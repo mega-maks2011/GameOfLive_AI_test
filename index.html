@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра "Жизнь"</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Игра "Жизнь"</h1>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="controls">
+        <button id="startButton">Старт</button>
+        <button id="pauseButton">Пауза</button>
+        <button id="randomButton">Случайно</button>
+        <button id="clearButton">Очистить</button>
+        <button id="settingsButton">Настройки (Размер, Правила, Сохранить)</button>
+    </div>
+
+    <div class="settings-container">
+        <label for="speedInput">Скорость (поколений/сек):</label>
+        <input type="number" id="speedInput" min="1" value="10" style="width: 60px;">
+        <input type="range" id="speedSlider" min="1" max="20" value="10">
+    </div>
+
+    <div class="info">
+        Поколение: <span id="generationCount">0</span> | Живых клеток: <span id="liveCellCount">0</span>
+    </div>
+
+    <p>Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.</p>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" data-modal="settingsModal">&times;</span>
+            <h2>Настройки</h2>
+
+            <div class="setting-section">
+                <h3>Отображение</h3>
+                <div>
+                    <label for="liveColorPicker">Цвет живых клеток:</label>
+                    <input type="color" id="liveColorPicker" value="#000000">
+                </div>
+                 <div>
+                    <label for="deadColorPicker">Цвет мертвых клеток:</label>
+                    <input type="color" id="deadColorPicker" value="#ffffff">
+                </div>
+                <div>
+                    <label for="gridColorPicker">Цвет сетки:</label>
+                    <input type="color" id="gridColorPicker" value="#cccccc">
+                </div>
+                <div>
+                    <label for="toggleGridLines">Показывать сетку:</label>
+                    <input type="checkbox" id="toggleGridLines" checked>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                 <h3>Размер поля и границы</h3>
+                 <div class="size-control">
+                    <label for="gridWidthInput">Ширина (клеток):</label>
+                    <input type="number" id="gridWidthInput" min="10" value="50" style="width: 60px;">
+                    <input type="range" id="gridWidthSlider" min="10" max="200" value="50" step="5">
+                 </div>
+                 <div class="size-control">
+                    <label for="gridHeightInput">Высота (клеток):</label>
+                    <input type="number" id="gridHeightInput" min="10" value="50" style="width: 60px;">
+                    <input type="range" id="gridHeightSlider" min="10" max="200" value="50" step="5">
+                 </div>
+                 <div>
+                    <label for="toggleToroidal">Бесконечное поле (тороидальное):</label>
+                    <input type="checkbox" id="toggleToroidal">
+                 </div>
+                 <br>
+                 <button id="applySizeButton">Применить размер/границы (очистит поле)</button>
+             </div>
+
+            <div class="setting-section">
+                <h3>Правила соседства</h3>
+                <label for="neighborhoodSelect">Тип соседства:</label>
+                <select id="neighborhoodSelect">
+                    <option value="moore">Мур (8 соседей)</option>
+                    <option value="vonneumann">Фон Нейман (4 соседа)</option>
+                </select>
+            </div>
+
+
+            <div class="setting-section">
+                <h3>Правила (B/S)</h3>
+                <p>Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23</p>
+                <label for="rulesInput">Правила:</label>
+                <input type="text" id="rulesInput" value="3/23"><br><br>
+                 <button id="applyRulesButton">Применить правила (сбросит симуляцию)</button>
+            </div>
+
+            <div class="setting-section">
+                <h3>Сохранить / Загрузить (JSON файл)</h3>
+                <button id="saveToJsonButton">Сохранить в файл</button>
+                <br><br>
+                <label for="loadFromJsonInput">Загрузить из файла:</label>
+                <input type="file" id="loadFromJsonInput" accept=".json">
+                <p style="font-size: 0.9em; color: #555;">(Загрузка файла автоматически применит состояние)</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <div class="authors">
+        <p>Авторы: Gemini и M-998</p>
+    </div>
+
+</body>
+</html>

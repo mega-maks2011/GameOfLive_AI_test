@@ -1,0 +1,348 @@
+/* Сброс базовых стилей для лучшей кроссбраузерности */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif; /* Используем более стандартный шрифт */
+    background-color: #e9ebee; /* Немного более приятный светлый фон */
+    color: #333; /* Основной цвет текста */
+    line-height: 1.6;
+    display: flex; /* Используем Flexbox для центрирования содержимого */
+    flex-direction: column; /* Элементы располагаются вертикально */
+    align-items: center; /* Центрируем по горизонтали */
+    padding: 20px; /* Внутренний отступ вокруг всего контента */
+    box-sizing: border-box; /* Учитываем padding в общей ширине/высоте */
+    min-height: 100vh; /* Минимальная высота - весь экран */
+}
+
+h1 {
+    color: #2c3e50; /* Более темный заголовок */
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+canvas {
+    border: 2px solid #34495e; /* Более выраженная граница */
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
+    display: block; /* Убираем возможный нижний отступ */
+    max-width: 100%; /* Канвас не будет вылезать за пределы родителя на маленьких экранах */
+    height: auto; /* Сохраняем пропорции */
+}
+
+.controls {
+    margin-bottom: 20px;
+    display: flex; /* Используем Flexbox для кнопок */
+    flex-wrap: wrap; /* Перенос кнопок на новую строку, если не хватает места */
+    justify-content: center; /* Центрируем кнопки */
+    gap: 10px; /* Промежуток между кнопками */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px; /* Скругленные углы кнопок */
+    background-color: #3498db; /* Синий цвет */
+    color: white;
+    transition: background-color 0.2s ease; /* Плавное изменение цвета при наведении */
+}
+
+button:hover {
+    background-color: #2980b9; /* Темнее при наведении */
+}
+
+button:active {
+    background-color: #1f608f; /* Еще темнее при нажатии */
+}
+
+/* Стили для контейнера скорости */
+.settings-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ecf0f1; /* Светлый фон для секции */
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.settings-container label {
+    font-weight: bold;
+}
+
+.settings-container input[type="number"] {
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+    width: 50px; /* Немного уменьшим ширину поля ввода числа */
+    text-align: center;
+}
+
+.settings-container input[type="range"] {
+    /* Базовый стиль слайдера */
+    -webkit-appearance: none;
+    appearance: none;
+    background: #bdc3c7;
+    border-radius: 5px;
+    height: 8px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.settings-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #3498db;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.settings-container input[type="range"]:hover {
+    opacity: 1;
+}
+
+
+.info {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #555;
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    color: #555;
+    margin-top: 0;
+}
+
+/* Стили для модального окна (контейнер) */
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Стили для содержимого модального окна - ОФОРМЛЕНИЕ В СТИЛЕ КОНСОЛИ */
+#settingsModal .modal-content {
+    background-color: #1e1e1e; /* Темный фон */
+    color: #cccccc; /* Светлый текст */
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace; /* Моноширинный шрифт */
+    border: 1px solid #007acc; /* Граница в стиле консоли (например, синий акцент) */
+    box-shadow: 0 5px 20px rgba(0, 122, 204, 0.5); /* Тень с акцентным цветом */
+    padding: 20px; /* Отступы */
+    border-radius: 8px; /* Скругление углов */
+    max-width: 600px; /* Максимальная ширина */
+    width: 95%; /* Ширина на маленьких экранах */
+    max-height: 90vh; /* Максимальная высота */
+    overflow-y: auto; /* Прокрутка если контент не помещается */
+    position: relative; /* Для позиционирования кнопки закрытия */
+}
+
+#settingsModal .modal-content h2 {
+    color: #007acc; /* Цвет заголовка */
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #007acc;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+}
+
+#settingsModal .close-button {
+    color: #cccccc; /* Светлый цвет для крестика */
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#settingsModal .close-button:hover,
+#settingsModal .close-button:focus {
+    color: #ffffff; /* Белый при наведении */
+}
+
+
+#settingsModal .setting-section {
+    border-bottom: 1px dashed #333; /* Темная пунктирная линия */
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+#settingsModal .setting-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#settingsModal .setting-section h3 {
+    color: #cccccc; /* Светлый заголовок секции */
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+#settingsModal label {
+    color: #9cdcfe; /* Цвет метки (как у строк в консоли) */
+    font-weight: normal;
+    display: inline-block;
+    margin-bottom: 5px;
+    min-width: 160px;
+}
+
+/* Стили для полей ввода и select в секциях настроек */
+#settingsModal input[type="number"],
+#settingsModal input[type="text"],
+#settingsModal input[type="color"],
+#settingsModal select {
+    background-color: #333333; /* Темный фон поля ввода */
+    color: #cccccc; /* Светлый текст */
+    border: 1px solid #555; /* Темная рамка */
+    border-radius: 3px;
+    padding: 5px;
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 1em;
+    margin-right: 5px;
+    box-sizing: border-box;
+}
+
+#settingsModal input[type="checkbox"] {
+    /* Стили чекбокса для темной темы */
+    background-color: #333333;
+    border: 1px solid #555;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+#settingsModal input[type="checkbox"]:checked {
+    background-color: #007acc; /* Цвет при отмеченном */
+    border-color: #007acc;
+}
+
+#settingsModal input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Галочка */
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+}
+
+
+#settingsModal input[type="color"] {
+    padding: 2px;
+    background-color: #333333;
+    border: 1px solid #555;
+    border-radius: 3px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+
+#settingsModal button {
+    background-color: #007acc; /* Цвет кнопок в стиле акцента консоли */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#settingsModal button:hover {
+    background-color: #005f99;
+}
+
+#settingsModal button:active {
+     background-color: #004c80;
+}
+
+#settingsModal p {
+    color: #888; /* Цвет поясняющего текста */
+    font-size: 0.9em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Стиль для контейнеров управления размером внутри секции */
+#settingsModal .size-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+#settingsModal .size-control label {
+    min-width: 150px;
+    margin-bottom: 0;
+}
+
+#settingsModal .size-control input[type="number"] {
+     width: 50px;
+}
+
+#settingsModal input[type="range"]::-webkit-slider-thumb {
+    background: #007acc; /* Ползунок в акцентном цвете */
+}
+
+#settingsModal input[type="range"]::-moz-range-thumb {
+     background: #007acc; /* Ползунок в акцентном цвете для Firefox */
+}
+
+/* Стили для input file */
+#settingsModal input[type="file"] {
+    background-color: #333333;
+    color: #cccccc;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 5px;
+    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 1em;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+
+/* Стили для раздела Авторы */
+.authors {
+    margin-top: 40px; /* Отступ сверху от последнего элемента */
+    font-size: 0.9em;
+    color: #555;
+    text-align: center;
+    width: 100%; /* Занимает всю доступную ширину */
+}
+
+.authors p {
+    margin: 0;
+    padding: 0;
+    color: #555; /* Убедимся, что цвет текста правильный */
+}
