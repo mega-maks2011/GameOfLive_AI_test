@@ -16,8 +16,9 @@ const translations = {
         'displaySettingsTitle': 'Display',
         'liveColorLabel': 'Live cell color:',
         'deadColorLabel': 'Dead cell color:',
-        'gridColorLabel': 'Grid line color:',
-        'showGridLinesLabel': 'Show grid lines:',
+        // Grid color label might be less relevant in WebGL if lines are hard to implement initially
+        'gridColorLabel': 'Grid line color (2D only):', // Modified label
+        'showGridLinesLabel': 'Show grid lines (2D only):', // Modified label
 
         'sizeSettingsTitle': 'Field Size and Borders',
         'widthLabel': 'Width (cells):',
@@ -35,14 +36,12 @@ const translations = {
         'rulesLabel': 'Rules:',
         'applyRulesButton': 'Apply Rules (resets simulation)',
 
-        'saveLoadTitle': 'Save / Load (JSON File)', // Заголовок остался, т.к. есть сохранение в файл
+        'saveLoadTitle': 'Save / Load (JSON File)',
         'saveToFileButton': 'Save to File',
         'loadFileLabel': 'Load from file:',
         'loadFileHint': '(Loading a file automatically applies state)',
 
-         // Local Storage related texts removed
-
-         'authorsText': 'Authors: Gemini and M-998', // Authors text
+         'authorsText': 'Authors: Gemini and M-998',
 
         // Alert messages
         'alertInvalidSizeInput': 'Please enter valid positive numbers for width and height (minimum {minSize}).',
@@ -51,9 +50,8 @@ const translations = {
         'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
         'alertFileLoadSuccess': 'Game state successfully loaded from file!',
         'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
-        // Local Storage related alerts removed
 
-        // Validation error messages (internal, shown in alert)
+        // Validation error messages
         'errorInvalidDataFormat': 'Invalid data format.',
         'errorInvalidCols': 'Invalid field width value.',
         'errorInvalidRows': 'Invalid field height value.',
@@ -62,7 +60,7 @@ const translations = {
         'errorInvalidBirthRules': 'Invalid birth rules format.',
         'errorInvalidSurvivalRules': 'Invalid survival rules format.',
         'errorInvalidGridDataSize': 'Invalid grid data or size mismatch. Expected {expected} cells, found {found}.',
-
+        'errorWebGLNotSupported': 'Your browser does not support WebGL.', // New error message
     },
     'ru': {
         'gameTitle': 'Игра "Жизнь"',
@@ -80,72 +78,10 @@ const translations = {
         'displaySettingsTitle': 'Отображение',
         'liveColorLabel': 'Цвет живых клеток:',
         'deadColorLabel': 'Цвет мертвых клеток:',
-        'gridColorLabel': 'Цвет сетки:',
-        'showGridLinesLabel': 'Показывать сетку:',
-
-        'sizeSettingsTitle': 'Размер поля и границы',
-        'widthLabel': 'Ширина (клеток):',
-        'heightLabel': 'Высота (клеток):',
-        'toroidalLabel': 'Бесконечное поле (тороидальное):',
-        'applySizeButton': 'Применить размер/границы (очистит поле)',
-
-        'neighborhoodSettingsTitle': 'Правила соседства',
-        'neighborhoodTypeLabel': 'Тип соседства:',
-        'mooreNeighborhood': 'Мур (8 соседей)',
-        'vonneumannNeighborhood': 'Фон Нейман (4 соседа)',
-
-        'rulesSettingsTitle': 'Правила (B/S)',
-        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). E.g., for standard Life: 3/23',
-        'rulesLabel': 'Правила:',
-        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
-
-        'saveLoadTitle': 'Save / Load (JSON File)', // Заголовок остался, т.к. есть сохранение в файл
-        'saveToFileButton': 'Save to File',
-        'loadFileLabel': 'Load from file:',
-        'loadFileHint': '(Loading a file automatically applies state)',
-
-         // Local Storage related texts removed
-
-         'authorsText': 'Авторы: Gemini и M-998', // Authors text
-
-        // Alert messages
-        'alertInvalidSizeInput': 'Please enter valid positive numbers for width and height (minimum {minSize}).',
-        'alertNeighborhoodChange': 'Neighborhood type changed to "{type}". Field reset.',
-        'alertRulesUpdated': 'Rules successfully updated:\nBirth on {birth} neighbors\nSurvival on {survival} neighbors.',
-        'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
-        'alertFileLoadSuccess': 'Game state successfully loaded from file!',
-        'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
-        // Local Storage related alerts removed
-
-        // Validation error messages (internal, shown in alert)
-        'errorInvalidDataFormat': 'Invalid data format.',
-        'errorInvalidCols': 'Invalid field width value.',
-        'errorInvalidRows': 'Invalid field height value.',
-        'errorInvalidToroidal': 'Invalid border mode value.',
-        'errorInvalidNeighborhood': 'Invalid neighborhood type value.',
-        'errorInvalidBirthRules': 'Invalid birth rules format.',
-        'errorInvalidSurvivalRules': 'Invalid survival rules format.',
-        'errorInvalidGridDataSize': 'Invalid grid data or size mismatch. Expected {expected} cells, found {found}.',
-
-    },
-    'ru': {
-        'gameTitle': 'Игра "Жизнь"',
-        'startButton': 'Старт',
-        'pauseButton': 'Пауза',
-        'randomButton': 'Случайно',
-        'clearButton': 'Очистить',
-        'settingsButton': 'Настройки',
-        'speedLabel': 'Скорость (поколений/сек):',
-        'generationLabel': 'Поколение',
-        'liveCellsLabel': 'Живых клеток',
-        'manualDrawHint': 'Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.',
-
-        'settingsModalTitle': 'Настройки',
-        'displaySettingsTitle': 'Отображение',
-        'liveColorLabel': 'Цвет живых клеток:',
-        'deadColorLabel': 'Цвет мертвых клеток:',
-        'gridColorLabel': 'Цвет сетки:',
-        'showGridLinesLabel': 'Показывать сетку:',
+        // Modified label
+        'gridColorLabel': 'Цвет сетки (только 2D):',
+        // Modified label
+        'showGridLinesLabel': 'Показывать сетку (только 2D):',
 
         'sizeSettingsTitle': 'Размер поля и границы',
         'widthLabel': 'Ширина (клеток):',
@@ -163,14 +99,12 @@ const translations = {
         'rulesLabel': 'Правила:',
         'applyRulesButton': 'Применить правила (сбросит симуляцию)',
 
-        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)', // Заголовок остался
+        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)',
         'saveToFileButton': 'Сохранить в файл',
         'loadFileLabel': 'Загрузить из файла:',
         'loadFileHint': '(Загрузка файла автоматически применит состояние)',
 
-        // Local Storage related texts removed
-
-         'authorsText': 'Авторы: Gemini и M-998', // Текст авторов
+         'authorsText': 'Авторы: Gemini и M-998',
 
         // Сообщения для пользователя (всплывающие alert)
         'alertInvalidSizeInput': 'Пожалуйста, введите корректные положительные числа для ширины и высоты (минимум {minSize}).',
@@ -179,7 +113,6 @@ const translations = {
         'alertInvalidRulesFormat': 'Некорректный формат правил. Используйте формат B/S (например "3/23") с цифрами от 0 до 8.',
         'alertFileLoadSuccess': 'Состояние игры успешно загружено из файла!',
         'alertFileLoadError': 'Ошибка при загрузке состояния игры из файла: {message}\nПожалуйста, убедитесь, что файл создан этой версией игры.',
-         // Local Storage related alerts removed
 
         // Валидация error messages
         'errorInvalidDataFormat': 'Неверный формат данных.',
@@ -190,7 +123,7 @@ const translations = {
         'errorInvalidBirthRules': 'Неверный формат правил рождения.',
         'errorInvalidSurvivalRules': 'Неверный формат правил выживания.',
         'errorInvalidGridDataSize': 'Неверные данные сетки или несоответствие размера. Ожидается {expected} клеток, найдено {found}.',
-
+        'errorWebGLNotSupported': 'Ваш браузер не поддерживает WebGL.', // New error message
     }
 };
 
@@ -204,40 +137,46 @@ const MAX_GRID_SIZE_SLIDER = 200;
 const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
 // CONSENT_KEY и LOCAL_STORAGE_KEY удалены
-
 // hasConsent переменная удалена
 
-let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Предпочтение языка может остаться опционально
+let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
 
 let liveCellColor = '#000000'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
 let deadCellColor = '#ffffff'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
 let gridLineColor = '#cccccc'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
-let showGridLines = true; // Инициализируется позже (будет обновлен из HTML)
+let showGridLines = true; // Инициализируется позже (будет обновлен из HTML) - В WebGL пока не используется явно для линий
 
-let isToroidal = false; // Инициализируется позже (будет обновлен из HTML)
-let neighborhoodType = 'moore'; // Инициализируется позже (будет обновлен из HTML)
+let isToroidal = false;
+let neighborhoodType = 'moore';
 
-let birthRules = [3]; // Инициализируется позже (будут обновлены из правил по умолчанию)
-let survivalRules = [2, 3]; // Инициализируется позже (будут обновлены из правил по умолчанию)
+let birthRules = [3];
+let survivalRules = [2, 3];
 
 // Переменные состояния игры (инициализируются в initializeGrid)
-const resolution = 10; // Размер клетки в пикселях
+const resolution = 10; // Размер клетки в пикселях - В WebGL resolution будет влиять на размер канваса, но не напрямую на отрисовку клеток
 let COLS; // Количество столбцов
 let ROWS; // Количество строк
-let grid; // Сетка игры
-let intervalId; // Используем setInterval для контроля скорости
+let grid; // Сетка игры (массив 0/1)
+let intervalId;
 let isRunning = false;
-let isDrawing = false; // Флаг для рисования мышью
-let drawState = 1; // Состояние (0 или 1), в которое мы РИСУЕМ
-let generation = 0; // Текущее поколение
-let liveCellsCount = 0; // Количество живых клеток
+let isDrawing = false;
+let drawState = 1;
+let generation = 0;
+let liveCellsCount = 0;
 
+
+// --- Переменные для WebGL ---
+let gl = null; // Контекст WebGL
+let shaderProgram = null; // Программа шейдеров
+let vertexBuffer = null; // Буфер вершин для квада
+let texture = null; // Текстура для состояния сетки
+let liveColorUniformLocation = null; // Расположение uniform для цвета живых клеток
+let deadColorUniformLocation = null; // Расположение uniform для цвета мертвых клеток
+let textureSamplerLocation = null; // Расположение uniform для текстуры
 
 // --- Получение ссылок на элементы (до DOMContentLoaded) ---
-// Эти переменные будут доступны в глобальной области видимости.
-// Обработчики событий должны назначаться внутри DOMContentLoaded.
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas ? canvas.getContext('2d') : null; // Проверка на null
+// ctx больше не нужен для WebGL
 
 const startButton = document.getElementById('startButton');
 const pauseButton = document.getElementById('pauseButton');
@@ -245,24 +184,20 @@ const randomButton = document.getElementById('randomButton');
 const clearButton = document.getElementById('clearButton');
 const settingsButton = document.getElementById('settingsButton');
 
-// Элементы управления скоростью
 const speedInput = document.getElementById('speedInput');
 const speedSlider = document.getElementById('speedSlider');
 
 const generationCountSpan = document.getElementById('generationCount');
 const liveCellCountSpan = document.getElementById('liveCellCount');
 
-// Модальное окно настроек и его элементы
 const settingsModal = document.getElementById('settingsModal');
-const closeModalButtons = document.querySelectorAll('.close-button'); // Кнопки закрытия модалок по классу
+const closeModalButtons = document.querySelectorAll('.close-button');
 
-// Элементы настроек отображения
 const liveColorPicker = document.getElementById('liveColorPicker');
 const deadColorPicker = document.getElementById('deadColorPicker');
-const gridColorPicker = document.getElementById('gridColorPicker');
-const toggleGridLines = document.getElementById('toggleGridLines');
+const gridColorPicker = document.getElementById('gridColorPicker'); // В WebGL пока не используется для линий
+const toggleGridLines = document.getElementById('toggleGridLines'); // В WebGL пока не используется для линий
 
-// Элементы настроек размера поля
 const gridWidthInput = document.getElementById('gridWidthInput');
 const gridWidthSlider = document.getElementById('gridWidthSlider');
 const gridHeightInput = document.getElementById('gridHeightInput');
@@ -271,34 +206,23 @@ const gridHeightSlider = document.getElementById('gridHeightSlider');
 const applySizeButton = document.getElementById('applySizeButton');
 const toggleToroidal = document.getElementById('toggleToroidal');
 
-// Элементы правил соседства
 const neighborhoodSelect = document.getElementById('neighborhoodSelect');
 
-// Элементы настроек правил (рождения/выживания)
 const rulesInput = document.getElementById('rulesInput');
 const applyRulesButton = document.getElementById('applyRulesButton');
 
-// Элементы сохранения/загрузки ИЗ ФАЙЛА
 const saveToJsonButton = document.getElementById('saveToJsonButton');
 const loadFromJsonInput = document.getElementById('loadFromJsonInput');
-// clearSessionButton и forceSaveButton удалены
 
-// Элементы модального окна согласия удалены
-
-
-// Элемент переключателя языка
 const languageSelect = document.getElementById('languageSelect');
 
 
 // --- Функции локализации ---
-
-// Функция для получения перевода по ключу
 function getTranslation(key, replacements = {}) {
     let text = translations[currentLanguage] && translations[currentLanguage][key] !== undefined
                ? translations[currentLanguage][key]
-               : (translations['en'][key] !== undefined ? translations['en'][key] : key); // Fallback: current lang -> en -> key
+               : (translations['en'][key] !== undefined ? translations['en'][key] : key);
 
-    // Применяем замены
     for (const placeholder in replacements) {
         const regex = new RegExp(`{${placeholder}}`, 'g');
         text = text.replace(regex, replacements[placeholder]);
@@ -306,70 +230,307 @@ function getTranslation(key, replacements = {}) {
     return text;
 }
 
-// Функция для обновления всего текста в UI
 function updateUI_Language() {
-    // Обновляем элементы с атрибутом data-lang-key
     document.querySelectorAll('[data-lang-key]').forEach(element => {
         const key = element.getAttribute('data-lang-key');
         const translation = getTranslation(key);
-
-        // Обновляем текст
         element.textContent = translation;
     });
 
-     // Специальный случай для опций в select'ах
      const mooreOption = document.querySelector('#neighborhoodSelect option[value="moore"]');
      const vonneumannOption = document.querySelector('#neighborhoodSelect option[value="vonneumann"]');
-
      if (mooreOption) mooreOption.textContent = getTranslation('mooreNeighborhood');
      if (vonneumannOption) vonneumannOption.textContent = getTranslation('vonneumannNeighborhood');
 
-     // Обновляем value поля правил
      if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-
-     // Обновляем title страницы
      if(document.title) document.title = getTranslation('gameTitle');
+
+     // Скрываем или отключаем элементы управления сеткой, если они не поддерживаются в WebGL
+     const gridColorLabelElement = document.querySelector('label[for="gridColorPicker"]');
+     const showGridLinesLabelElement = document.querySelector('label[for="toggleGridLines"]');
+     const gridColorPickerElement = document.getElementById('gridColorPicker');
+     const toggleGridLinesElement = document.getElementById('toggleGridLines');
+
+     if (gridColorLabelElement) gridColorLabelElement.textContent = getTranslation('gridColorLabel');
+     if (showGridLinesLabelElement) showGridLinesLabelElement.textContent = getTranslation('showGridLinesLabel');
+
+     // В этой базовой WebGL версии они не работают, можно их отключить или скрыть
+     if (gridColorPickerElement) gridColorPickerElement.style.display = 'none';
+     if (toggleGridLinesElement) toggleGridLinesElement.style.display = 'none';
+     if (gridColorLabelElement) gridColorLabelElement.style.display = 'none';
+     if (showGridLinesLabelElement) showGridLinesLabelElement.style.display = 'none';
 
 }
 
-// Функция для установки предпочтительного языка
 function setLanguagePreference(lang) {
     currentLanguage = lang;
-    // Удалено сохранение в localStorage
     updateUI_Language();
 }
 
 
-// --- Функции состояния игры и логики ---
+// --- Функции WebGL setup и отрисовки ---
 
-// Функция для конвертации поколений/сек в миллисекунды на поколение
-function gpsToMps(gps) {
-    const speed = parseInt(gps);
-    if (isNaN(speed) || speed <= 0) return 1000;
-    return 1000 / speed;
+// Шейдеры (GLSL)
+const vsSource = `
+    attribute vec4 a_position;
+    attribute vec2 a_texCoord;
+    varying vec2 v_texCoord;
+    void main() {
+        gl_Position = a_position;
+        v_texCoord = a_texCoord;
+    }
+`;
+
+const fsSource = `
+    precision mediump float;
+    varying vec2 v_texCoord;
+    uniform sampler2D u_gridTexture;
+    uniform vec3 u_liveColor;
+    uniform vec3 u_deadColor;
+
+    void main() {
+        // Получаем состояние клетки из текстуры (0.0 или 1.0)
+        float cellState = texture2D(u_gridTexture, v_texCoord).r;
+
+        // Интерполируем между цветом мертвой и живой клетки
+        gl_FragColor = vec4(mix(u_deadColor, u_liveColor, cellState), 1.0);
+
+        // // Опционально: добавление линий сетки в шейдере (более сложно)
+        // float cellWidth = 1.0 / ${COLS ? COLS.toFixed(1) : '50.0'}; // Используем COLS/ROWS из JS
+        // float cellHeight = 1.0 / ${ROWS ? ROWS.toFixed(1) : '50.0'}; // Нужна передача через uniform для динамики
+        // float lineWidth = 0.01; // Ширина линии в координатах текстуры
+        //
+        // bool isHorizontalLine = mod(v_texCoord.y, cellHeight) < lineWidth || mod(v_texCoord.y, cellHeight) > cellHeight - lineWidth;
+        // bool isVerticalLine = mod(v_texCoord.x, cellWidth) < lineWidth || mod(v_texCoord.x, cellWidth) > cellWidth - lineWidth;
+        //
+        // if (isHorizontalLine || isVerticalLine) {
+        //    gl_FragColor = vec4(${gridLineColor ? `vec3(${parseInt(gridLineColor.substring(1, 3), 16) / 255.0}, ${parseInt(gridLineColor.substring(3, 5), 16) / 255.0}, ${parseInt(gridLineColor.substring(5, 7), 16) / 255.0})` : 'vec3(0.8, 0.8, 0.8)'}, 1.0); // Цвет сетки
+        // }
+    }
+`;
+
+// Функция для компиляции шейдера
+function compileShader(gl, source, type) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
 }
 
-// Инициализация размеров канваса и сетки
+// Функция для инициализации шейдерной программы
+function initShaderProgram(gl, vsSource, fsSource) {
+    const vertexShader = compileShader(gl, vsSource, gl.VERTEX_SHADER);
+    const fragmentShader = compileShader(gl, fsSource, gl.FRAGMENT_SHADER);
+
+    if (!vertexShader || !fragmentShader) {
+        return null;
+    }
+
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        console.error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+        return null;
+    }
+
+    return shaderProgram;
+}
+
+// Функция для инициализации WebGL
+function initWebGL(canvas) {
+    gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+    if (!gl) {
+        alert(getTranslation('errorWebGLNotSupported'));
+        return null;
+    }
+
+    shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+    if (!shaderProgram) {
+        gl = null; // Очищаем контекст, если программа не создана
+        return null;
+    }
+
+    // Получаем расположения атрибутов и униформов
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, 'a_position');
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+    shaderProgram.texCoordAttribute = gl.getAttribLocation(shaderProgram, 'a_texCoord');
+    gl.enableVertexAttribArray(shaderProgram.texCoordAttribute);
+
+    textureSamplerLocation = gl.getUniformLocation(shaderProgram, 'u_gridTexture');
+    liveColorUniformLocation = gl.getUniformLocation(shaderProgram, 'u_liveColor');
+    deadColorUniformLocation = gl.getUniformLocation(shaderProgram, 'u_deadColor');
+
+    // Создаем буфер вершин для квада, покрывающего весь канвас
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    const vertices = new Float32Array([
+        -1.0, -1.0,  0.0, 0.0, // Левый нижний угол (позиция и тек.координаты)
+         1.0, -1.0,  1.0, 0.0, // Правый нижний
+        -1.0,  1.0,  0.0, 1.0, // Левый верхний
+         1.0,  1.0,  1.0, 1.0, // Правый верхний
+    ]);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    // Создаем текстуру для сетки
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Устанавливаем параметры текстуры
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); // Отключаем сглаживание
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); // Отключаем сглаживание
+
+    // Инициализируем текстуру пустыми данными (будет обновлено в initializeGrid)
+    // Используем формат LUMINANCE (один канал) для 0/1 значений
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 1, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, new Uint8Array([0]));
+
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Цвет очистки
+
+    return gl;
+}
+
+// Функция для обновления данных текстуры сетки из массива grid
+function updateGridTexture(grid) {
+    if (!gl || !texture || !grid || COLS === undefined || ROWS === undefined) {
+        console.error("Cannot update texture: WebGL context, texture, grid or dimensions missing.");
+        return;
+    }
+
+    // Преобразуем 2D массив grid в плоский Uint8Array (0 или 1)
+    const textureData = new Uint8Array(COLS * ROWS);
+    let index = 0;
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+             // Убеждаемся, что grid[col] и grid[col][row] существуют
+             if (grid[col] !== undefined && grid[col][row] !== undefined) {
+                 textureData[index++] = grid[col][row]; // 0 или 1
+             } else {
+                  // Заполняем нулем, если данные отсутствуют
+                 textureData[index++] = 0;
+             }
+        }
+    }
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Обновляем всю текстуру
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, COLS, ROWS, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, textureData);
+
+    // Если нужно обновлять только часть текстуры (для setCellState), используем texSubImage2D
+    // gl.texSubImage2D(gl.TEXTURE_2D, 0, col, row, 1, 1, gl.LUMINANCE, gl.UNSIGNED_BYTE, new Uint8Array([state]));
+}
+
+
+// Функция для отрисовки сетки с использованием WebGL
+function drawGridWebGL() {
+    if (!gl || !shaderProgram || !vertexBuffer || !texture || !grid || COLS === undefined || ROWS === undefined) {
+        // console.error("Cannot draw WebGL: WebGL context, program, buffer, texture, grid or dimensions missing.");
+        return; // Молча выходим, если WebGL не готов
+    }
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.useProgram(shaderProgram);
+
+    // Привязываем текстуру к текстурному модулю 0
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.uniform1i(textureSamplerLocation, 0); // Сообщаем шейдеру, что текстура в модуле 0
+
+    // Передаем цвета в шейдер
+    const liveRGB = hexToRgb(liveCellColor);
+    const deadRGB = hexToRgb(deadCellColor);
+    if (liveColorUniformLocation && deadColorUniformLocation) {
+         gl.uniform3f(liveColorUniformLocation, liveRGB.r / 255.0, liveRGB.g / 255.0, liveRGB.b / 255.0);
+         gl.uniform3f(deadColorUniformLocation, deadRGB.r / 255.0, deadRGB.g / 255.0, deadRGB.b / 255.0);
+    }
+
+
+    // Указываем WebGL, как брать данные вершин
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    const numComponents = 2; // 2 компонента на вершину (x, y)
+    const type = gl.FLOAT; // Данные во Float32Array
+    const normalize = false;
+    const stride = 4 * Float32Array.BYTES_PER_ELEMENT; // 4 float на вершину (позиция xy + тек.координаты uv)
+    const offset = 0; // Начинаем с начала буфера для позиций
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, numComponents, type, normalize, stride, offset);
+
+    const texCoordNumComponents = 2; // 2 компонента на тек.координаты (u, v)
+    const texCoordOffset = 2 * Float32Array.BYTES_PER_ELEMENT; // Тек.координаты начинаются после позиций
+    gl.vertexAttribPointer(shaderProgram.texCoordAttribute, texCoordNumComponents, type, normalize, stride, texCoordOffset);
+
+
+    // Отрисовываем квад (2 треугольника)
+    const vertexCount = 4;
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertexCount);
+
+     updateInfoDisplay(); // Обновляем счетчики
+}
+
+// Вспомогательная функция для конвертации HEX в RGB
+function hexToRgb(hex) {
+    const bigint = parseInt(hex.substring(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+}
+
+
+// --- Функции состояния игры и логики (большинство остаются прежними, но используют drawGridWebGL) ---
+
+// Инициализация размеров канваса и сетки - Обновлена для WebGL
 function initializeGrid(width, height) {
     isRunning = false;
     clearInterval(intervalId);
     generation = 0;
-    updateInfoDisplay();
 
-    if (canvas && ctx) {
+    if (canvas) {
+         // При использовании WebGL, размеры канваса напрямую соответствуют размерам сетки * resolution
+         // Но для текстуры WebGL важны размеры в пикселях текстуры, равные размерам сетки
         canvas.width = width * resolution;
         canvas.height = height * resolution;
+
+        // Размеры сетки в клетках
         COLS = width;
         ROWS = height;
-        grid = createGrid();
-        drawGrid(grid);
+
+         // Если WebGL контекст еще не инициализирован, инициализируем его
+         if (!gl) {
+             if (!initWebGL(canvas)) {
+                 console.error("Failed to initialize WebGL.");
+                 // Можно здесь показать сообщение пользователю или вернуться к 2D Canvas как запасному варианту
+                 return; // Не можем продолжить без WebGL
+             }
+         } else {
+             // Если контекст уже есть, просто обновляем viewport и данные текстуры
+             gl.viewport(0, 0, canvas.width, canvas.height);
+         }
+
+        grid = createGrid(); // Создаем новую сетку данных (массив 0/1)
+        updateGridTexture(grid); // Обновляем данные в текстуре WebGL
+        drawGridWebGL(); // Отрисовываем сцену
     } else {
-        console.error("Canvas or rendering context not found!");
+        console.error("Canvas element not found!");
     }
 }
 
 
-// Функция для создания пустой сетки
+// Функция для создания пустой сетки (остается прежней, т.к. работает с массивом данных)
 function createGrid() {
      if (COLS === undefined || ROWS === undefined) {
          console.error("Cannot create grid: COLS or ROWS are not defined.");
@@ -383,7 +544,7 @@ function createGrid() {
     return newGrid;
 }
 
-// Функция для заполнения сетки случайными значениями
+// Функция для заполнения сетки случайными значениями (остается прежней, т.к. работает с массивом данных)
 function randomGrid() {
      if (COLS === undefined || ROWS === undefined) {
           console.error("Cannot create random grid: COLS or ROWS are not defined.");
@@ -403,35 +564,16 @@ function randomGrid() {
             }
         }
     }
+    updateGridTexture(newGrid); // Обновляем текстуру после создания случайного поля
     return newGrid;
 }
 
-// Функция для отрисовки сетки
-function drawGrid(grid) {
-    if (!ctx || !grid) {
-        return;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let col = 0; col < COLS; col++) {
-        for (let row = 0; row < ROWS; row++) {
-            const cell = grid[col][row];
-
-            ctx.beginPath();
-            ctx.rect(col * resolution, row * resolution, resolution, resolution);
-            ctx.fillStyle = cell ? liveCellColor : deadCellColor;
-            ctx.fill();
-
-            if (showGridLines) {
-                ctx.strokeStyle = gridLineColor;
-                ctx.stroke();
-            }
-        }
-    }
-    updateInfoDisplay();
+// Функция для отрисовки сетки - ТЕПЕРЬ ИСПОЛЬЗУЕТ WebGL
+function drawGrid() {
+     drawGridWebGL(); // Просто вызываем функцию отрисовки WebGL
 }
 
-// Функция для вычисления следующего поколения
+// Функция для вычисления следующего поколения - Обновлена для WebGL
 function nextGeneration(grid) {
     if (!grid || COLS === undefined || ROWS === undefined) {
         console.error("Cannot compute next generation: grid or dimensions are missing.");
@@ -499,33 +641,46 @@ function nextGeneration(grid) {
 
     generation++;
     liveCellsCount = currentLiveCells;
+    updateGridTexture(nextGrid); // Обновляем текстуру с новым поколением
     return nextGrid;
 }
 
-// Обновление отображения информации
+// Обновление отображения информации (остается прежней)
 function updateInfoDisplay() {
      if(generationCountSpan) generationCountSpan.textContent = generation;
      if(liveCellCountSpan) liveCellCountSpan.textContent = liveCellsCount;
 }
 
 // --- Ручное рисование на канвасе ---
+// ИСПРАВЛЕНО: Функция setCellState обновляет и массив grid, и текстуру WebGL
 function setCellState(col, row, state) {
      if (col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
          const currentState = grid[col][row];
          if (currentState !== state) {
-             grid[col][row] = state;
+             grid[col][row] = state; // Обновляем массив данных
+
              if (state === 1) {
                  liveCellsCount++;
              } else {
                  liveCellsCount--;
              }
-             drawGrid(grid);
+
+             // Обновляем только соответствующий пиксель в текстуре WebGL
+             if (gl && texture) {
+                 gl.bindTexture(gl.TEXTURE_2D, texture);
+                 // Используем texSubImage2D для частичного обновления
+                 // Данные должны быть в Uint8Array
+                 const pixelData = new Uint8Array([state]); // Uint8Array с одним байтом (0 или 1)
+                 gl.texSubImage2D(gl.TEXTURE_2D, 0, col, row, 1, 1, gl.LUMINANCE, gl.UNSIGNED_BYTE, pixelData);
+             }
+
+             // Отрисовываем сцену заново
+             drawGridWebGL();
          }
      }
 }
 
-
-// Функция запуска симуляции с учетом скорости
+// Функция запуска симуляции с учетом скорости (остается прежней, использует nextGeneration и drawGrid)
 function startSimulation() {
     if (!isRunning) {
         isRunning = true;
@@ -536,21 +691,18 @@ function startSimulation() {
         const safeIntervalTime = Math.max(1, intervalTime);
 
         intervalId = setInterval(() => {
-            grid = nextGeneration(grid);
-            drawGrid(grid);
+            grid = nextGeneration(grid); // nextGeneration уже обновляет текстуру
+            drawGridWebGL(); // Просто отрисовываем
         }, safeIntervalTime);
     }
 }
 
 
-// --- Функции сохранения и загрузки Local Storage УДАЛЕНЫ ---
-
-
 // --- Функционал внутри модального окна настроек ---
 
-// Функция инициализации игры с параметрами по умолчанию
+// Функция инициализации игры с параметрами по умолчанию (обновлена)
 function initializeGameWithDefaults() {
-    initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE); // Начальный размер
+    initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE); // Начальный размер и инициализация WebGL
 
     // Устанавливаем начальные значения для всех элементов управления
      if(speedInput) speedInput.value = DEFAULT_SPEED_GPS;
@@ -571,20 +723,38 @@ function initializeGameWithDefaults() {
      birthRules = [3];
      survivalRules = [2, 3];
 
-     // Устанавливаем начальные цвета и видимость сетки из HTML
-     liveCellColor = liveColorPicker ? liveColorPicker.value : '#000000';
-     deadCellColor = deadColorPicker ? deadColorPicker.value : '#ffffff';
-     gridLineColor = gridColorPicker ? gridColorPicker.value : '#cccccc';
-     showGridLines = toggleGridLines ? toggleGridLines.checked : true;
+     // Устанавливаем начальные цвета из HTML (нужны для шейдера)
+     if(liveColorPicker) liveCellColor = liveColorPicker.value;
+     if(deadColorPicker) deadCellColor = deadColorPicker.value;
+     if(gridColorPicker) gridLineColor = gridColorPicker.value; // Читаем значение, но не используем для линий в WebGL
 
-     // updateUI_Language() вызывается после этого
+     // Читаем состояние чекбокса сетки, но не используем для линий в WebGL
+     if(toggleGridLines) showGridLines = toggleGridLines.checked;
+
+
+     updateUI_Language(); // Обновляем UI, включая метки сетки
 }
 
 
 // --- Инициализация игры при загрузке страницы ---
 function initializeGameOnLoad() {
-    initializeGameWithDefaults(); // При загрузке страницы всегда инициализируем игру с настройками по умолчанию
-    updateUI_Language(); // Обновляем язык интерфейса
+    // Инициализация WebGL и игры с параметрами по умолчанию
+    if (canvas) {
+         if (initWebGL(canvas)) {
+            initializeGameWithDefaults(); // Инициализация игры после успешной инициализации WebGL
+         } else {
+             // Если WebGL не поддерживается, можно здесь переключиться на 2D Canvas
+             // или показать сообщение об ошибке. Сейчас просто выходим.
+             console.error("Game cannot run without WebGL.");
+             alert(getTranslation('errorWebGLNotSupported')); // Показываем сообщение об ошибке
+             return; // Не продолжаем
+         }
+    } else {
+         console.error("Canvas element not found! Cannot initialize game.");
+         return; // Не продолжаем без канваса
+    }
+
+    updateUI_Language(); // Обновляем язык интерфейса после инициализации
      // Привязка всех обработчиков событий происходит в DOMContentLoaded
 }
 
@@ -612,6 +782,11 @@ function generateRandomDigitString(length) {
 
 // Запускаем логику при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Инициализация WebGL и Игры ---
+    initializeGameOnLoad();
+
+
     // --- Привязка обработчиков событий КНОПОК ---
     if(startButton) startButton.addEventListener('click', startSimulation);
     if(pauseButton) pauseButton.addEventListener('click', () => {
@@ -621,14 +796,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if(randomButton) randomButton.addEventListener('click', () => {
         isRunning = false;
         clearInterval(intervalId);
-        grid = randomGrid();
-        drawGrid(grid);
+        grid = randomGrid(); // randomGrid уже обновляет текстуру
+        drawGridWebGL(); // Просто отрисовываем
     });
     if(clearButton) clearButton.addEventListener('click', () => {
         isRunning = false;
         clearInterval(intervalId);
-        grid = createGrid();
-        drawGrid(grid);
+        grid = createGrid(); // createGrid создает пустой массив
+        updateGridTexture(grid); // Обновляем текстуру
+        drawGridWebGL(); // Отрисовываем
         generation = 0;
         updateInfoDisplay();
     });
@@ -643,10 +819,12 @@ document.addEventListener('DOMContentLoaded', () => {
          if(toggleToroidal) toggleToroidal.checked = isToroidal;
          if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
          if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+         // Цвета в настройках напрямую связаны с переменными, которые передаются в шейдер
          if(liveColorPicker) liveColorPicker.value = liveCellColor;
          if(deadColorPicker) deadCellColor.value = deadCellColor;
          if(gridColorPicker) gridColorPicker.value = gridLineColor;
          if(toggleGridLines) toggleGridLines.checked = showGridLines;
+
          if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем поле выбора файла
     });
 
@@ -711,34 +889,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Ручное рисование на канвасе
+    // Ручное рисование на канвасе (теперь обновляет WebGL текстуру)
      if(canvas) {
         canvas.addEventListener('mousedown', (event) => {
-             if (!isRunning) {
+             if (!isRunning && gl) { // Проверяем наличие WebGL контекста
                 isDrawing = true;
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
+
+                // Конвертируем пиксельные координаты в координаты сетки (клетки)
                 const col = Math.floor(x / resolution);
                 const row = Math.floor(y / resolution);
 
+
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
                      drawState = grid[col][row] === 1 ? 0 : 1;
-                     setCellState(col, row, drawState);
+                     setCellState(col, row, drawState); // setCellState теперь обновляет текстуру и вызывает отрисовку
                 }
              }
         });
 
         canvas.addEventListener('mousemove', (event) => {
-            if (isDrawing && !isRunning) {
+            if (isDrawing && !isRunning && gl) { // Проверяем наличие WebGL контекста
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
                 const col = Math.floor(x / resolution);
                 const row = Math.floor(y / resolution);
 
+                // Проверяем, что координаты внутри сетки и состояние клетки изменилось
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
-                     setCellState(col, row, drawState);
+                     setCellState(col, row, drawState); // setCellState теперь обновляет текстуру и вызывает отрисовку
                 }
             }
         });
@@ -759,6 +941,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalId = button.dataset.modal;
                  const modalElement = document.getElementById(modalId);
                  if(modalElement) modalElement.style.display = 'none';
+                // После закрытия модалки, если WebGL готов, перерисовываем сцену
+                if (gl) {
+                     drawGridWebGL();
+                }
             });
          }
     });
@@ -767,30 +953,32 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (event) => {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
+             // После закрытия модалки, если WebGL готов, перерисовываем сцену
+            if (gl) {
+                 drawGridWebGL();
+            }
         }
     });
 
-
-    // Обработчики кнопок модального окна согласия удалены
-
-
-    // Функционал внутри модального окна настроек
-     if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
-     if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
-     if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
-     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); });
-
-     if(toggleToroidal) toggleToroidal.addEventListener('change', (event) => { isToroidal = event.target.checked; });
-
-     if(neighborhoodSelect) neighborhoodSelect.addEventListener('change', (event) => {
-        neighborhoodType = event.target.value;
-         isRunning = false;
-         clearInterval(intervalId);
-         grid = createGrid();
-         drawGrid(grid);
-         generation = 0;
-         updateInfoDisplay();
-         alert(getTranslation('alertNeighborhoodChange', { type: getTranslation(neighborhoodType === 'moore' ? 'mooreNeighborhood' : 'vonneumannNeighborhood') }));
+    // Обработчики смены цвета в настройках (теперь напрямую влияют на отрисовку WebGL)
+    if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => {
+        liveCellColor = event.target.value;
+        if (gl) drawGridWebGL(); // Перерисовываем при смене цвета
+    });
+    if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => {
+        deadCellColor = event.target.value;
+        if (gl) drawGridWebGL(); // Перерисовываем при смене цвета
+    });
+     // Обработчики для gridColorPicker и toggleGridLines пока остаются, но не используются в WebGL
+     if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => {
+         gridLineColor = event.target.value;
+         // В WebGL пока нет отрисовки линий сетки
+         // if(showGridLines && gl) drawGridWebGL(); // Если бы линии были в шейдере
+    });
+     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => {
+         showGridLines = event.target.checked;
+         // В WebGL пока нет отрисовки линий сетки
+         // if(gl) drawGridWebGL(); // Если бы линии были в шейдере
     });
 
 
@@ -799,6 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newHeight = parseInt(gridHeightInput.value);
 
         if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
+            // initializeGrid теперь сама инициализирует/обновляет WebGL
             initializeGrid(newWidth, newHeight);
         } else {
             alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
@@ -825,8 +1014,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 isRunning = false;
                 clearInterval(intervalId);
-                grid = createGrid();
-                drawGrid(grid);
+                grid = createGrid(); // Создаем пустую сетку
+                updateGridTexture(grid); // Обновляем текстуру
+                drawGridWebGL(); // Отрисовываем
                 generation = 0;
                 updateInfoDisplay();
             } else {
@@ -863,8 +1053,8 @@ document.addEventListener('DOMContentLoaded', () => {
             liveCellsCount: liveCellsCount,
             liveCellColor: liveCellColor,
             deadCellColor: deadCellColor,
-            gridLineColor: gridLineColor,
-            showGridLines: showGridLines,
+            gridLineColor: gridLineColor, // Сохраняем цвет сетки, даже если не используем его в WebGL
+            showGridLines: showGridLines, // Сохраняем состояние чекбокса, даже если не используем в WebGL
             speedGPS: parseInt(speedInput.value),
             grid: gridString, // Сохраняем сетку как строку
             hash: randomHash // Добавляем поле hash со случайной строкой цифр
@@ -923,7 +1113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          throw new Error("Invalid grid data format: Contains non-binary values after string conversion.");
                      }
                 } else if (Array.isArray(loadedState.grid)) {
-                     // Обработка старого формата (массив чисел)
+                     // Обработка старого формата (массив чисел) - для совместимости с файлами, сохраненными до этой версии
                      if (loadedState.grid.length !== expectedSize) {
                           throw new Error(getTranslation('errorInvalidGridDataSize', { expected: expectedSize, found: loadedState.grid.length }));
                      }
@@ -943,6 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const calculatedLiveCount = loadedGridData.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
 
 
+                // Загружаем цвета и состояние сетки, даже если они не используются в WebGL отрисовке линий
                 const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : (liveColorPicker ? liveColorPicker.value : '#000000');
                 const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
                 const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : (gridColorPicker ? gridColorPicker.value : '#cccccc');
@@ -957,9 +1148,9 @@ document.addEventListener('DOMContentLoaded', () => {
                  neighborhoodType = loadedState.neighborhoodType;
                  isToroidal = loadedState.isToroidal;
 
-                initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку
+                initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку (и WebGL) с правильными размерами
 
-                // Копируем загруженные данные в новую сетку
+                // Копируем загруженные данные в новую сетку данных (массив)
                 let cellIndex = 0;
                 for (let col = 0; col < COLS; col++) {
                     for (let row = 0; row < ROWS; row++) {
@@ -996,9 +1187,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
                 if(toggleToroidal) toggleToroidal.checked = isToroidal;
 
-                // Хэш не используется при загрузке, поэтому его не нужно применять здесь
+                // Хэш не используется при загрузке
 
-                drawGrid(grid); // Перерисовываем с новыми данными
+                updateGridTexture(grid); // Обновляем текстуру WebGL с загруженными данными
+                drawGridWebGL(); // Перерисовываем сцену
                 updateInfoDisplay(); // Обновляем счетчики
 
                 alert(getTranslation('alertFileLoadSuccess'));
@@ -1022,8 +1214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // Обработчики кнопок Local Storage удалены
-
 
     // --- Логика инициализации страницы после загрузки DOM ---
 
@@ -1035,17 +1225,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setLanguagePreference(event.target.value); // setLanguagePreference вызывает updateUI_Language
      });
 
-    // Инициализация игры (теперь всегда с настройками по умолчанию)
-    initializeGameOnLoad(); // Вызываем новую функцию инициализации
+    // Инициализация WebGL и игры
+    initializeGameOnLoad();
 
-    // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для drawGrid до первой симуляции)
+    // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для WebGL)
     // Эти переменные будут обновлены при загрузке из файла или установлены initializeGameWithDefaults
     // Просто убедимся, что они имеют начальные значения из HTML
     if(liveColorPicker) liveCellColor = liveColorPicker.value;
     if(deadColorPicker) deadCellColor = deadColorPicker.value;
-    if(gridColorPicker) gridLineColor = gridColorPicker.value;
-    if(toggleGridLines) showGridLines = toggleGridLines.checked;
+    if(gridColorPicker) gridLineColor = gridColorPicker.value; // Цвет сетки
+    if(toggleGridLines) showGridLines = toggleGridLines.checked; // Состояние чекбокса сетки
 
 });
-
-// Удалена функция attemptLoadOrCreateGame
