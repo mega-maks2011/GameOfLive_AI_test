@@ -18,13 +18,12 @@
         </select>
     </div>
 
-
     <div class="controls">
         <button id="startButton" data-lang-key="startButton">Старт</button>
         <button id="pauseButton" data-lang-key="pauseButton">Пауза</button>
         <button id="randomButton" data-lang-key="randomButton">Случайно</button>
         <button id="clearButton" data-lang-key="clearButton">Очистить</button>
-        <button id="settingsButton" data-lang-key="settingsButton">Настройки (Размер, Правила, Сохранить)</button>
+        <button id="settingsButton" data-lang-key="settingsButton">Настройки</button>
     </div>
 
     <div class="settings-container">
@@ -93,10 +92,9 @@
                 </select>
             </div>
 
-
             <div class="setting-section">
                 <h3 data-lang-key="rulesSettingsTitle">Правила (B/S)</h3>
-                <p data-lang-key="rulesFormatHint">Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23</p>
+                <p data-lang-key="rulesFormatHint">Формат: B (рождение) / S (выживание). E.g., for standard Life: 3/23</p>
                 <label for="rulesInput" data-lang-key="rulesLabel">Правила:</label>
                 <input type="text" id="rulesInput" value="3/23"><br><br>
                  <button id="applyRulesButton" data-lang-key="applyRulesButton">Применить правила (сбросит симуляцию)</button>
@@ -110,26 +108,10 @@
                 <input type="file" id="loadFromJsonInput" accept=".json">
                 <p style="font-size: 0.9em; color: #888; margin-bottom: 15px;" data-lang-key="loadFileHint">(Загрузка файла автоматически применит состояние)</p>
 
-                <button id="forceSaveButton" data-lang-key="forceSaveButton">Принудительно сохранить сессию</button>
-                 <button id="clearSessionButton" data-lang-key="clearSessionButton">Очистить сохраненную сессию</button>
-                 <p style="font-size: 0.9em; color: #888; margin-top: 5px;" data-lang-key="clearSessionHint">(Удалить данные из браузера)</p>
-
-            </div>
+                </div>
 
         </div>
     </div>
-
-    <div id="consentModal" class="modal">
-        <div class="modal-content">
-            <h2 data-lang-key="consentModalTitle">Согласие на использование данных</h2>
-            <p data-lang-key="consentMessage">Эта игра сохраняет свое состояние (сетку, настройки и т.д.) локально в вашем браузере с помощью Local Storage, чтобы вы могли продолжить играть позже. Вы даете согласие на это?</p>
-            <div class="consent-buttons" style="text-align: center; margin-top: 20px;">
-                <button id="acceptConsentButton" data-lang-key="acceptConsentButton">Принять</button>
-                <button id="declineConsentButton" data-lang-key="declineConsentButton">Отказаться</button>
-            </div>
-            </div>
-    </div>
-
 
     <script src="script.js"></script>
 
