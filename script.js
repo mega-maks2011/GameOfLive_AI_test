@@ -99,6 +99,70 @@ const translations = {
         'rulesLabel': 'Правила:',
         'applyRulesButton': 'Применить правила (сбросит симуляцию)',
 
+        'saveLoadTitle': 'Save / Load (JSON File)', // Заголовок остался, т.к. есть сохранение в файл
+        'saveToFileButton': 'Save to File',
+        'loadFileLabel': 'Load from file:',
+        'loadFileHint': '(Loading a file automatically applies state)',
+
+         // Local Storage related texts removed
+
+         'authorsText': 'Авторы: Gemini и M-998', // Authors text
+
+        // Alert messages
+        'alertInvalidSizeInput': 'Please enter valid positive numbers for width and height (minimum {minSize}).',
+        'alertNeighborhoodChange': 'Neighborhood type changed to "{type}". Field reset.',
+        'alertRulesUpdated': 'Rules successfully updated:\nBirth on {birth} neighbors\nSurvival on {survival} neighbors.',
+        'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
+        'alertFileLoadSuccess': 'Game state successfully loaded from file!',
+        'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
+        // Local Storage related alerts removed
+
+        // Validation error messages (internal, shown in alert)
+        'errorInvalidDataFormat': 'Invalid data format.',
+        'errorInvalidCols': 'Invalid field width value.',
+        'errorInvalidRows': 'Invalid field height value.',
+        'errorInvalidToroidal': 'Invalid border mode value.',
+        'errorInvalidNeighborhood': 'Invalid neighborhood type value.',
+        'errorInvalidBirthRules': 'Invalid birth rules format.',
+        'errorInvalidSurvivalRules': 'Invalid survival rules format.',
+        'errorInvalidGridDataSize': 'Invalid grid data or size mismatch. Expected {expected} cells, found {found}.',
+
+    },
+    'ru': {
+        'gameTitle': 'Игра "Жизнь"',
+        'startButton': 'Старт',
+        'pauseButton': 'Пауза',
+        'randomButton': 'Случайно',
+        'clearButton': 'Очистить',
+        'settingsButton': 'Настройки',
+        'speedLabel': 'Скорость (поколений/сек):',
+        'generationLabel': 'Поколение',
+        'liveCellsLabel': 'Живых клеток',
+        'manualDrawHint': 'Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.',
+
+        'settingsModalTitle': 'Настройки',
+        'displaySettingsTitle': 'Отображение',
+        'liveColorLabel': 'Цвет живых клеток:',
+        'deadColorLabel': 'Цвет мертвых клеток:',
+        'gridColorLabel': 'Цвет сетки:',
+        'showGridLinesLabel': 'Показывать сетку:',
+
+        'sizeSettingsTitle': 'Размер поля и границы',
+        'widthLabel': 'Ширина (клеток):',
+        'heightLabel': 'Высота (клеток):',
+        'toroidalLabel': 'Бесконечное поле (тороидальное):',
+        'applySizeButton': 'Применить размер/границы (очистит поле)',
+
+        'neighborhoodSettingsTitle': 'Правила соседства',
+        'neighborhoodTypeLabel': 'Тип соседства:',
+        'mooreNeighborhood': 'Мур (8 соседей)',
+        'vonneumannNeighborhood': 'Фон Нейман (4 соседа)',
+
+        'rulesSettingsTitle': 'Правила (B/S)',
+        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23',
+        'rulesLabel': 'Правила:',
+        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
+
         'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)', // Заголовок остался
         'saveToFileButton': 'Сохранить в файл',
         'loadFileLabel': 'Загрузить из файла:',
@@ -145,16 +209,16 @@ const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
 let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Предпочтение языка может остаться опционально
 
-let liveCellColor = '#000000'; // Инициализируем значением по умолчанию (будут обновлены из HTML/localStorage)
-let deadCellColor = '#ffffff'; // Инициализируем значением по умолчанию (будут обновлены из HTML/localStorage)
-let gridLineColor = '#cccccc'; // Инициализируем значением по умолчанию (будут обновлены из HTML/localStorage)
-let showGridLines = true; // Инициализируется позже (будет обновлен из HTML/localStorage)
+let liveCellColor = '#000000'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
+let deadCellColor = '#ffffff'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
+let gridLineColor = '#cccccc'; // Инициализируем значением по умолчанию (будут обновлены из HTML)
+let showGridLines = true; // Инициализируется позже (будет обновлен из HTML)
 
-let isToroidal = false; // Инициализируется позже (будет обновлен из HTML/localStorage)
-let neighborhoodType = 'moore'; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
+let isToroidal = false; // Инициализируется позже (будет обновлен из HTML)
+let neighborhoodType = 'moore'; // Инициализируется позже (будет обновлен из HTML)
 
-let birthRules = [3]; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
-let survivalRules = [2, 3]; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
+let birthRules = [3]; // Инициализируется позже (будут обновлены из правил по умолчанию)
+let survivalRules = [2, 3]; // Инициализируется позже (будут обновлены из правил по умолчанию)
 
 // Переменные состояния игры (инициализируются в initializeGrid)
 const resolution = 10; // Размер клетки в пикселях
@@ -445,7 +509,6 @@ function updateInfoDisplay() {
 }
 
 // --- Ручное рисование на канвасе ---
-// ИСПРАВЛЕНО: Функция setCellState перемещена выше
 function setCellState(col, row, state) {
      if (col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
          const currentState = grid[col][row];
@@ -485,7 +548,7 @@ function startSimulation() {
 
 // --- Функционал внутри модального окна настроек ---
 
-// Функция инициализации игры с параметрами по умолчанию (без Local Storage)
+// Функция инициализации игры с параметрами по умолчанию
 function initializeGameWithDefaults() {
     initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE); // Начальный размер
 
@@ -537,6 +600,15 @@ function generateRandomString(length) {
     return result;
 }
 
+// --- Функция для генерации случайной строки цифр ---
+function generateRandomDigitString(length) {
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * 10).toString(); // Генерируем случайную цифру от 0 до 9
+    }
+    return result;
+}
+
 
 // Запускаем логику при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
@@ -572,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
          if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
          if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
          if(liveColorPicker) liveColorPicker.value = liveCellColor;
-         if(deadColorPicker) deadColorPicker.value = deadCellColor;
+         if(deadColorPicker) deadCellColor.value = deadCellColor;
          if(gridColorPicker) gridColorPicker.value = gridLineColor;
          if(toggleGridLines) toggleGridLines.checked = showGridLines;
          if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем поле выбора файла
@@ -777,6 +849,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Преобразуем сетку в одну строку нулей и единиц для уменьшения размера
         const gridString = grid.flat().join('');
 
+        // Генерируем случайную строку цифр для хэша
+        const randomHash = generateRandomDigitString(30);
+
         const gameState = {
             cols: COLS,
             rows: ROWS,
@@ -791,7 +866,8 @@ document.addEventListener('DOMContentLoaded', () => {
             gridLineColor: gridLineColor,
             showGridLines: showGridLines,
             speedGPS: parseInt(speedInput.value),
-            grid: gridString // Сохраняем сетку как строку
+            grid: gridString, // Сохраняем сетку как строку
+            hash: randomHash // Добавляем поле hash со случайной строкой цифр
         };
 
         const jsonString = JSON.stringify(gameState, null, 2);
@@ -847,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          throw new Error("Invalid grid data format: Contains non-binary values after string conversion.");
                      }
                 } else if (Array.isArray(loadedState.grid)) {
-                     // Обработка старого формата (массив чисел), если нужно
+                     // Обработка старого формата (массив чисел)
                      if (loadedState.grid.length !== expectedSize) {
                           throw new Error(getTranslation('errorInvalidGridDataSize', { expected: expectedSize, found: loadedState.grid.length }));
                      }
@@ -863,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const loadedGeneration = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
-                // Пересчитываем liveCellsCount на основе загруженной сетки, чтобы избежать расхождений
+                // Пересчитываем liveCellsCount на основе загруженной сетки
                 const calculatedLiveCount = loadedGridData.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
 
 
@@ -881,7 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  neighborhoodType = loadedState.neighborhoodType;
                  isToroidal = loadedState.isToroidal;
 
-                initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку с правильными размерами
+                initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку
 
                 // Копируем загруженные данные в новую сетку
                 let cellIndex = 0;
@@ -920,6 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
                 if(toggleToroidal) toggleToroidal.checked = isToroidal;
 
+                // Хэш не используется при загрузке, поэтому его не нужно применять здесь
 
                 drawGrid(grid); // Перерисовываем с новыми данными
                 updateInfoDisplay(); // Обновляем счетчики
