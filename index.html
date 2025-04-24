@@ -29,7 +29,7 @@
         Поколение: <span id="generationCount">0</span> | Живых клеток: <span id="liveCellCount">0</span>
     </div>
 
-    <p>Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.</p>
+    <p>Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и вешь мышь для рисования.</p>
 
     <div id="settingsModal" class="modal">
         <div class="modal-content">
@@ -95,12 +95,16 @@
             </div>
 
             <div class="setting-section">
-                <h3>Сохранить / Загрузить (JSON файл)</h3>
+                <h3>Сохранить / Загрузить (файл JSON)</h3>
                 <button id="saveToJsonButton">Сохранить в файл</button>
                 <br><br>
                 <label for="loadFromJsonInput">Загрузить из файла:</label>
                 <input type="file" id="loadFromJsonInput" accept=".json">
-                <p style="font-size: 0.9em; color: #555;">(Загрузка файла автоматически применит состояние)</p>
+                <p style="font-size: 0.9em; color: #888; margin-bottom: 15px;">(Загрузка файла автоматически применит состояние)</p>
+
+                <button id="clearSessionButton">Очистить сохраненную сессию</button>
+                 <p style="font-size: 0.9em; color: #888; margin-top: 5px;">(Удалить данные из браузера)</p>
+
             </div>
 
         </div>
