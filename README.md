@@ -18,7 +18,7 @@ The easiest way to get the code onto your local machine is to download the entir
 
 This project was brought to you by:
 
-* Gemini
+* Gemini (AI)
 * M-998
 
 ---
@@ -41,5 +41,5 @@ This project was brought to you by:
 
 Авторы этого проекта:
 
-* Gemini
+* Gemini (AI)
 * M-998
