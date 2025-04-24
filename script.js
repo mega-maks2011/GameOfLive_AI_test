@@ -152,8 +152,12 @@ const CONSENT_KEY = 'consentGiven'; // Ключ для согласия в local
 const LOCAL_STORAGE_KEY = 'gameOfLifeState'; // Ключ для сохранения игры
 
 
+// --- Получение ссылок на элементы (до DOMContentLoaded) ---
+// Эти переменные будут доступны в глобальной области видимости, но ссылки на элементы будут null
+// до события DOMContentLoaded. Обработчики событий должны назначаться внутри DOMContentLoaded.
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d') : null; // Проверка на null, если canvas еще не загружен
+
 const startButton = document.getElementById('startButton');
 const pauseButton = document.getElementById('pauseButton');
 const randomButton = document.getElementById('randomButton');
@@ -163,15 +167,13 @@ const settingsButton = document.getElementById('settingsButton');
 // Элементы управления скоростью
 const speedInput = document.getElementById('speedInput');
 const speedSlider = document.getElementById('speedSlider');
-const DEFAULT_SPEED_GPS = 10; // Скорость по умолчанию в поколений/сек
-const MIN_SPEED_GPS = 1;
-const MAX_SPEED_GPS = 20; // Максимальная скорость для слайдера
 
 const generationCountSpan = document.getElementById('generationCount');
 const liveCellCountSpan = document.getElementById('liveCellCount');
 
 // Модальное окно настроек и его элементы
 const settingsModal = document.getElementById('settingsModal');
+// Получаем closeModalButtons здесь, т.к. они не зависят от конкретной модалки
 const closeModalButtons = document.querySelectorAll('.close-button');
 
 // Элементы настроек отображения
@@ -179,10 +181,11 @@ const liveColorPicker = document.getElementById('liveColorPicker');
 const deadColorPicker = document.getElementById('deadColorPicker');
 const gridColorPicker = document.getElementById('gridColorPicker');
 const toggleGridLines = document.getElementById('toggleGridLines');
-let liveCellColor = liveColorPicker.value;
-let deadCellColor = deadColorPicker.value;
-let gridLineColor = gridColorPicker.value;
-let showGridLines = toggleGridLines.checked;
+let liveCellColor = '#000000'; // Инициализируем значением по умолчанию или из HTML
+let deadCellColor = '#ffffff'; // Инициализируем значением по умолчанию или из HTML
+let gridLineColor = '#cccccc'; // Инициализируем значением по умолчанию или из HTML
+let showGridLines = true; // Инициализируется позже
+
 
 // Элементы настроек размера поля
 const gridWidthInput = document.getElementById('gridWidthInput');
@@ -192,18 +195,18 @@ const gridHeightSlider = document.getElementById('gridHeightSlider');
 
 const applySizeButton = document.getElementById('applySizeButton');
 const toggleToroidal = document.getElementById('toggleToroidal');
-let isToroidal = toggleToroidal.checked;
+let isToroidal = false; // Инициализируется позже
 
 // Элементы правил соседства
 const neighborhoodSelect = document.getElementById('neighborhoodSelect');
-let neighborhoodType = neighborhoodSelect.value;
+let neighborhoodType = 'moore'; // Инициализируется позже
 
 
 // Элементы настроек правил (рождения/выживания)
 const rulesInput = document.getElementById('rulesInput');
 const applyRulesButton = document.getElementById('applyRulesButton');
-let birthRules = [3];
-let survivalRules = [2, 3];
+let birthRules = [3]; // Инициализируется позже
+let survivalRules = [2, 3]; // Инициализируется позже
 
 // Элементы сохранения/загрузки
 const saveToJsonButton = document.getElementById('saveToJsonButton');
@@ -212,6 +215,7 @@ const clearSessionButton = document.getElementById('clearSessionButton');
 const forceSaveButton = document.getElementById('forceSaveButton');
 
 // Элементы модального окна согласия
+// ИСПРАВЛЕНО: Добавлена точка в getElementById
 const consentModal = document.getElementById('consentModal');
 const acceptConsentButton = document.getElementById('acceptConsentButton');
 const declineConsentButton = document.getElementById('declineConsentButton');
@@ -221,22 +225,24 @@ const languageSelect = document.getElementById('languageSelect');
 
 
 const resolution = 10; // Размер клетки в пикселях
-let COLS; // Количество столбцов
-let ROWS; // Количество строк
+let COLS; // Количество столбцов - инициализируется в initializeGrid
+let ROWS; // Количество строк - инициализируется в initializeGrid
 
-let grid;
+let grid; // Инициализируется в initializeGrid
 let intervalId; // Используем setInterval для контроля скорости
 let isRunning = false;
 let isDrawing = false; // Флаг для рисования мышью
 let drawState = 1; // Состояние (0 или 1), в которое мы РИСУЕМ
 
 
-let generation = 0;
-let liveCellsCount = 0;
+let generation = 0; // Инициализируется в initializeGrid
+let liveCellsCount = 0; // Инициализируется в createGrid
+
 
 // Минимальные/максимальные значения для слайдеров размера (для синхронизации)
 const MIN_GRID_SIZE = 10;
 const MAX_GRID_SIZE_SLIDER = 200;
+const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
 
 // --- Функции локализации ---
@@ -249,7 +255,6 @@ function getTranslation(key, replacements = {}) {
 
     // Применяем замены
     for (const placeholder in replacements) {
-        // Используем регулярное выражение с флагом g для замены всех вхождений плейсхолдера
         const regex = new RegExp(`{${placeholder}}`, 'g');
         text = text.replace(regex, replacements[placeholder]);
     }
@@ -267,16 +272,23 @@ function updateUI_Language() {
         element.textContent = translation;
     });
 
-     // Специальный случай для опций в select'ах, у которых тоже есть data-lang-key
+     // Специальный случай для опций в select'ах, у которых тоже есть data-lang
      // Обновляем текст для опций соседства
-     document.querySelector('#neighborhoodSelect option[value="moore"]').textContent = getTranslation('mooreNeighborhood');
-     document.querySelector('#neighborhoodSelect option[value="vonneumann"]').textContent = getTranslation('vonneumannNeighborhood');
+     // Проверяем, что select и options существуют перед обновлением
+     const mooreOption = document.querySelector('#neighborhoodSelect option[value="moore"]');
+     const vonneumannOption = document.querySelector('#neighborhoodSelect option[value="vonneumann"]');
+
+     if (mooreOption) mooreOption.textContent = getTranslation('mooreNeighborhood');
+     if (vonneumannOption) vonneumannOption.textContent = getTranslation('vonneumannNeighborhood');
+
 
      // Обновляем value поля правил, т.к. оно может быть сброшено при локализации
-     rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+     // Проверяем, что rulesInput существует
+     if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+
 
      // Обновляем title страницы
-     document.title = getTranslation('gameTitle');
+     if(document.title) document.title = getTranslation('gameTitle');
 
 }
 
@@ -297,12 +309,17 @@ function initializeGrid(width, height) {
     generation = 0;
     updateInfoDisplay();
 
-    canvas.width = width * resolution;
-    canvas.height = height * resolution;
-    COLS = width;
-    ROWS = height;
-    grid = createGrid();
-    drawGrid(grid);
+    // Проверяем, что canvas и ctx существуют перед использованием
+    if (canvas && ctx) {
+        canvas.width = width * resolution;
+        canvas.height = height * resolution;
+        COLS = width;
+        ROWS = height;
+        grid = createGrid();
+        drawGrid(grid);
+    } else {
+        console.error("Canvas or rendering context not found!");
+    }
 }
 
 
@@ -339,6 +356,11 @@ function randomGrid() {
 
 // Функция для отрисовки сетки
 function drawGrid(grid) {
+     // Проверяем, что ctx и grid существуют перед отрисовкой
+    if (!ctx || !grid) {
+        console.error("Cannot draw grid: context or grid is missing.");
+        return;
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let col = 0; col < COLS; col++) {
@@ -361,6 +383,12 @@ function drawGrid(grid) {
 
 // Функция для вычисления следующего поколения
 function nextGeneration(grid) {
+     // Проверяем, что grid существует
+    if (!grid) {
+        console.error("Cannot compute next generation: grid is missing.");
+        return null; // Возвращаем null или пустую сетку в случае ошибки
+    }
+
     const nextGrid = new Array(COLS);
      for(let i = 0; i < COLS; i++) {
          nextGrid[i] = new Array(ROWS).fill(0);
@@ -395,8 +423,12 @@ function nextGeneration(grid) {
                         }
                     }
 
-                    const currentNeighbor = grid[x_cell][y_cell];
-                    numNeighbors += currentNeighbor;
+                    // Проверяем границы перед доступом к grid
+                    if (x_cell >= 0 && x_cell < COLS && y_cell >= 0 && y_cell < ROWS) {
+                         const currentNeighbor = grid[x_cell][y_cell];
+                         numNeighbors += currentNeighbor;
+                    }
+
 
                 }
             }
@@ -426,8 +458,9 @@ function nextGeneration(grid) {
 
 // Обновление отображения информации
 function updateInfoDisplay() {
-    generationCountSpan.textContent = generation;
-    liveCellCountSpan.textContent = liveCellsCount;
+     // Проверяем, что span элементы существуют перед обновлением
+     if(generationCountSpan) generationCountSpan.textContent = generation;
+     if(liveCellCountSpan) liveCellCountSpan.textContent = liveCellsCount;
 }
 
 // Функция запуска симуляции с учетом скорости
@@ -454,6 +487,11 @@ function saveSessionState() {
     if (!hasConsent) {
         return; // Не сохраняем, если нет согласия
     }
+     // Проверяем наличие grid перед сохранением
+     if (!grid) {
+        console.error("Cannot save state: grid is missing.");
+        return;
+     }
     try {
         const gameState = {
             cols: COLS,
@@ -547,17 +585,17 @@ function loadSessionState() {
         updateInfoDisplay();
 
         // Обновляем элементы интерфейса, которые не сбрасываются initializeGrid
-         neighborhoodSelect.value = neighborhoodType;
-         toggleToroidal.checked = isToroidal;
-         rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-         liveColorPicker.value = liveCellColor;
-         deadColorPicker.value = deadCellColor;
-         gridColorPicker.value = gridLineColor;
-         toggleGridLines.checked = showGridLines;
-         gridWidthInput.value = COLS;
-         gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
-         gridHeightInput.value = ROWS;
-         gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
+         if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
+         if(toggleToroidal) toggleToroidal.checked = isToroidal;
+         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+         if(liveColorPicker) liveColorPicker.value = liveCellColor;
+         if(deadColorPicker) deadColorPicker.value = deadCellColor;
+         if(gridColorPicker) gridColorPicker.value = gridLineColor;
+         if(toggleGridLines) toggleGridLines.checked = showGridLines;
+         if(gridWidthInput) gridWidthInput.value = COLS;
+         if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
+         if(gridHeightInput) gridHeightInput.value = ROWS;
+         if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
 
 
         return true; // Состояние успешно загружено
@@ -581,480 +619,63 @@ function clearSessionState() {
          // После очистки сбрасываем игру до начального состояния
          initializeGameWithDefaults();
          // Показываем модалку согласия снова (чтобы пользователь мог принять или отклонить заново)
-         consentModal.style.display = 'flex';
+         if(consentModal) consentModal.style.display = 'flex';
 
     } catch (e) {
         console.error("Error clearing localStorage:", e);
-        alert("Не удалось очистить сохраненную сессию.");
+        alert("Не удалось очистить сохраненную сессию."); // Это сообщение не локализовано
     }
 }
 
 // Функция для обновления видимости кнопок сохранения сессии в модалке настроек
 function updateSessionButtonsVisibility() {
-    if (hasConsent) {
-        clearSessionButton.style.display = 'block';
-        forceSaveButton.style.display = 'block';
-    } else {
-        // Скрываем кнопки, если согласия нет
-        clearSessionButton.style.display = 'none';
-        forceSaveButton.style.display = 'none';
-    }
-}
-
-// --- Обработчики событий ---
-
-startButton.addEventListener('click', startSimulation);
-pauseButton.addEventListener('click', () => {
-    isRunning = false;
-    clearInterval(intervalId);
-    if (hasConsent) saveSessionState();
-});
-randomButton.addEventListener('click', () => {
-    isRunning = false;
-    clearInterval(intervalId);
-    grid = randomGrid();
-    drawGrid(grid);
-});
-clearButton.addEventListener('click', () => {
-    isRunning = false;
-    clearInterval(intervalId);
-    grid = createGrid();
-    drawGrid(grid);
-    generation = 0;
-    updateInfoDisplay();
-    if (hasConsent) saveSessionState();
-});
-
-settingsButton.addEventListener('click', () => {
-    isRunning = false; clearInterval(intervalId);
-     // Обновляем видимость кнопок сессии перед открытием модалки
-    updateSessionButtonsVisibility();
-    settingsModal.style.display = 'flex';
-
-    // Обновляем значения полей ввода в модалке текущими значениями
-    gridWidthInput.value = COLS;
-    gridWidthSlider.value = COLS;
-    gridHeightInput.value = ROWS;
-    gridHeightSlider.value = ROWS;
-
-    toggleToroidal.checked = isToroidal;
-    neighborhoodSelect.value = neighborhoodType;
-    rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-
-    liveColorPicker.value = liveCellColor;
-    deadColorPicker.value = deadCellColor;
-    gridColorPicker.value = gridLineColor;
-    toggleGridLines.checked = showGridLines;
-
-    loadFromJsonInput.value = '';
-});
-
-window.addEventListener('beforeunload', () => {
-     if (hasConsent) saveSessionState();
-});
-
-
-// --- Обработчики синхронизации полей ввода/слайдеров ---
-speedSlider.addEventListener('input', () => {
-    const sliderSpeed = parseInt(speedSlider.value);
-    speedInput.value = sliderSpeed;
-    if (isRunning) {
-        startSimulation();
-    }
-    if (hasConsent) saveSessionState();
-});
-
-speedInput.addEventListener('input', () => {
-    let inputSpeed = parseInt(speedInput.value);
-
-    if (isNaN(inputSpeed) || inputSpeed < MIN_SPEED_GPS) {
-        inputSpeed = MIN_SPEED_GPS;
-        speedInput.value = inputSpeed;
-    }
-
-    speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, inputSpeed));
-
-    if (isRunning) {
-        startSimulation();
-    }
-    if (hasConsent) saveSessionState();
-});
-
-gridWidthInput.addEventListener('input', () => {
-    let inputVal = parseInt(gridWidthInput.value);
-     if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
-         inputVal = MIN_GRID_SIZE;
-         gridWidthInput.value = inputVal;
-     }
-      const MAX_INPUT_GRID_SIZE = 500;
-      if (inputVal > MAX_INPUT_GRID_SIZE) {
-          inputVal = MAX_INPUT_GRID_SIZE;
-          gridWidthInput.value = inputVal;
-      }
-    gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
-});
-
-gridWidthSlider.addEventListener('input', () => {
-    const sliderVal = parseInt(gridWidthSlider.value);
-    gridWidthInput.value = sliderVal;
-});
-
-
-gridHeightInput.addEventListener('input', () => {
-    let inputVal = parseInt(gridHeightInput.value);
-     if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
-         inputVal = MIN_GRID_SIZE;
-         gridHeightInput.value = inputVal;
-     }
-      const MAX_INPUT_GRID_SIZE = 500;
-      if (inputVal > MAX_INPUT_GRID_SIZE) {
-          inputVal = MAX_INPUT_GRID_SIZE;
-          gridHeightInput.value = inputVal;
-      }
-    gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
-});
-
-gridHeightSlider.addEventListener('input', () => {
-    const sliderVal = parseInt(gridHeightSlider.value);
-    gridHeightInput.value = sliderVal;
-});
-
-
-// --- Ручное рисование на канвасе ---
-canvas.addEventListener('mousedown', (event) => {
-     if (!isRunning) {
-        isDrawing = true;
-        const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const col = Math.floor(x / resolution);
-        const row = Math.floor(y / resolution);
-
-        if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
-             drawState = grid[col][row] === 1 ? 0 : 1;
-             setCellState(col, row, drawState);
-        }
-     }
-});
-
-canvas.addEventListener('mousemove', (event) => {
-    if (isDrawing && !isRunning) {
-        const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const col = Math.floor(x / resolution);
-        const row = Math.floor(y / resolution);
-
-        if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
-             setCellState(col, row, drawState);
-        }
-    }
-});
-
-canvas.addEventListener('mouseup', () => {
-    isDrawing = false;
-    if (hasConsent) saveSessionState();
-});
-canvas.addEventListener('mouseout', () => {
-    isDrawing = false;
-});
-
-function setCellState(col, row, state) {
-     if (col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
-         const currentState = grid[col][row];
-         if (currentState !== state) {
-             grid[col][row] = state;
-             if (state === 1) {
-                 liveCellsCount++;
-             } else {
-                 liveCellsCount--;
-             }
-             drawGrid(grid);
-         }
-     }
-}
-
-
-// --- Управление модальными окнами ---
-closeModalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const modalId = button.dataset.modal;
-        document.getElementById(modalId).style.display = 'none';
-        if (hasConsent) saveSessionState();
-    });
-});
-
-window.addEventListener('click', (event) => {
-    // Закрытие модалок при клике вне их содержимого, только если это не модалка согласия
-    if (event.target.classList.contains('modal') && event.target.id !== 'consentModal') {
-        event.target.style.display = 'none';
-        if (hasConsent) saveSessionState();
-    }
-});
-
-
-// --- Функционал внутри модального окна настроек ---
-
-// Настройки отображения
-liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
-deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
-gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
-toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); });
-
-// Состояние бесконечного поля
-toggleToroidal.addEventListener('change', (event) => { isToroidal = event.target.checked; });
-
-// Тип соседства
-neighborhoodSelect.addEventListener('change', (event) => {
-    neighborhoodType = event.target.value;
-     isRunning = false;
-     clearInterval(intervalId);
-     grid = createGrid();
-     drawGrid(grid);
-     generation = 0;
-     updateInfoDisplay();
-     // Используем getTranslation для сообщения
-     alert(getTranslation('alertNeighborhoodChange', { type: getTranslation(neighborhoodType === 'moore' ? 'mooreNeighborhood' : 'vonneumannNeighborhood') }));
-     if (hasConsent) saveSessionState();
-});
-
-
-// Изменение размера поля и применение границ
-applySizeButton.addEventListener('click', () => {
-    const newWidth = parseInt(gridWidthInput.value);
-    const newHeight = parseInt(gridHeightInput.value);
-
-    if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
-        initializeGrid(newWidth, newHeight);
-        if (hasConsent) saveSessionState();
-    } else {
-        // Используем getTranslation для сообщения
-        alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
-    }
-});
-
-// Изменение правил
-applyRulesButton.addEventListener('click', () => {
-    const rulesString = rulesInput.value.trim();
-    const parts = rulesString.split('/');
-
-    if (parts.length === 2) {
-        const birthPart = parts[0].trim();
-        const survivalPart = parts[1].trim();
-
-        const newBirthRules = birthPart.split('').map(Number).filter(n => !isNaN(n));
-        const newSurvivalRules = survivalPart.split('').map(Number).filter(n => !isNaN(n));
-
-        const isValidRuleSet = (rules) => rules.every(rule => rule >= 0 && rule <= 8);
-
-        if (newBirthRules.length > 0 && newSurvivalRules.length > 0 && isValidRuleSet(newBirthRules) && isValidRuleSet(newSurvivalRules)) {
-            birthRules = newBirthRules.sort((a, b) => a - b);
-            survivalRules = newSurvivalRules.sort((a, b) => a - b);
-            // Используем getTranslation для сообщения
-            alert(getTranslation('alertRulesUpdated', { birth: birthRules.join(', '), survival: survivalRules.join(', ') }));
-
-            isRunning = false;
-            clearInterval(intervalId);
-            grid = createGrid();
-            drawGrid(grid);
-            generation = 0;
-            updateInfoDisplay();
-            if (hasConsent) saveSessionState();
-
+     // Проверяем, что кнопки существуют перед попыткой изменить их стиль
+    if (clearSessionButton && forceSaveButton) {
+        if (hasConsent) {
+            clearSessionButton.style.display = 'block';
+            forceSaveButton.style.display = 'block';
         } else {
-            // Используем getTranslation для сообщения
-            alert(getTranslation('alertInvalidRulesFormat'));
+            // Скрываем кнопки, если согласия нет
+            clearSessionButton.style.display = 'none';
+            forceSaveButton.style.display = 'none';
         }
-    } else {
-        // Используем getTranslation для сообщения
-        alert(getTranslation('alertInvalidRulesFormat'));
     }
-});
+}
 
-
-// --- Сохранение в JSON файл ---
-saveToJsonButton.addEventListener('click', () => {
-    const gameState = {
-        cols: COLS,
-        rows: ROWS,
-        isToroidal: isToroidal,
-        neighborhoodType: neighborhoodType,
-        birthRules: birthRules,
-        survivalRules: survivalRules,
-        generation: generation,
-        liveCellsCount: liveCellsCount,
-        liveCellColor: liveCellColor,
-        deadCellColor: deadCellColor,
-        gridLineColor: gridLineColor,
-        showGridLines: showGridLines,
-        speedGPS: parseInt(speedInput.value),
-        grid: grid.flat()
-    };
-
-    const jsonString = JSON.stringify(gameState, null, 2);
-
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `game_of_life_state_${COLS}x${ROWS}_gen${generation}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-});
-
-// --- Загрузка из JSON файла ---
-loadFromJsonInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        try {
-            const loadedState = JSON.parse(e.target.result);
-
-            // --- Валидация загруженных данных ---
-            if (typeof loadedState !== 'object' || loadedState === null) { throw new Error(getTranslation('errorInvalidDataFormat')); }
-            if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); }
-            if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); }
-            if (typeof loadedState.isToroidal !== 'boolean') { throw new Error(getTranslation('errorInvalidToroidal')); }
-            if (typeof loadedState.neighborhoodType !== 'string' || !['moore', 'vonneumann'].includes(loadedState.neighborhoodType)) { throw new Error(getTranslation('errorInvalidNeighborhood')); }
-            if (!Array.isArray(loadedState.birthRules) || !loadedState.birthRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidBirthRules')); }
-            if (!Array.isArray(loadedState.survivalRules) || !loadedState.survivalRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidSurvivalRules')); }
-            if (!Array.isArray(loadedState.grid) || loadedState.grid.length !== loadedState.cols * loadedState.rows) { throw new Error(getTranslation('errorInvalidGridDataSize', { expected: loadedState.cols * loadedState.rows, found: loadedState.grid.length })); }
-
-            const loadedGeneration = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
-            const calculatedLiveCount = loadedState.grid.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
-
-            const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : liveColorPicker.value;
-            const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : deadColorPicker.value;
-            const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : gridColorPicker.value;
-            const loadedShowGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : toggleGridLines.checked;
-            const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
-
-
-            // --- Применение загруженного состояния ---
-            isRunning = false;
-            clearInterval(intervalId);
-
-             neighborhoodType = loadedState.neighborhoodType;
-             isToroidal = loadedState.isToroidal;
-
-            initializeGrid(loadedState.cols, loadedState.rows);
-
-            let cellIndex = 0;
-            for (let col = 0; col < COLS; col++) {
-                for (let row = 0; row < ROWS; row++) {
-                    const cellState = loadedState.grid[cellIndex];
-                    grid[col][row] = (cellState === 1) ? 1 : 0;
-                    cellIndex++;
-                }
-            }
-
-            birthRules = loadedState.birthRules.sort((a, b) => a - b);
-            survivalRules = loadedState.survivalRules.sort((a, b) => a - b);
-            generation = loadedGeneration;
-            liveCellsCount = calculatedLiveCount;
-
-            liveCellColor = loadedLiveCellColor;
-            deadCellColor = loadedDeadCellColor;
-            gridLineColor = loadedGridLineColor;
-            showGridLines = loadedShowGridLines;
-
-            rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-            liveColorPicker.value = liveCellColor;
-            deadColorPicker.value = deadCellColor;
-            gridColorPicker.value = gridLineColor;
-            toggleGridLines.checked = showGridLines;
-
-             gridWidthInput.value = COLS;
-             gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
-             gridHeightInput.value = ROWS;
-             gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
-
-            speedInput.value = loadedSpeedGPS;
-            speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
-
-            neighborhoodSelect.value = neighborhoodType;
-            toggleToroidal.checked = isToroidal;
-
-
-            drawGrid(grid);
-            updateInfoDisplay();
-
-            // Используем getTranslation для сообщения
-            alert(getTranslation('alertFileLoadSuccess'));
-            settingsModal.style.display = 'none';
-
-             // Сохраняем загруженное состояние в локальную сессию, если есть согласие
-            if (hasConsent) saveSessionState();
-
-        } catch (error) {
-            console.error("Error loading game state from file:", error);
-            // Используем getTranslation для сообщения
-            alert(getTranslation('alertFileLoadError', { message: error.message || error }));
-             loadFromJsonInput.value = '';
-        }
-    };
-
-    reader.onerror = (e) => {
-        console.error("FileReader error:", e);
-        alert("Ошибка чтения файла."); // Это сообщение не локализовано в словаре, можно добавить
-         loadFromJsonInput.value = '';
-    };
-
-
-    reader.readAsText(file);
-});
-
-// Обработчик кнопки очистки локального сохранения
-clearSessionButton.addEventListener('click', clearSessionState);
-
-// Обработчик кнопки принудительного сохранения
-forceSaveButton.addEventListener('click', () => {
-    if (hasConsent) {
-        saveSessionState();
-        // Используем getTranslation для сообщения
-        alert(getTranslation('alertForceSaveSuccess'));
-    }
-});
-
+// --- Обработчики событий (привязываются внутри DOMContentLoaded) ---
 
 // --- Инициализация игры при загрузке страницы ---
 
 // Функция инициализации игры с параметрами по умолчанию
 function initializeGameWithDefaults() {
-    initializeGrid(50, 50); // Начальный размер
+    initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE); // Начальный размер
 
     // Устанавливаем начальные значения для всех элементов управления
-    speedInput.value = DEFAULT_SPEED_GPS;
-    speedSlider.value = DEFAULT_SPEED_GPS;
+    // Проверяем существование элементов перед установкой значений
+     if(speedInput) speedInput.value = DEFAULT_SPEED_GPS;
+     if(speedSlider) speedSlider.value = DEFAULT_SPEED_GPS;
 
-    gridWidthInput.value = 50;
-    gridWidthSlider.value = 50;
-    gridHeightInput.value = 50;
-    gridHeightSlider.value = 50;
+     if(gridWidthInput) gridWidthInput.value = DEFAULT_GRID_SIZE;
+     if(gridWidthSlider) gridWidthSlider.value = DEFAULT_GRID_SIZE;
+     if(gridHeightInput) gridHeightInput.value = DEFAULT_GRID_SIZE;
+     if(gridHeightSlider) gridHeightSlider.value = DEFAULT_GRID_SIZE;
 
-    toggleToroidal.checked = false;
+     if(toggleToroidal) toggleToroidal.checked = false;
     isToroidal = false;
 
-    neighborhoodSelect.value = 'moore';
+     if(neighborhoodSelect) neighborhoodSelect.value = 'moore';
     neighborhoodType = 'moore';
 
-     rulesInput.value = '3/23'; // Значение правил по умолчанию
+     if(rulesInput) rulesInput.value = '3/23'; // Значение правил по умолчанию
      birthRules = [3];
      survivalRules = [2, 3];
 
      // Устанавливаем начальные цвета и видимость сетки из HTML
-     liveCellColor = liveColorPicker.value;
-     deadCellColor = deadCellColor; // Fix: Use deadColorPicker.value
-     gridLineColor = gridColorPicker.value;
-     showGridLines = toggleGridLines.checked;
+     // Проверяем существование элементов перед чтением значений
+     liveCellColor = liveColorPicker ? liveColorPicker.value : '#000000';
+     deadCellColor = deadColorPicker ? deadColorPicker.value : '#ffffff';
+     gridLineColor = gridColorPicker ? gridColorPicker.value : '#cccccc';
+     showGridLines = toggleGridLines ? toggleGridLines.checked : true;
 
      // Обновляем UI на основе начальных значений
      // updateUI_Language() вызывается до этого в attemptLoadOrCreateGame
@@ -1073,45 +694,432 @@ function attemptLoadOrCreateGame() {
             saveSessionState();
         }
      } else {
-         // Если согласия нет, инициализируем игру с нуля (данные сессии не загружаются)
          initializeGameWithDefaults();
-         // При этом кнопки сохранения сессии будут скрыты функцией updateSessionButtonsVisibility,
-         // которая вызывается ниже.
      }
-      // Обновляем видимость кнопок сессии после всех инициализаций
-      updateSessionButtonsVisibility();
+      updateSessionButtonsVisibility(); // Обновляем видимость кнопок сессии
 }
 
 
 // Запускаем логику при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    // Переносим обработчики кнопок согласия сюда, чтобы они были привязаны после загрузки DOM
-    acceptConsentButton.addEventListener('click', () => {
-        hasConsent = true;
-        localStorage.setItem(CONSENT_KEY, 'true'); // Сохраняем согласие
-        consentModal.style.display = 'none'; // Скрываем модалку согласия
-        attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем игру
+    // --- Привязка обработчиков событий КНОПОК ---
+    // Теперь, когда DOM готов, ссылки на элементы гарантированно не null
+
+    if(startButton) startButton.addEventListener('click', startSimulation);
+    if(pauseButton) pauseButton.addEventListener('click', () => {
+        isRunning = false;
+        clearInterval(intervalId);
+        if (hasConsent) saveSessionState();
+    });
+    if(randomButton) randomButton.addEventListener('click', () => {
+        isRunning = false;
+        clearInterval(intervalId);
+        grid = randomGrid();
+        drawGrid(grid);
+    });
+    if(clearButton) clearButton.addEventListener('click', () => {
+        isRunning = false;
+        clearInterval(intervalId);
+        grid = createGrid();
+        drawGrid(grid);
+        generation = 0;
+        updateInfoDisplay();
+        if (hasConsent) saveSessionState();
+    });
+    if(settingsButton) settingsButton.addEventListener('click', () => {
+        isRunning = false; clearInterval(intervalId);
+        updateSessionButtonsVisibility();
+         if(settingsModal) settingsModal.style.display = 'flex'; // Используем flex
+        // Обновляем значения полей в модалке
+         if(gridWidthInput) gridWidthInput.value = COLS;
+         if(gridWidthSlider) gridWidthSlider.value = COLS;
+         if(gridHeightInput) gridHeightInput.value = ROWS;
+         if(gridHeightSlider) gridHeightSlider.value = ROWS;
+         if(toggleToroidal) toggleToroidal.checked = isToroidal;
+         if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
+         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+         if(liveColorPicker) liveColorPicker.value = liveCellColor;
+         if(deadColorPicker) deadColorPicker.value = deadCellColor;
+         if(gridColorPicker) gridColorPicker.value = gridLineColor;
+         if(toggleGridLines) toggleGridLines.checked = showGridLines;
+         if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем поле выбора файла
     });
 
-    declineConsentButton.addEventListener('click', () => {
-        hasConsent = false;
-        localStorage.setItem(CONSENT_KEY, 'false'); // Сохраняем отказ
-        consentModal.style.display = 'none'; // Скрываем модалку согласия
-         initializeGameWithDefaults(); // Инициализируем с нуля
-         // При этом кнопки сохранения сессии будут скрыты функцией updateSessionButtonsVisibility,
-         // которая вызывается в конце attemptLoadOrCreateGame, но т.к. attemptLoadOrCreateGame
-         // не вызывается при отказе, вызовем updateSessionButtonsVisibility здесь
-         updateSessionButtonsVisibility();
+
+    // Сохраняем состояние при закрытии вкладки/окна, если есть согласие
+    window.addEventListener('beforeunload', () => {
+         if (hasConsent) saveSessionState();
     });
 
+    // Обработчики синхронизации полей ввода/слайдеров (проверяем существование элементов)
+    if(speedSlider) speedSlider.addEventListener('input', () => {
+        const sliderSpeed = parseInt(speedSlider.value);
+        if(speedInput) speedInput.value = sliderSpeed;
+        if (isRunning) {
+            startSimulation();
+        }
+        if (hasConsent) saveSessionState();
+    });
+     if(speedInput) speedInput.addEventListener('input', () => {
+        let inputSpeed = parseInt(speedInput.value);
+         if (isNaN(inputSpeed) || inputSpeed < MIN_SPEED_GPS) {
+            inputSpeed = MIN_SPEED_GPS;
+             if(speedInput) speedInput.value = inputSpeed;
+        }
+         if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, inputSpeed));
+        if (isRunning) {
+            startSimulation();
+        }
+        if (hasConsent) saveSessionState();
+    });
+
+    if(gridWidthInput) gridWidthInput.addEventListener('input', () => {
+        let inputVal = parseInt(gridWidthInput.value);
+         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
+             inputVal = MIN_GRID_SIZE;
+             if(gridWidthInput) gridWidthInput.value = inputVal;
+        }
+         const MAX_INPUT_GRID_SIZE = 500;
+          if (inputVal > MAX_INPUT_GRID_SIZE) {
+              inputVal = MAX_INPUT_GRID_SIZE;
+              if(gridWidthInput) gridWidthInput.value = inputVal;
+          }
+         if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
+    });
+    if(gridWidthSlider) gridWidthSlider.addEventListener('input', () => {
+        const sliderVal = parseInt(gridWidthSlider.value);
+        if(gridWidthInput) gridWidthInput.value = sliderVal;
+    });
+
+    if(gridHeightInput) gridHeightInput.addEventListener('input', () => {
+        let inputVal = parseInt(gridHeightInput.value);
+         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
+             inputVal = MIN_GRID_SIZE;
+             if(gridHeightInput) gridHeightInput.value = inputVal;
+        }
+          const MAX_INPUT_GRID_SIZE = 500;
+          if (inputVal > MAX_INPUT_GRID_SIZE) {
+              inputVal = MAX_INPUT_GRID_SIZE;
+               if(gridHeightInput) gridHeightInput.value = inputVal;
+          }
+         if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
+    });
+    if(gridHeightSlider) gridHeightSlider.addEventListener('input', () => {
+        const sliderVal = parseInt(gridHeightSlider.value);
+        if(gridHeightInput) gridHeightInput.value = sliderVal;
+    });
+
+
+    // Ручное рисование на канвасе (проверяем существование canvas)
+     if(canvas) {
+        canvas.addEventListener('mousedown', (event) => {
+             if (!isRunning) {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const col = Math.floor(x / resolution);
+                const row = Math.floor(y / resolution);
+
+                if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+                     drawState = grid[col][row] === 1 ? 0 : 1;
+                     setCellState(col, row, drawState);
+                }
+             }
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            if (isDrawing && !isRunning) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.clientX; // Fix: Use event.clientX and clientY relative to viewport
+                const y = event.clientY - rect.clientY; // Fix: Use event.clientX and clientY relative to viewport
+                const col = Math.floor(x / resolution);
+                const row = Math.floor(y / resolution);
+
+                if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
+                     setCellState(col, row, drawState);
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            if (hasConsent) saveSessionState();
+        });
+        canvas.addEventListener('mouseout', () => {
+            isDrawing = false;
+        });
+     }
+
+
+    // Управление модальными окнами (проверяем существование кнопок закрытия и модалки настроек)
+    closeModalButtons.forEach(button => {
+         if(button) {
+            button.addEventListener('click', () => {
+                const modalId = button.dataset.modal;
+                 const modalElement = document.getElementById(modalId);
+                 if(modalElement) modalElement.style.display = 'none';
+                if (hasConsent) saveSessionState();
+            });
+         }
+    });
+
+     // Обработчик клика вне модалок (проверяем существование модалки согласия)
+    window.addEventListener('click', (event) => {
+        if (event.target.classList.contains('modal') && (!consentModal || event.target.id !== 'consentModal')) {
+            event.target.style.display = 'none';
+            if (hasConsent) saveSessionState();
+        }
+    });
+
+
+    // Обработчики кнопок модального окна согласия (проверяем существование кнопок)
+    if(acceptConsentButton) {
+        acceptConsentButton.addEventListener('click', () => {
+            hasConsent = true;
+            localStorage.setItem(CONSENT_KEY, 'true');
+             if(consentModal) consentModal.style.display = 'none';
+            attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем игру
+        });
+    }
+
+    if(declineConsentButton) {
+        declineConsentButton.addEventListener('click', () => {
+            hasConsent = false;
+            localStorage.setItem(CONSENT_KEY, 'false');
+             if(consentModal) consentModal.style.display = 'none';
+             initializeGameWithDefaults();
+             updateSessionButtonsVisibility();
+        });
+    }
+
+
+    // Функционал внутри модального окна настроек (проверяем существование элементов)
+     if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
+     if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
+     if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
+     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); });
+
+     if(toggleToroidal) toggleToroidal.addEventListener('change', (event) => { isToroidal = event.target.checked; });
+
+     if(neighborhoodSelect) neighborhoodSelect.addEventListener('change', (event) => {
+        neighborhoodType = event.target.value;
+         isRunning = false;
+         clearInterval(intervalId);
+         grid = createGrid();
+         drawGrid(grid);
+         generation = 0;
+         updateInfoDisplay();
+         alert(getTranslation('alertNeighborhoodChange', { type: getTranslation(neighborhoodType === 'moore' ? 'mooreNeighborhood' : 'vonneumannNeighborhood') }));
+         if (hasConsent) saveSessionState();
+    });
+
+
+     if(applySizeButton) applySizeButton.addEventListener('click', () => {
+        const newWidth = parseInt(gridWidthInput.value);
+        const newHeight = parseInt(gridHeightInput.value);
+
+        if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
+            initializeGrid(newWidth, newHeight);
+            if (hasConsent) saveSessionState();
+        } else {
+            alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
+        }
+    });
+
+    if(applyRulesButton) applyRulesButton.addEventListener('click', () => {
+        const rulesString = rulesInput.value.trim();
+        const parts = rulesString.split('/');
+
+        if (parts.length === 2) {
+            const birthPart = parts[0].trim();
+            const survivalPart = parts[1].trim();
+
+            const newBirthRules = birthPart.split('').map(Number).filter(n => !isNaN(n));
+            const newSurvivalRules = survivalPart.split('').map(Number).filter(n => !isNaN(n));
+
+            const isValidRuleSet = (rules) => rules.every(rule => rule >= 0 && rule <= 8);
+
+            if (newBirthRules.length > 0 && newSurvivalRules.length > 0 && isValidRuleSet(newBirthRules) && isValidRuleSet(newSurvivalRules)) {
+                birthRules = newBirthRules.sort((a, b) => a - b);
+                survivalRules = newSurvivalRules.sort((a, b) => a - b);
+                alert(getTranslation('alertRulesUpdated', { birth: birthRules.join(', '), survival: survivalRules.join(', ') }));
+
+                isRunning = false;
+                clearInterval(intervalId);
+                grid = createGrid();
+                drawGrid(grid);
+                generation = 0;
+                updateInfoDisplay();
+                if (hasConsent) saveSessionState();
+
+            } else {
+                alert(getTranslation('alertInvalidRulesFormat'));
+            }
+        } else {
+            alert(getTranslation('alertInvalidRulesFormat'));
+        }
+    });
+
+
+    // Сохранение в JSON файл (проверяем существование кнопки)
+     if(saveToJsonButton) saveToJsonButton.addEventListener('click', () => {
+        const gameState = {
+            cols: COLS,
+            rows: ROWS,
+            isToroidal: isToroidal,
+            neighborhoodType: neighborhoodType,
+            birthRules: birthRules,
+            survivalRules: survivalRules,
+            generation: generation,
+            liveCellsCount: liveCellsCount,
+            liveCellColor: liveCellColor,
+            deadCellColor: deadCellColor,
+            gridLineColor: gridLineColor,
+            showGridLines: showGridLines,
+            speedGPS: parseInt(speedInput.value),
+            grid: grid.flat()
+        };
+
+        const jsonString = JSON.stringify(gameState, null, 2);
+
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `game_of_life_state_${COLS}x${ROWS}_gen${generation}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Загрузка из JSON файла (проверяем существование input)
+     if(loadFromJsonInput) loadFromJsonInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            try {
+                const loadedState = JSON.parse(e.target.result);
+
+                // --- Валидация загруженных данных ---
+                if (typeof loadedState !== 'object' || loadedState === null) { throw new Error(getTranslation('errorInvalidDataFormat')); }
+                if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); }
+                if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); }
+                if (typeof loadedState.isToroidal !== 'boolean') { throw new Error(getTranslation('errorInvalidToroidal')); }
+                if (typeof loadedState.neighborhoodType !== 'string' || !['moore', 'vonneumann'].includes(loadedState.neighborhoodType)) { throw new Error(getTranslation('errorInvalidNeighborhood')); }
+                if (!Array.isArray(loadedState.birthRules) || !loadedState.birthRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidBirthRules')); }
+                if (!Array.isArray(loadedState.survivalRules) || !loadedState.survivalRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidSurvivalRules')); }
+                if (!Array.isArray(loadedState.grid) || loadedState.grid.length !== loadedState.cols * loadedState.rows) { throw new Error(getTranslation('errorInvalidGridDataSize', { expected: loadedState.cols * loadedState.rows, found: loadedState.grid.length })); }
+
+                const loadedGeneration = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
+                const calculatedLiveCount = loadedState.grid.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
+
+                const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : '#000000';
+                const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : '#ffffff';
+                const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : '#cccccc';
+                const loadedShowGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : true;
+                const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
+
+
+                // --- Применение загруженного состояния ---
+                isRunning = false;
+                clearInterval(intervalId);
+
+                 neighborhoodType = loadedState.neighborhoodType;
+                 isToroidal = loadedState.isToroidal;
+
+                initializeGrid(loadedState.cols, loadedState.rows);
+
+                let cellIndex = 0;
+                for (let col = 0; col < COLS; col++) {
+                    for (let row = 0; row < ROWS; row++) {
+                        const cellState = loadedState.grid[cellIndex];
+                        grid[col][row] = (cellState === 1) ? 1 : 0;
+                        cellIndex++;
+                    }
+                }
+
+                birthRules = loadedState.birthRules.sort((a, b) => a - b);
+                survivalRules = loadedState.survivalRules.sort((a, b) => a - b);
+                generation = loadedGeneration;
+                liveCellsCount = calculatedLiveCount;
+
+                liveCellColor = loadedLiveCellColor;
+                deadCellColor = loadedDeadCellColor;
+                gridLineColor = loadedGridLineColor;
+                showGridLines = loadedShowGridLines;
+
+                // Обновляем элементы интерфейса
+                if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+                 if(liveColorPicker) liveColorPicker.value = liveCellColor;
+                 if(deadColorPicker) deadColorPicker.value = deadCellColor;
+                 if(gridColorPicker) gridColorPicker.value = gridLineColor;
+                 if(toggleGridLines) toggleGridLines.checked = showGridLines;
+
+                 if(gridWidthInput) gridWidthInput.value = COLS;
+                 if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
+                 if(gridHeightInput) gridHeightInput.value = ROWS;
+                 if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
+
+                if(speedInput) speedInput.value = loadedSpeedGPS;
+                if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
+
+                if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
+                if(toggleToroidal) toggleToroidal.checked = isToroidal;
+
+
+                drawGrid(grid);
+                updateInfoDisplay();
+
+                alert(getTranslation('alertFileLoadSuccess'));
+                 if(settingsModal) settingsModal.style.display = 'none';
+
+                 // Сохраняем загруженное состояние в локальную сессию, если есть согласие
+                if (hasConsent) saveSessionState();
+
+            } catch (error) {
+                console.error("Error loading game state from file:", error);
+                alert(getTranslation('alertFileLoadError', { message: error.message || error }));
+                 if(loadFromJsonInput) loadFromJsonInput.value = '';
+            }
+        };
+
+        reader.onerror = (e) => {
+            console.error("FileReader error:", e);
+            alert("Ошибка чтения файла.");
+             if(loadFromJsonInput) loadFromJsonInput.value = '';
+        };
+
+
+        reader.readAsText(file);
+    });
+
+    // Обработчик кнопки очистки локального сохранения (проверяем существование кнопки)
+     if(clearSessionButton) clearSessionButton.addEventListener('click', clearSessionState);
+
+    // Обработчик кнопки принудительного сохранения (проверяем существование кнопки)
+     if(forceSaveButton) forceSaveButton.addEventListener('click', () => {
+        if (hasConsent) {
+            saveSessionState();
+            alert(getTranslation('alertForceSaveSuccess'));
+        }
+    });
+
+
+    // --- Логика инициализации страницы после загрузки DOM ---
 
     // Устанавливаем начальные значения для переключателя языка
-    languageSelect.value = currentLanguage;
-    // Обновляем язык сразу при загрузке, чтобы UI был локализован
-    // updateUI_Language() теперь вызывается внутри attemptLoadOrCreateGame
+     if(languageSelect) languageSelect.value = currentLanguage;
 
      // Обработчик смены языка
-     languageSelect.addEventListener('change', (event) => {
+     if(languageSelect) languageSelect.addEventListener('change', (event) => {
         setLanguagePreference(event.target.value); // setLanguagePreference вызывает updateUI_Language
      });
 
@@ -1121,22 +1129,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const consentStatus = localStorage.getItem(CONSENT_KEY);
 
     if (consentStatus === 'true') {
-        // Согласие было дано ранее
         hasConsent = true;
-        attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем
+        attemptLoadOrCreateGame();
     } else if (consentStatus === 'false') {
-        // Согласие было отклонено ранее
         hasConsent = false;
-        initializeGameWithDefaults(); // Инициализируем по умолчанию (без загрузки сессии)
-        updateSessionButtonsVisibility(); // Скрываем кнопки сессии
+        initializeGameWithDefaults();
+        updateSessionButtonsVisibility();
     }
     else {
-        // Согласие еще не спрашивали
-        hasConsent = false; // По умолчанию нет согласия
-        consentModal.style.display = 'flex'; // Показываем модалку согласия
-         // Игра пока не инициализируется, ждем выбора пользователя
+        hasConsent = false;
+         if(consentModal) consentModal.style.display = 'flex';
+        // Игра пока не инициализируется, ждем выбора пользователя
     }
 });
-
-// Fix: Correctly initialize deadCellColor in initializeGameWithDefaults
-// This is now handled inside initializeGameWithDefaults
