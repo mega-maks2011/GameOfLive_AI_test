@@ -6,10 +6,10 @@ const translations = {
         'pauseButton': 'Pause',
         'randomButton': 'Random',
         'clearButton': 'Clear',
-        'settingsButton': 'Settings', // Shortened for space if needed, otherwise keep as is
+        'settingsButton': 'Settings',
         'speedLabel': 'Speed (gen/sec):',
         'generationLabel': 'Generation',
-        'liveCellsLabel': 'Live cells', // No colon here as used in a sentence structure
+        'liveCellsLabel': 'Live cells',
         'manualDrawHint': 'Click cells to toggle them (works when paused). Click and drag to draw.',
 
         'settingsModalTitle': 'Settings',
@@ -35,31 +35,23 @@ const translations = {
         'rulesLabel': 'Rules:',
         'applyRulesButton': 'Apply Rules (resets simulation)',
 
-        'saveLoadTitle': 'Save / Load (JSON File)',
+        'saveLoadTitle': 'Save / Load (JSON File)', // Заголовок остался, т.к. есть сохранение в файл
         'saveToFileButton': 'Save to File',
         'loadFileLabel': 'Load from file:',
         'loadFileHint': '(Loading a file automatically applies state)',
-        'forceSaveButton': 'Force save session', // New button
-        'clearSessionButton': 'Clear saved session',
-        'clearSessionHint': '(Remove data from browser)',
 
-        // Consent Modal - NEW
-        'consentModalTitle': 'Privacy Consent',
-        'consentMessage': 'This game saves its state (grid, settings, etc.) locally in your browser using Local Storage so you can resume your session later. Do you consent to this?',
-        'acceptConsentButton': 'Accept',
-        'declineConsentButton': 'Decline',
+         // Local Storage related texts removed
+
          'authorsText': 'Authors: Gemini and M-998', // Authors text
 
-        // Alert messages - UPDATED TO USE PLACEHOLDERS
+        // Alert messages
         'alertInvalidSizeInput': 'Please enter valid positive numbers for width and height (minimum {minSize}).',
         'alertNeighborhoodChange': 'Neighborhood type changed to "{type}". Field reset.',
         'alertRulesUpdated': 'Rules successfully updated:\nBirth on {birth} neighbors\nSurvival on {survival} neighbors.',
         'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
         'alertFileLoadSuccess': 'Game state successfully loaded from file!',
         'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
-        'alertSessionLoadError': 'Error loading saved state: {message}\nLocal state will be reset.',
-        'alertSessionCleared': 'Saved session cleared!',
-        'alertForceSaveSuccess': 'State saved!', // Success message for force save
+        // Local Storage related alerts removed
 
         // Validation error messages (internal, shown in alert)
         'errorInvalidDataFormat': 'Invalid data format.',
@@ -78,7 +70,7 @@ const translations = {
         'pauseButton': 'Пауза',
         'randomButton': 'Случайно',
         'clearButton': 'Очистить',
-        'settingsButton': 'Настройки', // Сокращено
+        'settingsButton': 'Настройки',
         'speedLabel': 'Скорость (поколений/сек):',
         'generationLabel': 'Поколение',
         'liveCellsLabel': 'Живых клеток',
@@ -107,33 +99,25 @@ const translations = {
         'rulesLabel': 'Правила:',
         'applyRulesButton': 'Применить правила (сбросит симуляцию)',
 
-        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)',
+        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)', // Заголовок остался
         'saveToFileButton': 'Сохранить в файл',
         'loadFileLabel': 'Загрузить из файла:',
         'loadFileHint': '(Загрузка файла автоматически применит состояние)',
-        'forceSaveButton': 'Принудительно сохранить', // Сокращено
-        'clearSessionButton': 'Очистить сессию', // Сокращено
-        'clearSessionHint': '(Удалить данные из браузера)',
 
-         // Модальное окно согласия - НОВОЕ
-        'consentModalTitle': 'Согласие на данные', // Сокращено
-        'consentMessage': 'Эта игра сохраняет свое состояние (сетку, настройки и т.д.) локально в вашем браузере с помощью Local Storage, чтобы вы могли продолжить играть позже. Вы даете согласие на это?',
-        'acceptConsentButton': 'Принять',
-        'declineConsentButton': 'Отказаться',
+        // Local Storage related texts removed
+
          'authorsText': 'Авторы: Gemini и M-998', // Текст авторов
 
-        // Сообщения для пользователя (всплывающие alert) - ОБНОВЛЕНЫ
+        // Сообщения для пользователя (всплывающие alert)
         'alertInvalidSizeInput': 'Пожалуйста, введите корректные положительные числа для ширины и высоты (минимум {minSize}).',
         'alertNeighborhoodChange': 'Тип соседства изменен на "{type}". Поле сброшено.',
         'alertRulesUpdated': 'Правила успешно обновлены:\nРождение при {birth} соседях\nВыживание при {survival} соседях.',
         'alertInvalidRulesFormat': 'Некорректный формат правил. Используйте формат B/S (например "3/23") с цифрами от 0 до 8.',
         'alertFileLoadSuccess': 'Состояние игры успешно загружено из файла!',
         'alertFileLoadError': 'Ошибка при загрузке состояния игры из файла: {message}\nПожалуйста, убедитесь, что файл создан этой версией игры.',
-        'alertSessionLoadError': 'Ошибка при загрузке сохраненного состояния: {message}\nЛокальное состояние будет сброшено.',
-        'alertSessionCleared': 'Сохраненная сессия очищена!',
-        'alertForceSaveSuccess': 'Состояние сохранено!', // Сообщение об успехе
+         // Local Storage related alerts removed
 
-        // Валидация error messages (internal, shown in alert) - UPDATED
+        // Валидация error messages
         'errorInvalidDataFormat': 'Неверный формат данных.',
         'errorInvalidCols': 'Неверное значение ширины поля.',
         'errorInvalidRows': 'Неверное значение высоты поля.',
@@ -147,7 +131,6 @@ const translations = {
 };
 
 // --- Объявление КОНСТАНТ и глобальных ПЕРЕМЕННЫХ в самом начале ---
-// ИСПРАВЛЕНО: Перемещены сюда объявления констант скорости
 const DEFAULT_SPEED_GPS = 10; // Скорость по умолчанию в поколений/сек
 const MIN_SPEED_GPS = 1;
 const MAX_SPEED_GPS = 20; // Максимальная скорость для слайдера
@@ -156,12 +139,11 @@ const MIN_GRID_SIZE = 10; // Минимальные/максимальные з�
 const MAX_GRID_SIZE_SLIDER = 200;
 const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
-const CONSENT_KEY = 'consentGiven'; // Ключ для согласия в localStorage
-const LOCAL_STORAGE_KEY = 'gameOfLifeState'; // Ключ для сохранения игры
+// CONSENT_KEY и LOCAL_STORAGE_KEY удалены
 
-// Переменные, которые будут инициализированы после определения констант
-let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
-let hasConsent = localStorage.getItem(CONSENT_KEY) === 'true';
+// hasConsent переменная удалена
+
+let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Предпочтение языка может остаться опционально
 
 let liveCellColor = '#000000'; // Инициализируем значением по умолчанию (будут обновлены из HTML/localStorage)
 let deadCellColor = '#ffffff'; // Инициализируем значением по умолчанию (будут обновлены из HTML/localStorage)
@@ -232,16 +214,13 @@ const neighborhoodSelect = document.getElementById('neighborhoodSelect');
 const rulesInput = document.getElementById('rulesInput');
 const applyRulesButton = document.getElementById('applyRulesButton');
 
-// Элементы сохранения/загрузки
+// Элементы сохранения/загрузки ИЗ ФАЙЛА
 const saveToJsonButton = document.getElementById('saveToJsonButton');
 const loadFromJsonInput = document.getElementById('loadFromJsonInput');
-const clearSessionButton = document.getElementById('clearSessionButton');
-const forceSaveButton = document.getElementById('forceSaveButton');
+// clearSessionButton и forceSaveButton удалены
 
-// Элементы модального окна согласия
-const consentModal = document.getElementById('consentModal');
-const acceptConsentButton = document.getElementById('acceptConsentButton');
-const declineConsentButton = document.getElementById('declineConsentButton');
+// Элементы модального окна согласия удалены
+
 
 // Элемент переключателя языка
 const languageSelect = document.getElementById('languageSelect');
@@ -292,9 +271,8 @@ function updateUI_Language() {
 // Функция для установки предпочтительного языка
 function setLanguagePreference(lang) {
     currentLanguage = lang;
-    if (hasConsent) { // Сохраняем предпочтение только если есть согласие
-        localStorage.setItem('preferredLanguage', lang);
-    }
+    // Удалено сохранение в localStorage
+    // if (hasConsent) { localStorage.setItem('preferredLanguage', lang); }
     updateUI_Language();
 }
 
@@ -324,17 +302,15 @@ function initializeGrid(width, height) {
         drawGrid(grid);
     } else {
         console.error("Canvas or rendering context not found!");
-        // Можно предпринять действия, если канвас недоступен, например, показать сообщение об ошибке пользователю
     }
 }
 
 
 // Функция для создания пустой сетки
 function createGrid() {
-     // Проверяем, что COLS и ROWS определены
      if (COLS === undefined || ROWS === undefined) {
          console.error("Cannot create grid: COLS or ROWS are not defined.");
-         return null; // Возвращаем null в случае ошибки
+         return null;
      }
     liveCellsCount = 0;
     const newGrid = new Array(COLS);
@@ -346,7 +322,6 @@ function createGrid() {
 
 // Функция для заполнения сетки случайными значениями
 function randomGrid() {
-     // Проверяем, что COLS и ROWS определены
      if (COLS === undefined || ROWS === undefined) {
           console.error("Cannot create random grid: COLS or ROWS are not defined.");
          return null;
@@ -365,16 +340,14 @@ function randomGrid() {
             }
         }
     }
-    // Сохраняем состояние после случайного заполнения, если есть согласие
-    if (hasConsent) saveSessionState();
+    // Удалено сохранение в localStorage
+    // if (hasConsent) saveSessionState();
     return newGrid;
 }
 
 // Функция для отрисовки сетки
 function drawGrid(grid) {
-     // Проверяем, что ctx и grid существуют перед отрисовкой
     if (!ctx || !grid) {
-        // console.error("Cannot draw grid: context or grid is missing."); // Может быть слишком много сообщений
         return;
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -399,10 +372,9 @@ function drawGrid(grid) {
 
 // Функция для вычисления следующего поколения
 function nextGeneration(grid) {
-     // Проверяем, что grid, COLS и ROWS определены
     if (!grid || COLS === undefined || ROWS === undefined) {
         console.error("Cannot compute next generation: grid or dimensions are missing.");
-        return grid; // Возвращаем текущую сетку, чтобы не сломать дальше
+        return grid;
     }
 
     const nextGrid = new Array(COLS);
@@ -439,13 +411,10 @@ function nextGeneration(grid) {
                         }
                     }
 
-                    // Проверяем границы перед доступом к grid
                     if (x_cell >= 0 && x_cell < COLS && y_cell >= 0 && y_cell < ROWS) {
                          const currentNeighbor = grid[x_cell][y_cell];
                          numNeighbors += currentNeighbor;
                     }
-
-
                 }
             }
 
@@ -474,7 +443,6 @@ function nextGeneration(grid) {
 
 // Обновление отображения информации
 function updateInfoDisplay() {
-     // Проверяем, что span элементы существуют перед обновлением
      if(generationCountSpan) generationCountSpan.textContent = generation;
      if(liveCellCountSpan) liveCellCountSpan.textContent = liveCellsCount;
 }
@@ -485,8 +453,7 @@ function startSimulation() {
         isRunning = true;
         clearInterval(intervalId);
 
-        // Проверяем существование speedInput перед чтением value
-        const currentSpeedGPS = speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS; // DEFAULT_SPEED_GPS теперь объявлен
+        const currentSpeedGPS = speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS;
         const intervalTime = gpsToMps(currentSpeedGPS);
         const safeIntervalTime = Math.max(1, intervalTime);
 
@@ -497,198 +464,44 @@ function startSimulation() {
     }
 }
 
-// --- Функции сохранения и загрузки из localStorage (ТОЛЬКО ЕСЛИ hasConsent === true) ---
+// --- Функции сохранения и загрузки Local Storage УДАЛЕНЫ ---
+// saveSessionState удалена
+// loadSessionState удалена
+// clearSessionState удалена
+// updateSessionButtonsVisibility удалена
 
-// Функция сохранения состояния в localStorage
-function saveSessionState() {
-    if (!hasConsent) {
-        return; // Не сохраняем, если нет согласия
-    }
-     // Проверяем наличие grid перед сохранением
-     if (!grid || COLS === undefined || ROWS === undefined || speedInput === null) { // Добавлена проверка speedInput
-        console.error("Cannot save state: grid, dimensions, or speedInput are missing.");
-        return;
-     }
-    try {
-        const gameState = {
-            cols: COLS,
-            rows: ROWS,
-            isToroidal: isToroidal,
-            neighborhoodType: neighborhoodType,
-            birthRules: birthRules,
-            survivalRules: survivalRules,
-            generation: generation,
-            liveCellsCount: liveCellsCount,
-            liveCellColor: liveCellColor,
-            deadCellColor: deadCellColor,
-            gridLineColor: gridLineColor,
-            showGridLines: showGridLines,
-            speedGPS: parseInt(speedInput.value), // Уверены, что speedInput не null здесь
-            grid: grid.flat()
-        };
-        const jsonString = JSON.stringify(gameState);
-        localStorage.setItem(LOCAL_STORAGE_KEY, jsonString);
-    } catch (e) {
-        console.error("Error saving game state to localStorage:", e);
-         // Можно добавить alert пользователю, если сохранение не удалось
-         // alert("Не удалось сохранить состояние игры в браузере.");
-    }
-}
 
-// Функция загрузки состояния из localStorage
-// Возвращает true, если состояние успешно загружено, false иначе
-function loadSessionState() {
-     if (!hasConsent) {
-        return false; // Не загружаем, если нет согласия
-     }
-    try {
-        const savedStateString = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (!savedStateString) {
-            return false; // Нет сохраненного состояния
-        }
-
-        const loadedState = JSON.parse(savedStateString);
-
-        // --- Валидация загруженных данных ---
-        if (typeof loadedState !== 'object' || loadedState === null) { throw new Error(getTranslation('errorInvalidDataFormat')); }
-        if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); } // MIN_GRID_SIZE теперь объявлен
-        if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); }
-        if (typeof loadedState.isToroidal !== 'boolean') { throw new Error(getTranslation('errorInvalidToroidal')); }
-        if (typeof loadedState.neighborhoodType !== 'string' || !['moore', 'vonneumann'].includes(loadedState.neighborhoodType)) { throw new Error(getTranslation('errorInvalidNeighborhood')); }
-        if (!Array.isArray(loadedState.birthRules) || !loadedState.birthRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidBirthRules')); }
-        if (!Array.isArray(loadedState.survivalRules) || !loadedState.survivalRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidSurvivalRules')); }
-        if (!Array.isArray(loadedState.grid) || loadedState.grid.length !== loadedState.cols * loadedState.rows) { throw new Error(getTranslation('errorInvalidGridDataSize', { expected: loadedState.cols * loadedState.rows, found: loadedState.grid.length })); }
-
-        // Валидация скорости
-         if (typeof loadedState.speedGPS !== 'number' || loadedState.speedGPS < MIN_SPEED_GPS) { // MIN_SPEED_GPS теперь объявлен
-             console.warn("Loaded speedGPS is invalid, using default.");
-             loadedState.speedGPS = DEFAULT_SPEED_GPS; // DEFAULT_SPEED_GPS теперь объявлен
+// --- Ручное рисование на канвасе ---
+function setCellState(col, row, state) {
+     if (col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
+         const currentState = grid[col][row];
+         if (currentState !== state) {
+             grid[col][row] = state;
+             if (state === 1) {
+                 liveCellsCount++;
+             } else {
+                 liveCellsCount--;
+             }
+             drawGrid(grid);
          }
-
-
-        // --- Применение загруженного состояния ---
-        isRunning = false;
-        clearInterval(intervalId);
-
-         neighborhoodType = loadedState.neighborhoodType;
-         isToroidal = loadedState.isToroidal;
-
-        initializeGrid(loadedState.cols, loadedState.rows);
-
-
-        let cellIndex = 0;
-         let actualLiveCount = 0;
-        for (let col = 0; col < COLS; col++) {
-            for (let row = 0; row < ROWS; row++) {
-                const cellState = loadedState.grid[cellIndex];
-                grid[col][row] = (cellState === 1) ? 1 : 0;
-                if (grid[col][row] === 1) {
-                    actualLiveCount++;
-                }
-                cellIndex++;
-            }
-        }
-
-        birthRules = loadedState.birthRules.sort((a, b) => a - b);
-        survivalRules = loadedState.survivalRules.sort((a, b) => a - b);
-        generation = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
-        liveCellsCount = actualLiveCount;
-
-
-        liveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : (liveColorPicker ? liveColorPicker.value : '#000000');
-        deadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
-        gridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : (gridColorPicker ? gridColorPicker.value : '#cccccc');
-        showGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : (toggleGridLines ? toggleGridLines.checked : true);
-
-
-        const loadedSpeedGPS = loadedState.speedGPS; // Скорость уже проверена выше
-        if(speedInput) speedInput.value = loadedSpeedGPS;
-        if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
-
-
-        drawGrid(grid);
-        updateInfoDisplay();
-
-        // Обновляем элементы интерфейса, которые не сбрасываются initializeGrid
-         if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
-         if(toggleToroidal) toggleToroidal.checked = isToroidal;
-         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-         if(liveColorPicker) liveColorPicker.value = liveCellColor;
-         if(deadColorPicker) deadColorPicker.value = deadCellColor;
-         if(gridColorPicker) gridColorPicker.value = gridLineColor;
-         if(toggleGridLines) toggleGridLines.checked = showGridLines;
-         if(gridWidthInput) gridWidthInput.value = COLS;
-         if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
-         if(gridHeightInput) gridHeightInput.value = ROWS;
-         if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
-
-
-        return true; // Состояние успешно загружено
-
-    } catch (error) {
-        console.error("Error loading game state from localStorage:", error);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-         // Можно добавить alert пользователю, если загрузка не удалась
-         // alert(getTranslation('alertSessionLoadError', { message: error.message || error }));
-        return false; // Ошибка при загрузке
-    }
+     }
 }
 
-// Функция для очистки сохраненного состояния
-function clearSessionState() {
-    // Очистку разрешаем всегда, даже если согласие не было дано на сохранение
-    try {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        localStorage.removeItem(CONSENT_KEY); // Очищаем и согласие
-        hasConsent = false; // Сбрасываем переменную согласия
 
-        alert(getTranslation('alertSessionCleared'));
-         // После очистки сбрасываем игру до начального состояния
-         initializeGameWithDefaults();
-         // Показываем модалку согласия снова (чтобы пользователь мог принять или отклонить заново)
-         if(consentModal) consentModal.style.display = 'flex';
+// --- Функционал внутри модального окна настроек ---
 
-    } catch (e) {
-        console.error("Error clearing localStorage:", e);
-        alert("Не удалось очистить сохраненную сессию."); // Это сообщение не локализовано
-    }
-}
-
-// Функция для обновления видимости кнопок сохранения сессии в модалке настроек
-function updateSessionButtonsVisibility() {
-     // Проверяем, что кнопки существуют перед попыткой изменить их стиль
-    if (clearSessionButton && forceSaveButton) {
-        if (hasConsent) {
-            clearSessionButton.style.display = 'block';
-            forceSaveButton.style.display = 'block';
-        } else {
-            // Скрываем кнопки, если согласия нет
-            clearSessionButton.style.display = 'none';
-            forceSaveButton.style.display = 'none';
-        }
-    } else {
-         console.warn("Session save buttons not found in DOM.");
-    }
-}
-
-// --- Обработчики событий (привязываются внутри DOMContentLoaded) ---
-
-// --- Инициализация игры при загрузке страницы ---
-
-// Функция инициализации игры с параметрами по умолчанию
+// Функция инициализации игры с параметрами по умолчанию (без Local Storage)
 function initializeGameWithDefaults() {
-    // DEFAULT_GRID_SIZE теперь объявлен
     initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE); // Начальный размер
 
     // Устанавливаем начальные значения для всех элементов управления
-    // Проверяем существование элементов перед установкой значений
-     if(speedInput) speedInput.value = DEFAULT_SPEED_GPS; // DEFAULT_SPEED_GPS теперь объявлен
-     if(speedSlider) speedSlider.value = DEFAULT_SPEED_GPS; // DEFAULT_SPEED_GPS теперь объявлен
+     if(speedInput) speedInput.value = DEFAULT_SPEED_GPS;
+     if(speedSlider) speedSlider.value = DEFAULT_SPEED_GPS;
 
-     if(gridWidthInput) gridWidthInput.value = DEFAULT_GRID_SIZE; // DEFAULT_GRID_SIZE теперь объявлен
-     if(gridWidthSlider) gridWidthSlider.value = DEFAULT_GRID_SIZE; // DEFAULT_GRID_SIZE теперь объявлен
-     if(gridHeightInput) gridHeightInput.value = DEFAULT_GRID_SIZE; // DEFAULT_GRID_SIZE теперь объявлен
-     if(gridHeightSlider) gridHeightSlider.value = DEFAULT_GRID_SIZE; // DEFAULT_GRID_SIZE теперь объявлен
+     if(gridWidthInput) gridWidthInput.value = DEFAULT_GRID_SIZE;
+     if(gridWidthSlider) gridWidthSlider.value = DEFAULT_GRID_SIZE;
+     if(gridHeightInput) gridHeightInput.value = DEFAULT_GRID_SIZE;
+     if(gridHeightSlider) gridHeightSlider.value = DEFAULT_GRID_SIZE;
 
      if(toggleToroidal) toggleToroidal.checked = false;
     isToroidal = false;
@@ -701,52 +514,42 @@ function initializeGameWithDefaults() {
      survivalRules = [2, 3];
 
      // Устанавливаем начальные цвета и видимость сетки из HTML
-     // Проверяем существование элементов перед чтением значений
      liveCellColor = liveColorPicker ? liveColorPicker.value : '#000000';
      deadCellColor = deadColorPicker ? deadColorPicker.value : '#ffffff';
      gridLineColor = gridColorPicker ? gridColorPicker.value : '#cccccc';
      showGridLines = toggleGridLines ? toggleGridLines.checked : true;
 
-     // Обновляем UI на основе начальных значений
-     // updateUI_Language() вызывается до этого в attemptLoadOrCreateGame
-     // updateSessionButtonsVisibility() вызывается до этого в attemptLoadOrCreateGame
+     // updateUI_Language() вызывается после этого
 }
 
-// Функция, которая пытается загрузить сессию или инициализирует игру
-function attemptLoadOrCreateGame() {
-     updateUI_Language(); // Применяем локализацию перед попыткой загрузки/инициализации
-     if (hasConsent) {
-        const sessionLoaded = loadSessionState(); // Пробуем загрузить состояние
 
-        if (!sessionLoaded) {
-            initializeGameWithDefaults();
-             // Сохраняем начальное состояние, т.к. согласие есть
-            saveSessionState();
-        }
-     } else {
-         initializeGameWithDefaults();
-     }
-      updateSessionButtonsVisibility(); // Обновляем видимость кнопок сессии
+// --- Инициализация игры при загрузке страницы (Удалена логика Local Storage) ---
+function initializeGameOnLoad() {
+     // При загрузке страницы всегда инициализируем игру с настройками по умолчанию
+    initializeGameWithDefaults();
+     // Обновляем язык интерфейса
+    updateUI_Language();
+
+     // Привязка всех обработчиков событий происходит в DOMContentLoaded
 }
 
 
 // Запускаем логику при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     // --- Привязка обработчиков событий КНОПОК ---
-    // Теперь, когда DOM готов, ссылки на элементы гарантированно не null
-
-    // Проверяем существование кнопок перед привязкой
     if(startButton) startButton.addEventListener('click', startSimulation);
     if(pauseButton) pauseButton.addEventListener('click', () => {
         isRunning = false;
         clearInterval(intervalId);
-        if (hasConsent) saveSessionState();
+        // Удалено сохранение в localStorage
+        // if (hasConsent) saveSessionState();
     });
     if(randomButton) randomButton.addEventListener('click', () => {
         isRunning = false;
         clearInterval(intervalId);
         grid = randomGrid();
         drawGrid(grid);
+        // Удалено сохранение в localStorage (оно в randomGrid)
     });
     if(clearButton) clearButton.addEventListener('click', () => {
         isRunning = false;
@@ -755,12 +558,14 @@ document.addEventListener('DOMContentLoaded', () => {
         drawGrid(grid);
         generation = 0;
         updateInfoDisplay();
-        if (hasConsent) saveSessionState();
+        // Удалено сохранение в localStorage
+        // if (hasConsent) saveSessionState();
     });
     if(settingsButton) settingsButton.addEventListener('click', () => {
         isRunning = false; clearInterval(intervalId);
-        updateSessionButtonsVisibility();
-         if(settingsModal) settingsModal.style.display = 'flex'; // Используем flex
+        // Удалена updateSessionButtonsVisibility
+        // updateSessionButtonsVisibility();
+         if(settingsModal) settingsModal.style.display = 'flex';
         // Обновляем значения полей в модалке
          if(gridWidthInput) gridWidthInput.value = COLS;
          if(gridWidthSlider) gridWidthSlider.value = COLS;
@@ -777,45 +582,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Сохраняем состояние при закрытии вкладки/окна, если есть согласие
-    window.addEventListener('beforeunload', () => {
-         if (hasConsent) saveSessionState();
-    });
+    // Удален обработчик beforeunload для сохранения в localStorage
+    // window.addEventListener('beforeunload', () => { if (hasConsent) saveSessionState(); });
 
-    // Обработчики синхронизации полей ввода/слайдеров (проверяем существование элементов)
+
+    // Обработчики синхронизации полей ввода/слайдеров
     if(speedSlider) speedSlider.addEventListener('input', () => {
         const sliderSpeed = parseInt(speedSlider.value);
         if(speedInput) speedInput.value = sliderSpeed;
         if (isRunning) {
             startSimulation();
         }
-        if (hasConsent) saveSessionState();
+        // Удалено сохранение в localStorage
+        // if (hasConsent) saveSessionState();
     });
      if(speedInput) speedInput.addEventListener('input', () => {
         let inputSpeed = parseInt(speedInput.value);
-         if (isNaN(inputSpeed) || inputSpeed < MIN_SPEED_GPS) { // MIN_SPEED_GPS теперь объявлен
-            inputSpeed = MIN_SPEED_GPS; // MIN_SPEED_GPS теперь объявлен
+         if (isNaN(inputSpeed) || inputSpeed < MIN_SPEED_GPS) {
+            inputSpeed = MIN_SPEED_GPS;
              if(speedInput) speedInput.value = inputSpeed;
         }
-         if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, inputSpeed)); // MIN_SPEED_GPS, MAX_SPEED_GPS теперь объявлены
+         if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, inputSpeed));
         if (isRunning) {
             startSimulation();
         }
-        if (hasConsent) saveSessionState();
+        // Удалено сохранение в localStorage
+        // if (hasConsent) saveSessionState();
     });
 
     if(gridWidthInput) gridWidthInput.addEventListener('input', () => {
         let inputVal = parseInt(gridWidthInput.value);
-         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) { // MIN_GRID_SIZE теперь объявлен
-             inputVal = MIN_GRID_SIZE; // MIN_GRID_SIZE теперь объявлен
+         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
+             inputVal = MIN_GRID_SIZE;
              if(gridWidthInput) gridWidthInput.value = inputVal;
         }
-         const MAX_INPUT_GRID_SIZE = 500; // Эта константа только здесь, можно оставить или перенести наверх
+         const MAX_INPUT_GRID_SIZE = 500;
           if (inputVal > MAX_INPUT_GRID_SIZE) {
               inputVal = MAX_INPUT_GRID_SIZE;
                if(gridWidthInput) gridWidthInput.value = inputVal;
           }
-         if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal)); // MIN_GRID_SIZE, MAX_GRID_SIZE_SLIDER теперь объявлены
+         if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
     });
     if(gridWidthSlider) gridWidthSlider.addEventListener('input', () => {
         const sliderVal = parseInt(gridWidthSlider.value);
@@ -824,16 +630,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(gridHeightInput) gridHeightInput.addEventListener('input', () => {
         let inputVal = parseInt(gridHeightInput.value);
-         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) { // MIN_GRID_SIZE теперь объявлен
-             inputVal = MIN_GRID_SIZE; // MIN_GRID_SIZE теперь объявлен
+         if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
+             inputVal = MIN_GRID_SIZE;
              if(gridHeightInput) gridHeightInput.value = inputVal;
         }
-          const MAX_INPUT_GRID_SIZE = 500; // Эта константа только здесь
+          const MAX_INPUT_GRID_SIZE = 500;
           if (inputVal > MAX_INPUT_GRID_SIZE) {
               inputVal = MAX_INPUT_GRID_SIZE;
                if(gridHeightInput) gridHeightInput.value = inputVal;
           }
-         if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal)); // MIN_GRID_SIZE, MAX_GRID_SIZE_SLIDER теперь объявлены
+         if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
     });
     if(gridHeightSlider) gridHeightSlider.addEventListener('input', () => {
         const sliderVal = parseInt(gridHeightSlider.value);
@@ -841,16 +647,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Ручное рисование на канвасе (проверяем существование canvas)
+    // Ручное рисование на канвасе
      if(canvas) {
         canvas.addEventListener('mousedown', (event) => {
              if (!isRunning) {
                 isDrawing = true;
                 const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left; // Correct calculation relative to canvas
-                const y = event.clientY - rect.top;  // Correct calculation relative to canvas
-                const col = Math.floor(x / resolution); // resolution теперь объявлен
-                const row = Math.floor(y / resolution); // resolution теперь объявлен
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const col = Math.floor(x / resolution);
+                const row = Math.floor(y / resolution);
 
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
                      drawState = grid[col][row] === 1 ? 0 : 1;
@@ -862,10 +668,10 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('mousemove', (event) => {
             if (isDrawing && !isRunning) {
                 const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left; // Correct calculation relative to canvas
-                const y = event.clientY - rect.top;  // Correct calculation relative to canvas
-                const col = Math.floor(x / resolution); // resolution теперь объявлен
-                const row = Math.floor(y / resolution); // resolution теперь объявлен
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const col = Math.floor(x / resolution);
+                const row = Math.floor(y / resolution);
 
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
                      setCellState(col, row, drawState);
@@ -875,7 +681,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         canvas.addEventListener('mouseup', () => {
             isDrawing = false;
-            if (hasConsent) saveSessionState();
+            // Удалено сохранение в localStorage
+            // if (hasConsent) saveSessionState();
         });
         canvas.addEventListener('mouseout', () => {
             isDrawing = false;
@@ -883,49 +690,34 @@ document.addEventListener('DOMContentLoaded', () => {
      }
 
 
-    // Управление модальными окнами (проверяем существование кнопок закрытия и модалки настроек)
+    // Управление модальными окнами
     closeModalButtons.forEach(button => {
          if(button) {
             button.addEventListener('click', () => {
                 const modalId = button.dataset.modal;
                  const modalElement = document.getElementById(modalId);
                  if(modalElement) modalElement.style.display = 'none';
-                if (hasConsent) saveSessionState();
+                // Удалено сохранение в localStorage
+                // if (hasConsent) saveSessionState();
             });
          }
     });
 
-     // Обработчик клика вне модалок (проверяем существование модалки согласия)
+     // Обработчик клика вне модалок
     window.addEventListener('click', (event) => {
-        if (event.target.classList.contains('modal') && (!consentModal || event.target.id !== 'consentModal')) {
+         // consentModal переменная удалена, проверка скорректирована
+        if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
-            if (hasConsent) saveSessionState();
+            // Удалено сохранение в localStorage
+            // if (hasConsent) saveSessionState();
         }
     });
 
 
-    // Обработчики кнопок модального окна согласия (привязываются здесь, внутри DOMContentLoaded)
-    if(acceptConsentButton) {
-        acceptConsentButton.addEventListener('click', () => {
-            hasConsent = true;
-            localStorage.setItem(CONSENT_KEY, 'true'); // CONSENT_KEY теперь объявлен
-             if(consentModal) consentModal.style.display = 'none';
-            attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем игру
-        });
-    }
-
-    if(declineConsentButton) {
-        declineConsentButton.addEventListener('click', () => {
-            hasConsent = false;
-            localStorage.setItem(CONSENT_KEY, 'false'); // CONSENT_KEY теперь объявлен
-             if(consentModal) consentModal.style.display = 'none';
-             initializeGameWithDefaults();
-             updateSessionButtonsVisibility();
-        });
-    }
+    // Обработчики кнопок модального окна согласия удалены
 
 
-    // Функционал внутри модального окна настроек (проверяем существование элементов)
+    // Функционал внутри модального окна настроек
      if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
      if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
      if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
@@ -942,7 +734,8 @@ document.addEventListener('DOMContentLoaded', () => {
          generation = 0;
          updateInfoDisplay();
          alert(getTranslation('alertNeighborhoodChange', { type: getTranslation(neighborhoodType === 'moore' ? 'mooreNeighborhood' : 'vonneumannNeighborhood') }));
-         if (hasConsent) saveSessionState();
+         // Удалено сохранение в localStorage
+         // if (hasConsent) saveSessionState();
     });
 
 
@@ -950,11 +743,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const newWidth = parseInt(gridWidthInput.value);
         const newHeight = parseInt(gridHeightInput.value);
 
-        if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) { // MIN_GRID_SIZE теперь объявлен
+        if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
             initializeGrid(newWidth, newHeight);
-            if (hasConsent) saveSessionState();
+            // Удалено сохранение в localStorage
+            // if (hasConsent) saveSessionState();
         } else {
-            alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE })); // MIN_GRID_SIZE теперь объявлен
+            alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
         }
     });
 
@@ -982,7 +776,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 drawGrid(grid);
                 generation = 0;
                 updateInfoDisplay();
-                if (hasConsent) saveSessionState();
+                // Удалено сохранение в localStorage
+                // if (hasConsent) saveSessionState();
 
             } else {
                 alert(getTranslation('alertInvalidRulesFormat'));
@@ -993,12 +788,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Сохранение в JSON файл (проверяем существование кнопки)
+    // --- Сохранение в JSON файл ---
      if(saveToJsonButton) saveToJsonButton.addEventListener('click', () => {
-         // Проверяем наличие данных перед сохранением
-        if (!grid || COLS === undefined || ROWS === undefined || speedInput === null) {
+         if (!grid || COLS === undefined || ROWS === undefined || speedInput === null) {
             console.error("Cannot save to JSON: grid, dimensions, or speedInput are missing.");
-             alert("Не удалось сохранить в файл: данные игры отсутствуют или неполные."); // Сообщение пользователю
+             alert("Не удалось сохранить в файл: данные игры отсутствуют или неполные.");
             return;
          }
         const gameState = {
@@ -1032,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
-    // Загрузка из JSON файла (проверяем существование input)
+    // --- Загрузка из JSON файла ---
      if(loadFromJsonInput) loadFromJsonInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (!file) {
@@ -1047,8 +841,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // --- Валидация загруженных данных ---
                 if (typeof loadedState !== 'object' || loadedState === null) { throw new Error(getTranslation('errorInvalidDataFormat')); }
-                if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); } // MIN_GRID_SIZE объявлен
-                if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); } // MIN_GRID_SIZE объявлен
+                if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); }
+                if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); }
                 if (typeof loadedState.isToroidal !== 'boolean') { throw new Error(getTranslation('errorInvalidToroidal')); }
                 if (typeof loadedState.neighborhoodType !== 'string' || !['moore', 'vonneumann'].includes(loadedState.neighborhoodType)) { throw new Error(getTranslation('errorInvalidNeighborhood')); }
                 if (!Array.isArray(loadedState.birthRules) || !loadedState.birthRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidBirthRules')); }
@@ -1062,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
                 const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : (gridColorPicker ? gridColorPicker.value : '#cccccc');
                 const loadedShowGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : (toggleGridLines ? toggleGridLines.checked : true);
-                const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS; // MIN_SPEED_GPS, DEFAULT_SPEED_GPS объявлены
+                const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
 
 
                 // --- Применение загруженного состояния ---
@@ -1101,12 +895,12 @@ document.addEventListener('DOMContentLoaded', () => {
                  if(toggleGridLines) toggleGridLines.checked = showGridLines;
 
                  if(gridWidthInput) gridWidthInput.value = COLS;
-                 if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS)); // MIN_GRID_SIZE, MAX_GRID_SIZE_SLIDER объявлены
+                 if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
                  if(gridHeightInput) gridHeightInput.value = ROWS;
-                 if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS)); // MIN_GRID_SIZE, MAX_GRID_SIZE_SLIDER объявлены
+                 if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
 
                 if(speedInput) speedInput.value = loadedSpeedGPS;
-                if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS)); // MIN_SPEED_GPS, MAX_SPEED_GPS объявлены
+                if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
 
                 if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
                 if(toggleToroidal) toggleToroidal.checked = isToroidal;
@@ -1118,8 +912,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(getTranslation('alertFileLoadSuccess'));
                  if(settingsModal) settingsModal.style.display = 'none';
 
-                 // Сохраняем загруженное состояние в локальную сессию, если есть согласие
-                if (hasConsent) saveSessionState();
+                 // Удалено сохранение в localStorage
+                // if (hasConsent) saveSessionState();
 
             } catch (error) {
                 console.error("Error loading game state from file:", error);
@@ -1138,18 +932,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // Обработчик кнопки очистки локального сохранения (проверяем существование кнопки)
-     if(clearSessionButton) clearSessionButton.addEventListener('click', clearSessionState);
-
-    // Обработчик кнопки принудительного сохранения (проверяем существование кнопки)
-     if(forceSaveButton) forceSaveButton.addEventListener('click', () => {
-        if (hasConsent) {
-            saveSessionState();
-            alert(getTranslation('alertForceSaveSuccess'));
-        } else {
-             alert("Сохранение сессии недоступно без вашего согласия."); // Сообщение, если согласие не дано
-        }
-    });
+    // Обработчики кнопок Local Storage удалены
+    // if(clearSessionButton) clearSessionButton.addEventListener('click', clearSessionState);
+    // if(forceSaveButton) forceSaveButton.addEventListener('click', ...);
 
 
     // --- Логика инициализации страницы после загрузки DOM ---
@@ -1162,32 +947,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setLanguagePreference(event.target.value); // setLanguagePreference вызывает updateUI_Language
      });
 
+    // Инициализация игры (теперь всегда с настройками по умолчанию)
+    initializeGameOnLoad(); // Вызываем новую функцию инициализации
 
-    // Проверяем согласие. Если уже есть, сразу пытаемся загрузить/инициализировать.
-    // Если нет, показываем модалку согласия.
-    const consentStatus = localStorage.getItem(CONSENT_KEY);
-
-    if (consentStatus === 'true') {
-        hasConsent = true;
-        attemptLoadOrCreateGame();
-    } else if (consentStatus === 'false') {
-        hasConsent = false;
-        initializeGameWithDefaults();
-        updateSessionButtonsVisibility(); // Скрываем кнопки сессии
-    }
-    else {
-        hasConsent = false;
-         if(consentModal) consentModal.style.display = 'flex';
-        // Игра пока не инициализируется, ждем выбора пользователя
-        // UI элементы, которые не инициализируются в initializeGameWithDefaults, могут остаться в состоянии по умолчанию
-        // updateSessionButtonsVisibility() скроет кнопки сессии.
-        updateSessionButtonsVisibility();
-    }
-
-    // Инициализация цветов и видимости сетки из HTML после загрузки DOM
+    // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для drawGrid до первой симуляции)
+    // Эти переменные будут обновлены при загрузке из файла или установлены initializeGameWithDefaults
+    // Просто убедимся, что они имеют начальные значения из HTML
     if(liveColorPicker) liveCellColor = liveColorPicker.value;
     if(deadColorPicker) deadCellColor = deadColorPicker.value;
-    if(gridColorPicker) gridColorPicker.value = gridLineColor; // Fix: read from picker, not assign
-    if(gridColorPicker) gridLineColor = gridColorPicker.value; // Corrected order
-    if(toggleGridLines) showGridLines = toggleGridLines.checked; // Fix: read from checkbox
+    if(gridColorPicker) gridLineColor = gridColorPicker.value;
+    if(toggleGridLines) showGridLines = toggleGridLines.checked;
+
 });
+
+// Удалена функция attemptLoadOrCreateGame
