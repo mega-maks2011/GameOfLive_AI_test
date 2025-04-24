@@ -95,7 +95,7 @@ const translations = {
         'vonneumannNeighborhood': 'Фон Нейман (4 соседа)',
 
         'rulesSettingsTitle': 'Правила (B/S)',
-        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23',
+        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). E.g., for standard Life: 3/23',
         'rulesLabel': 'Правила:',
         'applyRulesButton': 'Применить правила (сбросит симуляцию)',
 
@@ -151,7 +151,7 @@ let gridLineColor = '#cccccc'; // Инициализируем значение�
 let showGridLines = true; // Инициализируется позже (будет обновлен из HTML/localStorage)
 
 let isToroidal = false; // Инициализируется позже (будет обновлен из HTML/localStorage)
-let neighborhoodType = 'moore'; // Инициализируется позже (будет обновлен из правил по умолчанию/localStorage)
+let neighborhoodType = 'moore'; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
 
 let birthRules = [3]; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
 let survivalRules = [2, 3]; // Инициализируется позже (будут обновлены из правил по умолчанию/localStorage)
@@ -480,6 +480,9 @@ function startSimulation() {
 }
 
 
+// --- Функции сохранения и загрузки Local Storage УДАЛЕНЫ ---
+
+
 // --- Функционал внутри модального окна настроек ---
 
 // Функция инициализации игры с параметрами по умолчанию (без Local Storage)
@@ -649,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
                      drawState = grid[col][row] === 1 ? 0 : 1;
-                     setCellState(col, row, drawState); // setCellState теперь объявлена выше
+                     setCellState(col, row, drawState);
                 }
              }
         });
@@ -663,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = Math.floor(y / resolution);
 
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
-                     setCellState(col, row, drawState); // setCellState теперь объявлена выше
+                     setCellState(col, row, drawState);
                 }
             }
         });
@@ -690,7 +693,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
      // Обработчик клика вне модалок
     window.addEventListener('click', (event) => {
-         // consentModal переменная удалена, проверка скорректирована
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
         }
@@ -771,6 +773,10 @@ document.addEventListener('DOMContentLoaded', () => {
              alert("Не удалось сохранить в файл: данные игры отсутствуют или неполные.");
             return;
          }
+
+        // Преобразуем сетку в одну строку нулей и единиц для уменьшения размера
+        const gridString = grid.flat().join('');
+
         const gameState = {
             cols: COLS,
             rows: ROWS,
@@ -785,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gridLineColor: gridLineColor,
             showGridLines: showGridLines,
             speedGPS: parseInt(speedInput.value),
-            grid: grid.flat()
+            grid: gridString // Сохраняем сетку как строку
         };
 
         const jsonString = JSON.stringify(gameState, null, 2);
@@ -795,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const a = document.createElement('a');
         a.href = url;
-        // ИСПРАВЛЕНО: Добавлена случайная строка в имя файла
+        // Добавлена случайная строка в имя файла
         const randomPart = generateRandomString(16);
         a.download = `gameOfLife${COLS}x${ROWS}_${randomPart}.json`; // Формат по запросу пользователя
         document.body.appendChild(a);
@@ -825,10 +831,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof loadedState.neighborhoodType !== 'string' || !['moore', 'vonneumann'].includes(loadedState.neighborhoodType)) { throw new Error(getTranslation('errorInvalidNeighborhood')); }
                 if (!Array.isArray(loadedState.birthRules) || !loadedState.birthRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidBirthRules')); }
                 if (!Array.isArray(loadedState.survivalRules) || !loadedState.survivalRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidSurvivalRules')); }
-                if (!Array.isArray(loadedState.grid) || loadedState.grid.length !== loadedState.cols * loadedState.rows) { throw new Error(getTranslation('errorInvalidGridDataSize', { expected: loadedState.cols * loadedState.rows, found: loadedState.grid.length })); }
+
+                // Валидация и преобразование данных сетки (строка -> массив)
+                const expectedSize = loadedState.cols * loadedState.rows;
+                let loadedGridData;
+
+                if (typeof loadedState.grid === 'string') {
+                    if (loadedState.grid.length !== expectedSize) {
+                         throw new Error(getTranslation('errorInvalidGridDataSize', { expected: expectedSize, found: loadedState.grid.length }));
+                    }
+                     // Преобразуем строку обратно в массив чисел
+                    loadedGridData = loadedState.grid.split('').map(Number);
+                     // Проверяем, что все элементы - 0 или 1 после преобразования
+                     if (!loadedGridData.every(cell => cell === 0 || cell === 1)) {
+                         throw new Error("Invalid grid data format: Contains non-binary values after string conversion.");
+                     }
+                } else if (Array.isArray(loadedState.grid)) {
+                     // Обработка старого формата (массив чисел), если нужно
+                     if (loadedState.grid.length !== expectedSize) {
+                          throw new Error(getTranslation('errorInvalidGridDataSize', { expected: expectedSize, found: loadedState.grid.length }));
+                     }
+                     // Проверяем, что все элементы - 0 или 1 в старом формате
+                     if (!loadedState.grid.every(cell => cell === 0 || cell === 1)) {
+                         throw new Error("Invalid grid data format: Array contains non-binary values.");
+                     }
+                     loadedGridData = loadedState.grid;
+
+                } else {
+                     // Если данные сетки ни строка, ни массив
+                     throw new Error(getTranslation('errorInvalidDataFormat') + " Invalid grid data type.");
+                }
 
                 const loadedGeneration = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
-                const calculatedLiveCount = loadedState.grid.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
+                // Пересчитываем liveCellsCount на основе загруженной сетки, чтобы избежать расхождений
+                const calculatedLiveCount = loadedGridData.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
+
 
                 const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : (liveColorPicker ? liveColorPicker.value : '#000000');
                 const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
@@ -844,13 +881,13 @@ document.addEventListener('DOMContentLoaded', () => {
                  neighborhoodType = loadedState.neighborhoodType;
                  isToroidal = loadedState.isToroidal;
 
-                initializeGrid(loadedState.cols, loadedState.rows);
+                initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку с правильными размерами
 
+                // Копируем загруженные данные в новую сетку
                 let cellIndex = 0;
                 for (let col = 0; col < COLS; col++) {
                     for (let row = 0; row < ROWS; row++) {
-                        const cellState = loadedState.grid[cellIndex];
-                        grid[col][row] = (cellState === 1) ? 1 : 0;
+                        grid[col][row] = loadedGridData[cellIndex];
                         cellIndex++;
                     }
                 }
@@ -858,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 birthRules = loadedState.birthRules.sort((a, b) => a - b);
                 survivalRules = loadedState.survivalRules.sort((a, b) => a - b);
                 generation = loadedGeneration;
-                liveCellsCount = calculatedLiveCount;
+                liveCellsCount = calculatedLiveCount; // Используем пересчитанное значение
 
                 liveCellColor = loadedLiveCellColor;
                 deadCellColor = loadedDeadCellColor;
@@ -884,23 +921,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(toggleToroidal) toggleToroidal.checked = isToroidal;
 
 
-                drawGrid(grid);
-                updateInfoDisplay();
+                drawGrid(grid); // Перерисовываем с новыми данными
+                updateInfoDisplay(); // Обновляем счетчики
 
                 alert(getTranslation('alertFileLoadSuccess'));
                  if(settingsModal) settingsModal.style.display = 'none';
 
+
             } catch (error) {
                 console.error("Error loading game state from file:", error);
                 alert(getTranslation('alertFileLoadError', { message: error.message || error }));
-                 if(loadFromJsonInput) loadFromJsonInput.value = '';
+                 if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем input file
             }
         };
 
         reader.onerror = (e) => {
             console.error("FileReader error:", e);
             alert("Ошибка чтения файла.");
-             if(loadFromJsonInput) loadFromJsonInput.value = '';
+             if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем input file
         };
 
 
@@ -932,3 +970,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if(toggleGridLines) showGridLines = toggleGridLines.checked;
 
 });
+
+// Удалена функция attemptLoadOrCreateGame
