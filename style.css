@@ -346,3 +346,11 @@ p {
     padding: 0;
     color: #555; /* Убедимся, что цвет текста правильный */
 }
+
+#settingsModal .setting-section #clearSessionButton {
+    /* Унаследует стили button, но можно добавить специфичные, если требуется */
+    display: block; /* Кнопка занимает всю ширину секции */
+    width: 100%;
+    margin-top: 10px;
+    box-sizing: border-box; /* Учитываем padding в ширине */
+}
