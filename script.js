@@ -133,7 +133,7 @@ const translations = {
         'alertSessionCleared': 'Сохраненная сессия очищена!',
         'alertForceSaveSuccess': 'Состояние сохранено!', // Сообщение об успехе
 
-        // Сообщения об ошибках валидации (внутренние, показываются в alert) - ОБНОВЛЕНЫ
+        // Валидация error messages (internal, shown in alert) - UPDATED
         'errorInvalidDataFormat': 'Неверный формат данных.',
         'errorInvalidCols': 'Неверное значение ширины поля.',
         'errorInvalidRows': 'Неверное значение высоты поля.',
@@ -147,8 +147,9 @@ const translations = {
 };
 
 let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Определяем язык из localStorage или браузера
-let hasConsent = localStorage.getItem('consentGiven') === 'true'; // Проверяем согласие в localStorage
+let hasConsent = localStorage.getItem(CONSENT_KEY) === 'true'; // Проверяем согласие в localStorage (строка 'true' или null/другое)
 const CONSENT_KEY = 'consentGiven'; // Ключ для согласия в localStorage
+const LOCAL_STORAGE_KEY = 'gameOfLifeState'; // Ключ для сохранения игры
 
 
 const canvas = document.getElementById('gameCanvas');
@@ -156,7 +157,7 @@ const ctx = canvas.getContext('2d');
 const startButton = document.getElementById('startButton');
 const pauseButton = document.getElementById('pauseButton');
 const randomButton = document.getElementById('randomButton');
-const clearButton = documentgetElementById('clearButton');
+const clearButton = document.getElementById('clearButton');
 const settingsButton = document.getElementById('settingsButton');
 
 // Элементы управления скоростью
@@ -208,19 +209,15 @@ let survivalRules = [2, 3];
 const saveToJsonButton = document.getElementById('saveToJsonButton');
 const loadFromJsonInput = document.getElementById('loadFromJsonInput');
 const clearSessionButton = document.getElementById('clearSessionButton');
-const forceSaveButton = document.getElementById('forceSaveButton'); // НОВАЯ ССЫЛКА
+const forceSaveButton = document.getElementById('forceSaveButton');
 
-// Элементы модального окна согласия - НОВЫЕ ССЫЛКИ
+// Элементы модального окна согласия
 const consentModal = document.getElementById('consentModal');
 const acceptConsentButton = document.getElementById('acceptConsentButton');
 const declineConsentButton = document.getElementById('declineConsentButton');
 
-// Элемент переключателя языка - НОВАЯ ССЫЛКА
+// Элемент переключателя языка
 const languageSelect = document.getElementById('languageSelect');
-
-
-// Ключ для сохранения в localStorage
-const LOCAL_STORAGE_KEY = 'gameOfLifeState';
 
 
 const resolution = 10; // Размер клетки в пикселях
@@ -252,7 +249,9 @@ function getTranslation(key, replacements = {}) {
 
     // Применяем замены
     for (const placeholder in replacements) {
-        text = text.replace(`{${placeholder}}`, replacements[placeholder]);
+        // Используем регулярное выражение с флагом g для замены всех вхождений плейсхолдера
+        const regex = new RegExp(`{${placeholder}}`, 'g');
+        text = text.replace(regex, replacements[placeholder]);
     }
     return text;
 }
@@ -264,19 +263,12 @@ function updateUI_Language() {
         const key = element.getAttribute('data-lang-key');
         const translation = getTranslation(key);
 
-        // Отдельно обрабатываем OPTION элементы
-        if (element.tagName === 'OPTION') {
-             // Находим select родителя и обновляем options внутри него
-             // Этот подход может быть избыточен, т.к. мы обновляем select по ID напрямую
-             // Давайте просто обновим текст у уже существующих опций с data-lang-key
-        } else {
-            element.textContent = translation;
-        }
+        // Обновляем текст
+        element.textContent = translation;
     });
 
      // Специальный случай для опций в select'ах, у которых тоже есть data-lang-key
-     // Можно было бы использовать data-lang-key на option напрямую, но иногда удобнее в коде JS
-     // Давайте обновим текст для опций соседства
+     // Обновляем текст для опций соседства
      document.querySelector('#neighborhoodSelect option[value="moore"]').textContent = getTranslation('mooreNeighborhood');
      document.querySelector('#neighborhoodSelect option[value="vonneumann"]').textContent = getTranslation('vonneumannNeighborhood');
 
@@ -460,7 +452,6 @@ function startSimulation() {
 // Функция сохранения состояния в localStorage
 function saveSessionState() {
     if (!hasConsent) {
-        // console.log("Consent not given, skipping save."); // Опционально
         return; // Не сохраняем, если нет согласия
     }
     try {
@@ -482,10 +473,8 @@ function saveSessionState() {
         };
         const jsonString = JSON.stringify(gameState);
         localStorage.setItem(LOCAL_STORAGE_KEY, jsonString);
-        // console.log("Game state saved to localStorage.");
     } catch (e) {
         console.error("Error saving game state to localStorage:", e);
-        // alert(getTranslation('errorSavingSession')); // Можно добавить сообщение об ошибке сохранения
     }
 }
 
@@ -493,19 +482,17 @@ function saveSessionState() {
 // Возвращает true, если состояние успешно загружено, false иначе
 function loadSessionState() {
      if (!hasConsent) {
-        // console.log("Consent not given, skipping load."); // Опционально
         return false; // Не загружаем, если нет согласия
      }
     try {
         const savedStateString = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (!savedStateString) {
-            // console.log("No saved game state found in localStorage.");
             return false; // Нет сохраненного состояния
         }
 
         const loadedState = JSON.parse(savedStateString);
 
-        // --- Валидация загруженных данных (аналогично загрузке из файла) ---
+        // --- Валидация загруженных данных ---
         if (typeof loadedState !== 'object' || loadedState === null) { throw new Error(getTranslation('errorInvalidDataFormat')); }
         if (typeof loadedState.cols !== 'number' || loadedState.cols < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidCols')); }
         if (typeof loadedState.rows !== 'number' || loadedState.rows < MIN_GRID_SIZE) { throw new Error(getTranslation('errorInvalidRows')); }
@@ -523,7 +510,7 @@ function loadSessionState() {
          neighborhoodType = loadedState.neighborhoodType;
          isToroidal = loadedState.isToroidal;
 
-        initializeGrid(loadedState.cols, loadedState.rows); // Это сбросит grid, generation, liveCellsCount
+        initializeGrid(loadedState.cols, loadedState.rows);
 
 
         let cellIndex = 0;
@@ -550,8 +537,6 @@ function loadSessionState() {
         gridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : gridColorPicker.value;
         showGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : toggleGridLines.checked;
 
-        // Обновляем элементы интерфейса (будут обновлены после загрузки состояния)
-
 
         const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
         speedInput.value = loadedSpeedGPS;
@@ -575,55 +560,27 @@ function loadSessionState() {
          gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, ROWS));
 
 
-        // alert(getTranslation('alertSessionLoadSuccess')); // Опционально уведомить пользователя
         return true; // Состояние успешно загружено
 
     } catch (error) {
         console.error("Error loading game state from localStorage:", error);
-        // Если произошла ошибка загрузки или парсинга, очистим некорректные данные
         localStorage.removeItem(LOCAL_STORAGE_KEY);
-        // alert(getTranslation('alertSessionLoadError', { message: error.message || error })); // Опционально
         return false; // Ошибка при загрузке
     }
 }
 
 // Функция для очистки сохраненного состояния
 function clearSessionState() {
-    if (!hasConsent) {
-         // Нельзя очистить то, что не сохраняли без согласия
-         return;
-    }
+    // Очистку разрешаем всегда, даже если согласие не было дано на сохранение
     try {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
         localStorage.removeItem(CONSENT_KEY); // Очищаем и согласие
         hasConsent = false; // Сбрасываем переменную согласия
 
         alert(getTranslation('alertSessionCleared'));
-         // После очистки сбрасываем игру и скрываем/отключаем кнопки сохранения сессии
-         initializeGrid(50, 50); // Сброс игры
-         // Сброс UI элементов до значений по умолчанию
-         speedInput.value = DEFAULT_SPEED_GPS;
-         speedSlider.value = DEFAULT_SPEED_GPS;
-         toggleToroidal.checked = false;
-         isToroidal = false;
-         neighborhoodSelect.value = 'moore';
-         neighborhoodType = 'moore';
-          rulesInput.value = '3/23';
-          birthRules = [3];
-          survivalRules = [2, 3];
-           liveCellColor = liveColorPicker.value = '#000000';
-           deadCellColor = deadColorPicker.value = '#ffffff';
-           gridLineColor = gridColorPicker.value = '#cccccc';
-           showGridLines = toggleGridLines.checked = true;
-
-         drawGrid(grid);
-         updateInfoDisplay();
-
-         // Скрываем кнопки сохранения сессии
-         clearSessionButton.style.display = 'none';
-         forceSaveButton.style.display = 'none';
-
-         // Показываем модалку согласия снова
+         // После очистки сбрасываем игру до начального состояния
+         initializeGameWithDefaults();
+         // Показываем модалку согласия снова (чтобы пользователь мог принять или отклонить заново)
          consentModal.style.display = 'flex';
 
     } catch (e) {
@@ -638,6 +595,7 @@ function updateSessionButtonsVisibility() {
         clearSessionButton.style.display = 'block';
         forceSaveButton.style.display = 'block';
     } else {
+        // Скрываем кнопки, если согласия нет
         clearSessionButton.style.display = 'none';
         forceSaveButton.style.display = 'none';
     }
@@ -649,12 +607,12 @@ startButton.addEventListener('click', startSimulation);
 pauseButton.addEventListener('click', () => {
     isRunning = false;
     clearInterval(intervalId);
-    if (hasConsent) saveSessionState(); // Сохраняем при паузе, если есть согласие
+    if (hasConsent) saveSessionState();
 });
 randomButton.addEventListener('click', () => {
     isRunning = false;
     clearInterval(intervalId);
-    grid = randomGrid(); // randomGrid теперь сам вызывает saveSessionState
+    grid = randomGrid();
     drawGrid(grid);
 });
 clearButton.addEventListener('click', () => {
@@ -664,14 +622,14 @@ clearButton.addEventListener('click', () => {
     drawGrid(grid);
     generation = 0;
     updateInfoDisplay();
-    if (hasConsent) saveSessionState(); // Сохраняем при очистке, если есть согласие
+    if (hasConsent) saveSessionState();
 });
 
 settingsButton.addEventListener('click', () => {
     isRunning = false; clearInterval(intervalId);
      // Обновляем видимость кнопок сессии перед открытием модалки
     updateSessionButtonsVisibility();
-    settingsModal.style.display = 'flex'; // Используем flex для центрирования
+    settingsModal.style.display = 'flex';
 
     // Обновляем значения полей ввода в модалке текущими значениями
     gridWidthInput.value = COLS;
@@ -688,10 +646,9 @@ settingsButton.addEventListener('click', () => {
     gridColorPicker.value = gridLineColor;
     toggleGridLines.checked = showGridLines;
 
-    loadFromJsonInput.value = ''; // Сбрасываем поле выбора файла
+    loadFromJsonInput.value = '';
 });
 
-// Сохраняем состояние при закрытии вкладки/окна, если есть согласие
 window.addEventListener('beforeunload', () => {
      if (hasConsent) saveSessionState();
 });
@@ -704,7 +661,7 @@ speedSlider.addEventListener('input', () => {
     if (isRunning) {
         startSimulation();
     }
-    if (hasConsent) saveSessionState(); // Сохраняем при изменении скорости
+    if (hasConsent) saveSessionState();
 });
 
 speedInput.addEventListener('input', () => {
@@ -720,7 +677,7 @@ speedInput.addEventListener('input', () => {
     if (isRunning) {
         startSimulation();
     }
-    if (hasConsent) saveSessionState(); // Сохраняем при изменении скорости
+    if (hasConsent) saveSessionState();
 });
 
 gridWidthInput.addEventListener('input', () => {
@@ -775,7 +732,7 @@ canvas.addEventListener('mousedown', (event) => {
 
         if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
              drawState = grid[col][row] === 1 ? 0 : 1;
-             setCellState(col, row, drawState); // setCellState вызывает drawGrid и updateInfoDisplay
+             setCellState(col, row, drawState);
         }
      }
 });
@@ -789,14 +746,14 @@ canvas.addEventListener('mousemove', (event) => {
         const row = Math.floor(y / resolution);
 
         if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
-             setCellState(col, row, drawState); // setCellState вызывает drawGrid и updateInfoDisplay
+             setCellState(col, row, drawState);
         }
     }
 });
 
 canvas.addEventListener('mouseup', () => {
     isDrawing = false;
-    if (hasConsent) saveSessionState(); // Сохраняем после завершения рисования, если есть согласие
+    if (hasConsent) saveSessionState();
 });
 canvas.addEventListener('mouseout', () => {
     isDrawing = false;
@@ -823,7 +780,7 @@ closeModalButtons.forEach(button => {
     button.addEventListener('click', () => {
         const modalId = button.dataset.modal;
         document.getElementById(modalId).style.display = 'none';
-        if (hasConsent) saveSessionState(); // Сохраняем при закрытии настроек, если есть согласие
+        if (hasConsent) saveSessionState();
     });
 });
 
@@ -831,29 +788,8 @@ window.addEventListener('click', (event) => {
     // Закрытие модалок при клике вне их содержимого, только если это не модалка согласия
     if (event.target.classList.contains('modal') && event.target.id !== 'consentModal') {
         event.target.style.display = 'none';
-        if (hasConsent) saveSessionState(); // Сохраняем, если есть согласие
+        if (hasConsent) saveSessionState();
     }
-});
-
-// Обработчики кнопок модального окна согласия
-acceptConsentButton.addEventListener('click', () => {
-    hasConsent = true;
-    localStorage.setItem(CONSENT_KEY, 'true'); // Сохраняем согласие
-    consentModal.style.display = 'none'; // Скрываем модалку согласия
-    // Теперь, когда согласие получено, пробуем загрузить состояние или инициализируем по умолчанию
-     attemptLoadOrCreateGame();
-     // Обновляем видимость кнопок сохранения сессии в настройках
-     updateSessionButtonsVisibility();
-});
-
-declineConsentButton.addEventListener('click', () => {
-    hasConsent = false;
-    localStorage.setItem(CONSENT_KEY, 'false'); // Сохраняем отказ
-    consentModal.style.display = 'none'; // Скрываем модалку согласия
-     // Инициализируем игру с нуля, так как сохранять/загружать нельзя
-    initializeGameWithDefaults();
-     // Скрываем кнопки сохранения сессии
-    updateSessionButtonsVisibility();
 });
 
 
@@ -877,8 +813,9 @@ neighborhoodSelect.addEventListener('change', (event) => {
      drawGrid(grid);
      generation = 0;
      updateInfoDisplay();
-     alert(getTranslation('alertNeighborhoodChange', { type: neighborhoodType === 'moore' ? getTranslation('mooreNeighborhood') : getTranslation('vonneumannNeighborhood') }));
-     if (hasConsent) saveSessionState(); // Сохраняем, если есть согласие
+     // Используем getTranslation для сообщения
+     alert(getTranslation('alertNeighborhoodChange', { type: getTranslation(neighborhoodType === 'moore' ? 'mooreNeighborhood' : 'vonneumannNeighborhood') }));
+     if (hasConsent) saveSessionState();
 });
 
 
@@ -889,8 +826,9 @@ applySizeButton.addEventListener('click', () => {
 
     if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
         initializeGrid(newWidth, newHeight);
-        if (hasConsent) saveSessionState(); // Сохраняем, если есть согласие
+        if (hasConsent) saveSessionState();
     } else {
+        // Используем getTranslation для сообщения
         alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
     }
 });
@@ -912,6 +850,7 @@ applyRulesButton.addEventListener('click', () => {
         if (newBirthRules.length > 0 && newSurvivalRules.length > 0 && isValidRuleSet(newBirthRules) && isValidRuleSet(newSurvivalRules)) {
             birthRules = newBirthRules.sort((a, b) => a - b);
             survivalRules = newSurvivalRules.sort((a, b) => a - b);
+            // Используем getTranslation для сообщения
             alert(getTranslation('alertRulesUpdated', { birth: birthRules.join(', '), survival: survivalRules.join(', ') }));
 
             isRunning = false;
@@ -920,12 +859,14 @@ applyRulesButton.addEventListener('click', () => {
             drawGrid(grid);
             generation = 0;
             updateInfoDisplay();
-            if (hasConsent) saveSessionState(); // Сохраняем, если есть согласие
+            if (hasConsent) saveSessionState();
 
         } else {
+            // Используем getTranslation для сообщения
             alert(getTranslation('alertInvalidRulesFormat'));
         }
     } else {
+        // Используем getTranslation для сообщения
         alert(getTranslation('alertInvalidRulesFormat'));
     }
 });
@@ -1025,7 +966,6 @@ loadFromJsonInput.addEventListener('change', (event) => {
             gridLineColor = loadedGridLineColor;
             showGridLines = loadedShowGridLines;
 
-            // Обновляем элементы интерфейса
             rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
             liveColorPicker.value = liveCellColor;
             deadColorPicker.value = deadCellColor;
@@ -1047,6 +987,7 @@ loadFromJsonInput.addEventListener('change', (event) => {
             drawGrid(grid);
             updateInfoDisplay();
 
+            // Используем getTranslation для сообщения
             alert(getTranslation('alertFileLoadSuccess'));
             settingsModal.style.display = 'none';
 
@@ -1055,6 +996,7 @@ loadFromJsonInput.addEventListener('change', (event) => {
 
         } catch (error) {
             console.error("Error loading game state from file:", error);
+            // Используем getTranslation для сообщения
             alert(getTranslation('alertFileLoadError', { message: error.message || error }));
              loadFromJsonInput.value = '';
         }
@@ -1062,7 +1004,7 @@ loadFromJsonInput.addEventListener('change', (event) => {
 
     reader.onerror = (e) => {
         console.error("FileReader error:", e);
-        alert("Ошибка чтения файла.");
+        alert("Ошибка чтения файла."); // Это сообщение не локализовано в словаре, можно добавить
          loadFromJsonInput.value = '';
     };
 
@@ -1077,9 +1019,9 @@ clearSessionButton.addEventListener('click', clearSessionState);
 forceSaveButton.addEventListener('click', () => {
     if (hasConsent) {
         saveSessionState();
+        // Используем getTranslation для сообщения
         alert(getTranslation('alertForceSaveSuccess'));
     }
-    // Если согласия нет, кнопка должна быть скрыта, поэтому дополнительная проверка не нужна
 });
 
 
@@ -1110,13 +1052,13 @@ function initializeGameWithDefaults() {
 
      // Устанавливаем начальные цвета и видимость сетки из HTML
      liveCellColor = liveColorPicker.value;
-     deadCellColor = deadColorPicker.value;
+     deadCellColor = deadCellColor; // Fix: Use deadColorPicker.value
      gridLineColor = gridColorPicker.value;
      showGridLines = toggleGridLines.checked;
 
      // Обновляем UI на основе начальных значений
-     updateUI_Language(); // Применяем локализацию
-     updateSessionButtonsVisibility(); // Скрываем/показываем кнопки сессии
+     // updateUI_Language() вызывается до этого в attemptLoadOrCreateGame
+     // updateSessionButtonsVisibility() вызывается до этого в attemptLoadOrCreateGame
 }
 
 // Функция, которая пытается загрузить сессию или инициализирует игру
@@ -1126,15 +1068,15 @@ function attemptLoadOrCreateGame() {
         const sessionLoaded = loadSessionState(); // Пробуем загрузить состояние
 
         if (!sessionLoaded) {
-            // Если локальное состояние не найдено или не загрузилось
-            initializeGameWithDefaults(); // Инициализируем по умолчанию
-             // Сохраняем начальное состояние в локальную сессию, т.к. согласие есть
+            initializeGameWithDefaults();
+             // Сохраняем начальное состояние, т.к. согласие есть
             saveSessionState();
         }
-        // Если загружено успешно, UI уже обновлен внутри loadSessionState
      } else {
-         // Если согласия нет, инициализируем игру с нуля
+         // Если согласия нет, инициализируем игру с нуля (данные сессии не загружаются)
          initializeGameWithDefaults();
+         // При этом кнопки сохранения сессии будут скрыты функцией updateSessionButtonsVisibility,
+         // которая вызывается ниже.
      }
       // Обновляем видимость кнопок сессии после всех инициализаций
       updateSessionButtonsVisibility();
@@ -1143,23 +1085,58 @@ function attemptLoadOrCreateGame() {
 
 // Запускаем логику при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    // Сначала проверяем согласие. Если уже есть, сразу пытаемся загрузить/инициализировать.
-    // Если нет, показываем модалку согласия.
-    if (hasConsent) {
-        attemptLoadOrCreateGame();
-    } else {
-        // Нет согласия, показываем модалку
-        consentModal.style.display = 'flex';
-         // Инициализируем по умолчанию, но без сохранения, пока не получим согласие
-         //initializeGameWithDefaults(); // Лучше инициализировать после согласия/отказа
-    }
+    // Переносим обработчики кнопок согласия сюда, чтобы они были привязаны после загрузки DOM
+    acceptConsentButton.addEventListener('click', () => {
+        hasConsent = true;
+        localStorage.setItem(CONSENT_KEY, 'true'); // Сохраняем согласие
+        consentModal.style.display = 'none'; // Скрываем модалку согласия
+        attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем игру
+    });
 
-     // Устанавливаем начальные значения для переключателя языка
-     languageSelect.value = currentLanguage;
+    declineConsentButton.addEventListener('click', () => {
+        hasConsent = false;
+        localStorage.setItem(CONSENT_KEY, 'false'); // Сохраняем отказ
+        consentModal.style.display = 'none'; // Скрываем модалку согласия
+         initializeGameWithDefaults(); // Инициализируем с нуля
+         // При этом кнопки сохранения сессии будут скрыты функцией updateSessionButtonsVisibility,
+         // которая вызывается в конце attemptLoadOrCreateGame, но т.к. attemptLoadOrCreateGame
+         // не вызывается при отказе, вызовем updateSessionButtonsVisibility здесь
+         updateSessionButtonsVisibility();
+    });
+
+
+    // Устанавливаем начальные значения для переключателя языка
+    languageSelect.value = currentLanguage;
+    // Обновляем язык сразу при загрузке, чтобы UI был локализован
+    // updateUI_Language() теперь вызывается внутри attemptLoadOrCreateGame
 
      // Обработчик смены языка
      languageSelect.addEventListener('change', (event) => {
-        setLanguagePreference(event.target.value);
+        setLanguagePreference(event.target.value); // setLanguagePreference вызывает updateUI_Language
      });
 
+
+    // Проверяем согласие. Если уже есть, сразу пытаемся загрузить/инициализировать.
+    // Если нет, показываем модалку согласия.
+    const consentStatus = localStorage.getItem(CONSENT_KEY);
+
+    if (consentStatus === 'true') {
+        // Согласие было дано ранее
+        hasConsent = true;
+        attemptLoadOrCreateGame(); // Пробуем загрузить или инициализируем
+    } else if (consentStatus === 'false') {
+        // Согласие было отклонено ранее
+        hasConsent = false;
+        initializeGameWithDefaults(); // Инициализируем по умолчанию (без загрузки сессии)
+        updateSessionButtonsVisibility(); // Скрываем кнопки сессии
+    }
+    else {
+        // Согласие еще не спрашивали
+        hasConsent = false; // По умолчанию нет согласия
+        consentModal.style.display = 'flex'; // Показываем модалку согласия
+         // Игра пока не инициализируется, ждем выбора пользователя
+    }
 });
+
+// Fix: Correctly initialize deadCellColor in initializeGameWithDefaults
+// This is now handled inside initializeGameWithDefaults
