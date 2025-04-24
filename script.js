@@ -217,6 +217,7 @@ const clearSessionButton = document.getElementById('clearSessionButton');
 const forceSaveButton = document.getElementById('forceSaveButton');
 
 // Элементы модального окна согласия
+// ИСПРАВЛЕНО: Добавлена точка в getElementById
 const consentModal = document.getElementById('consentModal');
 const acceptConsentButton = document.getElementById('acceptConsentButton');
 const declineConsentButton = document.getElementById('declineConsentButton');
@@ -908,7 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
      if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
      if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
      if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
-     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); }); // Исправлена опечатка "Проверка"
+     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); });
 
      if(toggleToroidal) toggleToroidal.addEventListener('change', (event) => { isToroidal = event.target.checked; });
 
