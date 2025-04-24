@@ -32,6 +32,24 @@ canvas {
     height: auto; /* Сохраняем пропорции */
 }
 
+.language-switcher { /* Стили для переключателя языка */
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.language-switcher label {
+    margin-right: 5px;
+}
+
+.language-switcher select {
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+
 .controls {
     margin-bottom: 20px;
     display: flex; /* Используем Flexbox для кнопок */
@@ -58,6 +76,12 @@ button:hover {
 button:active {
     background-color: #1f608f; /* Еще темнее при нажатии */
 }
+
+button:disabled { /* Стиль для неактивных кнопок */
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
 
 /* Стили для контейнера скорости */
 .settings-container {
@@ -140,7 +164,7 @@ p {
     box-sizing: border-box;
 }
 
-/* Стили для содержимого модального окна - ОФОРМЛЕНИЕ В СТИЛЕ КОНСОЛИ */
+/* Стили для содержимого модального окна НАСТРОЕК - ОФОРМЛЕНИЕ В СТИЛЕ КОНСОЛИ */
 #settingsModal .modal-content {
     background-color: #1e1e1e; /* Темный фон */
     color: #cccccc; /* Светлый текст */
@@ -331,26 +355,70 @@ p {
     width: 100%;
 }
 
+/* Убедимся, что кнопки сохранения/загрузки в модалке занимают всю ширину */
+#settingsModal .setting-section #saveToJsonButton,
+#settingsModal .setting-section #forceSaveButton,
+#settingsModal .setting-section #clearSessionButton {
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 5px; /* Отступ между этими кнопками */
+    box-sizing: border-box;
+}
 
 /* Стили для раздела Авторы */
 .authors {
-    margin-top: 40px; /* Отступ сверху от последнего элемента */
+    margin-top: 40px;
     font-size: 0.9em;
     color: #555;
     text-align: center;
-    width: 100%; /* Занимает всю доступную ширину */
+    width: 100%;
 }
 
 .authors p {
     margin: 0;
     padding: 0;
-    color: #555; /* Убедимся, что цвет текста правильный */
+    color: #555;
 }
 
-#settingsModal .setting-section #clearSessionButton {
-    /* Унаследует стили button, но можно добавить специфичные, если требуется */
-    display: block; /* Кнопка занимает всю ширину секции */
-    width: 100%;
-    margin-top: 10px;
-    box-sizing: border-box; /* Учитываем padding в ширине */
+
+/* Стили для МОДАЛЬНОГО ОКНА СОГЛАСИЯ */
+#consentModal {
+    z-index: 200; /* Выше, чем модалка настроек */
+}
+
+#consentModal .modal-content {
+    background-color: #ffffff; /* Светлый фон */
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px; /* Меньше, чем настройки */
+    text-align: center;
+}
+
+#consentModal .modal-content h2 {
+    color: #333;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+#consentModal .consent-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#consentModal .consent-buttons button {
+     /* Унаследуют общие стили кнопок */
+     margin: 0 10px; /* Отступ между кнопками */
+}
+
+/* Скрываем кнопку закрытия у модалки согласия */
+#consentModal .close-button {
+    display: none;
 }
