@@ -146,10 +146,12 @@ const translations = {
     }
 };
 
-let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Определяем язык из localStorage или браузера
-let hasConsent = localStorage.getItem(CONSENT_KEY) === 'true'; // Проверяем согласие в localStorage (строка 'true' или null/другое)
+// ИСПРАВЛЕНО: Объявляем ключи Local Storage первыми
 const CONSENT_KEY = 'consentGiven'; // Ключ для согласия в localStorage
 const LOCAL_STORAGE_KEY = 'gameOfLifeState'; // Ключ для сохранения игры
+
+let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en'); // Определяем язык из localStorage или браузера
+let hasConsent = localStorage.getItem(CONSENT_KEY) === 'true'; // Проверяем согласие в localStorage (строка 'true' или null/другое)
 
 
 // --- Получение ссылок на элементы (до DOMContentLoaded) ---
@@ -215,7 +217,6 @@ const clearSessionButton = document.getElementById('clearSessionButton');
 const forceSaveButton = document.getElementById('forceSaveButton');
 
 // Элементы модального окна согласия
-// ИСПРАВЛЕНО: Добавлена точка в getElementById
 const consentModal = document.getElementById('consentModal');
 const acceptConsentButton = document.getElementById('acceptConsentButton');
 const declineConsentButton = document.getElementById('declineConsentButton');
@@ -469,7 +470,8 @@ function startSimulation() {
         isRunning = true;
         clearInterval(intervalId);
 
-        const currentSpeedGPS = parseInt(speedInput.value);
+        // Проверяем существование speedInput перед чтением value
+        const currentSpeedGPS = speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS;
         const intervalTime = gpsToMps(currentSpeedGPS);
         const safeIntervalTime = Math.max(1, intervalTime);
 
@@ -488,8 +490,8 @@ function saveSessionState() {
         return; // Не сохраняем, если нет согласия
     }
      // Проверяем наличие grid перед сохранением
-     if (!grid) {
-        console.error("Cannot save state: grid is missing.");
+     if (!grid || COLS === undefined || ROWS === undefined || speedInput === null) { // Добавлена проверка speedInput
+        console.error("Cannot save state: grid, dimensions, or speedInput are missing.");
         return;
      }
     try {
@@ -506,7 +508,7 @@ function saveSessionState() {
             deadCellColor: deadCellColor,
             gridLineColor: gridLineColor,
             showGridLines: showGridLines,
-            speedGPS: parseInt(speedInput.value),
+            speedGPS: parseInt(speedInput.value), // Уверены, что speedInput не null здесь
             grid: grid.flat()
         };
         const jsonString = JSON.stringify(gameState);
@@ -540,6 +542,12 @@ function loadSessionState() {
         if (!Array.isArray(loadedState.survivalRules) || !loadedState.survivalRules.every(n => typeof n === 'number' && n >= 0 && n <= 8)) { throw new Error(getTranslation('errorInvalidSurvivalRules')); }
         if (!Array.isArray(loadedState.grid) || loadedState.grid.length !== loadedState.cols * loadedState.rows) { throw new Error(getTranslation('errorInvalidGridDataSize', { expected: loadedState.cols * loadedState.rows, found: loadedState.grid.length })); }
 
+        // Валидация скорости
+         if (typeof loadedState.speedGPS !== 'number' || loadedState.speedGPS < MIN_SPEED_GPS) {
+             console.warn("Loaded speedGPS is invalid, using default.");
+             loadedState.speedGPS = DEFAULT_SPEED_GPS;
+         }
+
 
         // --- Применение загруженного состояния ---
         isRunning = false;
@@ -570,15 +578,15 @@ function loadSessionState() {
         liveCellsCount = actualLiveCount;
 
 
-        liveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : liveColorPicker.value;
-        deadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : deadColorPicker.value;
-        gridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : gridColorPicker.value;
-        showGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : toggleGridLines.checked;
+        liveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : (liveColorPicker ? liveColorPicker.value : '#000000');
+        deadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
+        gridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : (gridColorPicker ? gridColorPicker.value : '#cccccc');
+        showGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : (toggleGridLines ? toggleGridLines.checked : true);
 
 
-        const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
-        speedInput.value = loadedSpeedGPS;
-        speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
+        const loadedSpeedGPS = loadedState.speedGPS; // Скорость уже проверена выше
+        if(speedInput) speedInput.value = loadedSpeedGPS;
+        if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
 
 
         drawGrid(grid);
@@ -705,6 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Привязка обработчиков событий КНОПОК ---
     // Теперь, когда DOM готов, ссылки на элементы гарантированно не null
 
+    // Проверяем существование кнопок перед привязкой
     if(startButton) startButton.addEventListener('click', startSimulation);
     if(pauseButton) pauseButton.addEventListener('click', () => {
         isRunning = false;
@@ -782,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
          const MAX_INPUT_GRID_SIZE = 500;
           if (inputVal > MAX_INPUT_GRID_SIZE) {
               inputVal = MAX_INPUT_GRID_SIZE;
-              if(gridWidthInput) gridWidthInput.value = inputVal;
+               if(gridWidthInput) gridWidthInput.value = inputVal;
           }
          if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
     });
@@ -816,8 +825,8 @@ document.addEventListener('DOMContentLoaded', () => {
              if (!isRunning) {
                 isDrawing = true;
                 const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
+                const x = event.clientX - rect.left; // Correct calculation relative to canvas
+                const y = event.clientY - rect.top;  // Correct calculation relative to canvas
                 const col = Math.floor(x / resolution);
                 const row = Math.floor(y / resolution);
 
@@ -831,8 +840,8 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('mousemove', (event) => {
             if (isDrawing && !isRunning) {
                 const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.clientX; // Fix: Use event.clientX and clientY relative to viewport
-                const y = event.clientY - rect.clientY; // Fix: Use event.clientX and clientY relative to viewport
+                const x = event.clientX - rect.left; // Correct calculation relative to canvas
+                const y = event.clientY - rect.top;  // Correct calculation relative to canvas
                 const col = Math.floor(x / resolution);
                 const row = Math.floor(y / resolution);
 
@@ -874,6 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Обработчики кнопок модального окна согласия (проверяем существование кнопок)
+    // ИСПРАВЛЕНО: Привязываются здесь, внутри DOMContentLoaded
     if(acceptConsentButton) {
         acceptConsentButton.addEventListener('click', () => {
             hasConsent = true;
@@ -898,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
      if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => { liveCellColor = event.target.value; drawGrid(grid); });
      if(deadColorPicker) deadColorPicker.addEventListener('input', (event) => { deadCellColor = event.target.value; drawGrid(grid); });
      if(gridColorPicker) gridColorPicker.addEventListener('input', (event) => { gridLineColor = event.target.value; if(showGridLines) { drawGrid(grid); } });
-     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); });
+     if(toggleGridLines) toggleGridLines.addEventListener('change', (event) => { showGridLines = event.target.checked; drawGrid(grid); }); // Исправлена опечатка "Проверка"
 
      if(toggleToroidal) toggleToroidal.addEventListener('change', (event) => { isToroidal = event.target.checked; });
 
@@ -1021,10 +1031,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const loadedGeneration = (typeof loadedState.generation === 'number' && loadedState.generation >= 0) ? loadedState.generation : 0;
                 const calculatedLiveCount = loadedState.grid.reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0);
 
-                const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : '#000000';
-                const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : '#ffffff';
-                const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : '#cccccc';
-                const loadedShowGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : true;
+                const loadedLiveCellColor = (typeof loadedState.liveCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.liveCellColor)) ? loadedState.liveCellColor : (liveColorPicker ? liveColorPicker.value : '#000000');
+                const loadedDeadCellColor = (typeof loadedState.deadCellColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.deadCellColor)) ? loadedState.deadCellColor : (deadColorPicker ? deadColorPicker.value : '#ffffff');
+                const loadedGridLineColor = (typeof loadedState.gridLineColor === 'string' && /^#([0-9A-F]{3}){1,2}$/i.test(loadedState.gridLineColor)) ? loadedState.gridLineColor : (gridColorPicker ? gridColorPicker.value : '#cccccc');
+                const loadedShowGridLines = (typeof loadedState.showGridLines === 'boolean') ? loadedState.showGridLines : (toggleGridLines ? toggleGridLines.checked : true);
                 const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
 
 
