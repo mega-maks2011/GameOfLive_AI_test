@@ -198,7 +198,7 @@ const toggleGridLines = document.getElementById('toggleGridLines'); // В WebGL 
 const gridWidthInput = document.getElementById('gridWidthInput');
 const gridWidthSlider = document.getElementById('gridWidthSlider');
 const gridHeightInput = document.getElementById('gridHeightInput');
-const gridHeightSlider = documentgetElementById('gridHeightSlider');
+const gridHeightSlider = document.getElementById('gridHeightSlider');
 
 const applySizeButton = document.getElementById('applySizeButton');
 const toggleToroidal = document.getElementById('toggleToroidal');
