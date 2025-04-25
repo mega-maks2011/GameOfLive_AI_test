@@ -1,384 +1,262 @@
-/* Сброс базовых стилей для лучшей кроссбраузерности */
+/* Basic reset */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif; /* Используем более стандартный шрифт */
-    background-color: #e9ebee; /* Немного более приятный светлый фон */
-    color: #333; /* Основной цвет текста */
-    line-height: 1.6;
-    display: flex; /* Используем Flexbox для центрирования содержимого */
-    flex-direction: column; /* Элементы располагаются вертикально */
-    align-items: center; /* Центрируем по горизонтали */
-    padding: 20px; /* Внутренний отступ вокруг всего контента */
-    box-sizing: border-box; /* Учитываем padding в общей ширине/высоте */
-    min-height: 100vh; /* Минимальная высота - весь экран */
+    font-family: sans-serif; /* Modern font */
+    background-color: #f0f0f0; /* Light background */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top */
+    min-height: 100vh;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    padding-top: 20px; /* Add some space at the top */
+}
+
+.container {
+    background-color: #ffffff; /* White background for the main container */
+    padding: 20px;
+    border-radius: 8px; /* Slightly rounded container corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center;
+    margin-bottom: 20px; /* Space at the bottom */
 }
 
 h1 {
-    color: #2c3e50; /* Более темный заголовок */
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-align: center;
+    color: #333; /* Darker heading color */
 }
 
 canvas {
-    border: 2px solid #34495e; /* Более выраженная граница */
-    background-color: #ffffff;
-    margin-bottom: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
-    display: block; /* Убираем возможный нижний отступ */
-    max-width: 100%; /* Канвас не будет вылезать за пределы родителя на маленьких экранах */
-    height: auto; /* Сохраняем пропорции */
+    border: 1px solid #ddd; /* Subtle border around canvas */
+    display: block; /* Remove extra space below canvas */
+    margin: 20px auto; /* Center the canvas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Very subtle shadow for canvas */
 }
 
-.language-switcher { /* Стили для переключателя языка */
-    margin-bottom: 15px;
-    font-size: 0.9em;
-    color: #555;
+.controls, .info, .settings-section {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #eee; /* Light border for sections */
+    border-radius: 5px; /* Rounded corners for sections */
+    background-color: #f9f9f9; /* Very light background for sections */
+    text-align: left; /* Align text left within sections */
 }
 
-.language-switcher label {
-    margin-right: 5px;
-}
-
-.language-switcher select {
-    padding: 5px;
-    border: 1px solid #bdc3c7;
-    border-radius: 3px;
-    font-size: 0.9em;
-}
-
-
-.controls {
-    margin-bottom: 20px;
-    display: flex; /* Используем Flexbox для кнопок */
-    flex-wrap: wrap; /* Перенос кнопок на новую строку, если не хватает места */
-    justify-content: center; /* Центрируем кнопки */
-    gap: 10px; /* Промежуток между кнопками */
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
+.controls button,
+.settings-modal button,
+.settings-modal input[type="submit"] {
+    padding: 10px 15px;
+    margin: 5px;
     border: none;
-    border-radius: 5px; /* Скругленные углы кнопок */
-    background-color: #3498db; /* Синий цвет */
+    border-radius: 5px; /* Rounded buttons */
+    cursor: pointer;
+    background-color: #007bff; /* Primary blue color */
     color: white;
-    transition: background-color 0.2s ease; /* Плавное изменение цвета при наведении */
+    font-size: 1em;
+    transition: background-color 0.2s ease; /* Smooth hover transition */
 }
 
-button:hover {
-    background-color: #2980b9; /* Темнее при наведении */
+.controls button:hover,
+.settings-modal button:hover,
+.settings-modal input[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
-button:active {
-    background-color: #1f608f; /* Еще темнее при нажатии */
-}
-
-button:disabled { /* Стиль для неактивных кнопок */
+.controls button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
 }
 
 
-/* Стили для контейнера скорости */
-.settings-container {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #ecf0f1; /* Светлый фон для секции */
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-.settings-container label {
-    font-weight: bold;
-}
-
-.settings-container input[type="number"] {
-    padding: 5px;
-    border: 1px solid #bdc3c7;
-    border-radius: 3px;
-    width: 50px; /* Немного уменьшим ширину поля ввода числа */
-    text-align: center;
-}
-
-.settings-container input[type="range"] {
-    /* Базовый стиль слайдера */
-    -webkit-appearance: none;
-    appearance: none;
-    background: #bdc3c7;
-    border-radius: 5px;
-    height: 8px;
-    outline: none;
-    opacity: 0.7;
-    transition: opacity .2s;
-}
-
-.settings-container input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #3498db;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.settings-container input[type="range"]:hover {
-    opacity: 1;
-}
-
-
-.info {
-    margin-bottom: 15px;
-    font-size: 1.1em;
+.info p {
+    margin: 5px 0;
     color: #555;
-    text-align: center;
 }
 
-p {
-    text-align: center;
-    color: #555;
-    margin-top: 0;
-}
-
-/* Стили для модального окна (контейнер) */
+/* Settings Modal */
 .modal {
-    display: none; /* Скрыто по умолчанию */
-    position: fixed;
-    z-index: 100;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 20px; /* Add padding for smaller screens */
+    box-sizing: border-box; /* Include padding in dimensions */
 }
 
-/* Стили для содержимого модального окна НАСТРОЕК - ОФОРМЛЕНИЕ В СТИЛЕ КОНСОЛИ */
-#settingsModal .modal-content {
-    background-color: #1e1e1e; /* Темный фон */
-    color: #cccccc; /* Светлый текст */
-    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace; /* Моноширинный шрифт */
-    border: 1px solid #007acc; /* Граница в стиле консоли (например, синий акцент) */
-    box-shadow: 0 5px 20px rgba(0, 122, 204, 0.5); /* Тень с акцентным цветом */
-    padding: 20px; /* Отступы */
-    border-radius: 8px; /* Скругление углов */
-    max-width: 600px; /* Максимальная ширина */
-    width: 95%; /* Ширина на маленьких экранах */
-    max-height: 90vh; /* Максимальная высота */
-    overflow-y: auto; /* Прокрутка если контент не помещается */
-    position: relative; /* Для позиционирования кнопки закрытия */
+.modal-content {
+    background-color: #fefefe;
+    padding: 30px; /* More padding */
+    border: 1px solid #888;
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Maximum width */
+    border-radius: 15px; /* *** Более округлые углы для модального окна *** */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Более выраженная тень */
+    position: relative; /* Needed for absolute positioning of the close button */
 }
 
-#settingsModal .modal-content h2 {
-    color: #007acc; /* Цвет заголовка */
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #007acc;
-    padding-bottom: 10px;
-    font-size: 1.5em;
-}
-
-#settingsModal .close-button {
-    color: #cccccc; /* Светлый цвет для крестика */
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    font-size: 24px;
+.close-button {
+    color: #aaa;
+    position: absolute; /* Position relative to modal-content */
+    top: 15px; /* Сдвинуто вниз для лучшего вида с округлыми углами */
+    right: 20px; /* Сдвинуто влево */
+    font-size: 28px;
     font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
     cursor: pointer;
 }
 
-#settingsModal .close-button:hover,
-#settingsModal .close-button:focus {
-    color: #ffffff; /* Белый при наведении */
+.settings-modal h2 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee; /* Separator line */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-
-#settingsModal .setting-section {
-    border-bottom: 1px dashed #333; /* Темная пунктирная линия */
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+.settings-modal .settings-section {
+    margin-bottom: 20px; /* Space between settings sections */
+    padding: 15px; /* More padding inside sections */
 }
 
-#settingsModal .setting-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.settings-modal label {
+    display: inline-block; /* Labels side-by-side with inputs if space allows */
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    width: 180px; /* Немного увеличена ширина для меток */
+    text-align: right; /* Align label text to the right */
+    margin-right: 10px; /* Space between label and input */
+    vertical-align: top; /* Выравнивание по верхнему краю */
 }
 
-#settingsModal .setting-section h3 {
-    color: #cccccc; /* Светлый заголовок секции */
-    margin-top: 5px;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-}
-
-#settingsModal label {
-    color: #9cdcfe; /* Цвет метки (как у строк в консоли) */
-    font-weight: normal;
-    display: inline-block;
-    margin-bottom: 5px;
-    min-width: 160px;
-}
-
-/* Стили для полей ввода и select в секциях настроек */
-#settingsModal input[type="number"],
-#settingsModal input[type="text"],
-#settingsModal input[type="color"],
-#settingsModal select {
-    background-color: #333333; /* Темный фон поля ввода */
-    color: #cccccc; /* Светлый текст */
-    border: 1px solid #555; /* Темная рамка */
-    border-radius: 3px;
-    padding: 5px;
-    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: 1em;
-    margin-right: 5px;
-    box-sizing: border-box;
-}
-
-#settingsModal input[type="checkbox"] {
-    /* Стили чекбокса для темной темы */
-    background-color: #333333;
-    border: 1px solid #555;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-    vertical-align: middle;
-    margin-right: 5px;
-}
-
-#settingsModal input[type="checkbox"]:checked {
-    background-color: #007acc; /* Цвет при отмеченном */
-    border-color: #007acc;
-}
-
-#settingsModal input[type="checkbox"]:checked::after {
-    content: '\2713'; /* Галочка */
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 12px;
-}
-
-
-#settingsModal input[type="color"] {
-    padding: 2px;
-    background-color: #333333;
-    border: 1px solid #555;
-    border-radius: 3px;
-    cursor: pointer;
-    vertical-align: middle;
-}
-
-
-#settingsModal button {
-    background-color: #007acc; /* Цвет кнопок в стиле акцента консоли */
-    color: white;
-    padding: 8px 15px;
+.settings-modal input[type="number"],
+.settings-modal input[type="range"],
+.settings-modal input[type="color"],
+.settings-modal select,
+.settings-modal input[type="text"],
+.settings-modal input[type="file"] {
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-size: 1em;
+    vertical-align: middle; /* Align inputs vertically */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    /* Убрана фиксированная ширина, будет регулироваться контейнером */
 }
 
-#settingsModal button:hover {
-    background-color: #005f99;
+.settings-modal input[type="range"] {
+     vertical-align: middle;
 }
 
-#settingsModal button:active {
-     background-color: #004c80;
+.settings-modal input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
 }
 
-#settingsModal p {
-    color: #888; /* Цвет поясняющего текста */
+.settings-modal .hint {
     font-size: 0.9em;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-/* Стиль для контейнеров управления размером внутри секции */
-#settingsModal .size-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    color: #777;
+    margin-top: -5px; /* Pull hint closer to the element */
     margin-bottom: 10px;
-    flex-wrap: wrap;
+    display: block; /* Ensure hint is on its own line */
+    margin-left: 195px; /* Отступ слева, чтобы выровнять с текстом после меток */
 }
 
-#settingsModal .size-control label {
-    min-width: 150px;
-    margin-bottom: 0;
+/* Корректировка отступа для hints, когда нет label рядом */
+.settings-modal .hint:first-child {
+    margin-left: 0;
 }
 
-#settingsModal .size-control input[type="number"] {
-     width: 50px;
+.settings-modal .button-group {
+    margin-top: 15px;
+    text-align: center; /* Center buttons within the group */
 }
 
-#settingsModal input[type="range"]::-webkit-slider-thumb {
-    background: #007acc; /* Ползунок в акцентном цвете */
+.settings-modal .button-group button {
+    margin: 0 5px; /* Space between buttons */
 }
 
-#settingsModal input[type="range"]::-moz-range-thumb {
-     background: #007acc; /* Ползунок в акцентном цвете для Firefox */
-}
 
-/* Стили для input file */
-#settingsModal input[type="file"] {
-    background-color: #333333;
-    color: #cccccc;
-    border: 1px solid #555;
-    border-radius: 3px;
-    padding: 5px;
-    font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+/* Language Select */
+#languageSelect {
+    margin-top: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 1em;
     cursor: pointer;
-    box-sizing: border-box;
-    width: 100%;
 }
 
-/* Убедимся, что кнопки сохранения/загрузки в модалке занимают всю ширину */
-#settingsModal .setting-section #saveToJsonButton { /* Только кнопка сохранения в файл осталась */
-    display: block;
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 5px;
-    box-sizing: border-box;
+#languageSelect:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-
-/* Стили для раздела Авторы */
-.authors {
-    margin-top: 40px;
+/* Authors Text */
+#authors {
+    margin-top: 20px;
     font-size: 0.9em;
-    color: #555;
-    text-align: center;
-    width: 100%;
+    color: #888;
 }
 
-.authors p {
-    margin: 0;
-    padding: 0;
-    color: #555;
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
 
-/* Стили для МОДАЛЬНОГО ОКНА СОГЛАСИЯ удалены */
+    .controls button,
+    .settings-modal button,
+    .settings-modal input[type="submit"] {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .settings-modal .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+     .settings-modal label {
+         width: 100%; /* Full width labels on smaller screens */
+         text-align: left; /* Left align labels */
+         margin-right: 0;
+         margin-bottom: 5px;
+         vertical-align: top; /* Keep top alignment if content flows */
+     }
+
+     .settings-modal input[type="number"],
+     .settings-modal input[type="range"],
+     .settings-modal input[type="color"],
+     .settings-modal select,
+     .settings-modal input[type="text"],
+     .settings-modal input[type="file"],
+     .settings-modal .hint { /* Adjust hint margin on small screens */
+         width: calc(100% - 18px); /* Full width inputs considering padding/border */
+         margin-left: 0; /* Remove left margin */
+         margin-bottom: 10px;
+     }
+
+
+     .settings-modal .button-group {
+         text-align: left;
+     }
+
+     .settings-modal .button-group button {
+         margin: 5px 5px 5px 0; /* Space below and right */
+     }
+}
