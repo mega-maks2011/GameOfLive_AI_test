@@ -62,6 +62,68 @@ const translations = {
         'errorInvalidBirthRules': 'Invalid birth rules format.',
         'errorInvalidSurvivalRules': 'Invalid survival rules format.',
         'errorInvalidGridDataSize': 'Invalid grid data or size mismatch. Expected {expected} cells, found {found}.',
+    },
+    'ru': {
+        'gameTitle': 'Игра "Жизнь"',
+        'startButton': 'Старт',
+        'pauseButton': 'Пауза',
+        'randomButton': 'Случайно',
+        'clearButton': 'Очистить',
+        'settingsButton': 'Настройки',
+        'speedLabel': 'Скорость (поколений/сек):',
+        'generationLabel': 'Поколение',
+        'liveCellsLabel': 'Живых клеток',
+        'manualDrawHint': 'Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.',
+
+        'settingsModalTitle': 'Настройки',
+        'displaySettingsTitle': 'Отображение',
+        'liveColorLabel': 'Цвет живых клеток:',
+        'deadColorLabel': 'Цвет мертвых клеток:',
+        // Modified label
+        'gridColorLabel': 'Цвет сетки:',
+        // Modified label
+        'showGridLinesLabel': 'Показывать сетку:',
+
+        'sizeSettingsTitle': 'Размер поля и границы',
+        'widthLabel': 'Ширина (клеток):',
+        'heightLabel': 'Высота (клеток):',
+        'toroidalLabel': 'Бесконечное поле (тороидальное):',
+        'applySizeButton': 'Применить размер/границы (очистит поле)',
+
+        'neighborhoodSettingsTitle': 'Правила соседства',
+        'neighborhoodTypeLabel': 'Тип соседства:',
+        'mooreNeighborhood': 'Мур (8 соседей)',
+        'vonneumannNeighborhood': 'Фон Нейман (4 соседа)',
+
+        'rulesSettingsTitle': 'Правила (B/S)',
+        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23',
+        'rulesLabel': 'Правила:',
+        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
+
+        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)',
+        'saveToFileButton': 'Сохранить в файл',
+        'loadFileLabel': 'Загрузить из файла:',
+        'loadFileHint': '(Загрузка файла автоматически применит состояние)',
+
+         'authorsText': 'Авторы: Gemini и M-998',
+
+        // Сообщения для пользователя (всплывающие alert)
+        'alertInvalidSizeInput': 'Пожалуйста, введите корректные положительные числа для ширины и высоты (минимум {minSize}).',
+        'alertNeighborhoodChange': 'Тип соседства изменен на "{type}". Поле сброшено.',
+        'alertRulesUpdated': 'Правила успешно обновлены:\nРождение при {birth} соседях\nВыживание при {survival} соседях.',
+        'alertInvalidRulesFormat': 'Некорректный формат правил. Используйте формат B/S (например "3/23") с цифрами от 0 до 8.',
+        'alertFileLoadSuccess': 'Состояние игры успешно загружено из файла!',
+        'alertFileLoadError': 'Ошибка при загрузке состояния игры из файла: {message}\nПожалуйста, убедитесь, что файл создан этой версией игры.',
+
+        // Валидация error messages
+        'errorInvalidDataFormat': 'Неверный формат данных.',
+        'errorInvalidCols': 'Неверное значение ширины поля.',
+        'errorInvalidRows': 'Неверное значение высоты поля.',
+        'errorInvalidToroidal': 'Неверное значение режима границ.',
+        'errorInvalidNeighborhood': 'Неверное значение типа соседства.',
+        'errorInvalidBirthRules': 'Неверный формат правил рождения.',
+        'errorInvalidSurvivalRules': 'Неверный формат правил выживания.',
+        'errorInvalidGridDataSize': 'Неверные данные сетки или несоответствие размера. Ожидается {expected} клеток, найдено {found}.',
     }
 };
 
@@ -99,7 +161,7 @@ let isRunning = false;
 let isDrawing = false; // Флаг для рисования мышью
 let drawState = 1; // Состояние (0 или 1), в которое мы РИСУЕМ
 let generation = 0; // Текущее поколение
-let liveCellsCount = 0; // Количество живых клеток
+let liveCellsCount = 0;
 
 
 // --- Переменные для WebGL УДАЛЕНЫ ---
@@ -170,9 +232,15 @@ function getTranslation(key, replacements = {}) {
 }
 
 function updateUI_Language() {
-    document.querySelectorAll('[data-lang-key]').forEach(element => {
+    console.log("Updating UI language to:", currentLanguage);
+    const elementsToTranslate = document.querySelectorAll('[data-lang-key]');
+    console.log("Found elements to translate:", elementsToTranslate.length);
+
+    elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-lang-key');
         const translation = getTranslation(key);
+        // Опционально: выводите в консоль каждую примененную локализацию для отладки
+        // console.log(`Translating key "${key}" to "${translation}" for element`, element);
         element.textContent = translation;
     });
 
@@ -223,26 +291,22 @@ function initializeGrid(width, height) {
     updateInfoDisplay();
 
     if (canvas && ctx) {
-        // Размеры канваса в пикселях для 2D Canvas
-        canvas.width = width * resolution;
-        canvas.height = height * resolution;
-
         // Размеры сетки в клетках
         COLS = width;
         ROWS = height;
 
         // Добавляем проверку на корректность размеров
         if (COLS <= 0 || ROWS <= 0) {
-            console.error("Invalid grid dimensions:", { COLS, ROWS });
-            // Можно здесь сбросить на размеры по умолчанию или показать ошибку пользователю
+            console.error("Invalid grid dimensions provided, resetting to default:", { COLS, ROWS });
              // Переинициализируем с размерами по умолчанию, чтобы избежать ошибок
             COLS = DEFAULT_GRID_SIZE;
             ROWS = DEFAULT_GRID_SIZE;
-             canvas.width = COLS * resolution;
-             canvas.height = ROWS * resolution;
              console.warn(`Resetting dimensions to default: ${COLS}x${ROWS}`);
-             // return; // Не возвращаемся, чтобы попытаться создать сетку по умолчанию
         }
+
+         // Устанавливаем размеры канваса в пикселях для 2D Canvas после определения COLS/ROWS
+         canvas.width = COLS * resolution;
+         canvas.height = ROWS * resolution;
 
 
         grid = createGrid(); // Создаем новую сетку данных (массив 0/1)
@@ -399,7 +463,7 @@ function updateInfoDisplay() {
 
 // --- Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas) ---
 function setCellState(col, row, state) {
-     // Проверка на наличие контекста 2D Canvas вместо gl
+     // Проверка на наличие контекста 2D Canvas
      if (ctx && grid && COLS !== undefined && ROWS !== undefined && COLS > 0 && ROWS > 0 && col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
          const currentState = grid[col][row];
          if (currentState !== state) {
@@ -431,7 +495,7 @@ function setCellState(col, row, state) {
 
 // Функция запуска симуляции с учетом скорости (остается прежней, использует nextGeneration и drawGrid)
 function startSimulation() {
-    // Проверяем наличие контекста 2D Canvas вместо gl
+    // Проверяем наличие контекста 2D Canvas
     if (!isRunning && ctx && COLS !== undefined && ROWS !== undefined && COLS > 0 && ROWS > 0) {
         isRunning = true;
         clearInterval(intervalId);
@@ -473,9 +537,7 @@ function initializeGameWithDefaults() {
      if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
     neighborhoodType = 'moore';
 
-     if(rulesInput) rulesInput.value = '3/23'; // Значение правил по умолчанию
-     birthRules = [3];
-     survivalRules = [2, 3];
+     if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Правила по умолчанию
 
      // Устанавливаем начальные цвета и видимость сетки из HTML (теперь актуально для 2D Canvas)
      if(liveColorPicker) liveCellColor = liveColorPicker.value;
@@ -560,10 +622,10 @@ document.addEventListener('DOMContentLoaded', () => {
          if(gridHeightSlider) gridHeightSlider.value = ROWS;
          if(toggleToroidal) toggleToroidal.checked = isToroidal;
          if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
-         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
+         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Используем актуальные правила
          // Цвета в настройках теперь напрямую связаны с переменными, которые используются для 2D отрисовки
          if(liveColorPicker) liveColorPicker.value = liveCellColor;
-         if(deadColorPicker) deadColorPicker.value = deadCellColor;
+         if(deadColorPicker) deadCellColor = deadCellColor;
          if(gridColorPicker) gridColorPicker.value = gridLineColor; // Актуально для 2D
          if(toggleGridLines) toggleGridLines.checked = showGridLines; // Актуально для 2D
 
@@ -631,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas)
      if(canvas) {
         canvas.addEventListener('mousedown', (event) => {
-             // Проверяем наличие контекста 2D Canvas вместо gl
+             // Проверяем наличие контекста 2D Canvas
              if (!isRunning && ctx) {
                 isDrawing = true;
                 const rect = canvas.getBoundingClientRect();
@@ -655,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         canvas.addEventListener('mousemove', (event) => {
-            // Проверяем наличие контекста 2D Canvas вместо gl
+            // Проверяем наличие контекста 2D Canvas
             if (isDrawing && !isRunning && ctx) {
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
@@ -687,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  const modalElement = document.getElementById(modalId);
                  if(modalElement) modalElement.style.display = 'none';
                 // После закрытия модалки, если контекст 2D Canvas готов, перерисовываем сцену
-                if (ctx) {
+                if (ctx && grid) { // Проверяем наличие grid
                      drawGrid(grid); // Отрисовываем на 2D Canvas
                 }
             });
@@ -699,7 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
              // После закрытия модалки, если контекст 2D Canvas готов, перерисовываем сцену
-            if (ctx) {
+            if (ctx && grid) { // Проверяем наличие grid
                  drawGrid(grid); // Отрисовываем на 2D Canvas
             }
         }
@@ -742,11 +804,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const parts = rulesString.split('/');
 
         if (parts.length === 2) {
+            // ИСПРАВЛЕНО: Использовать parts[0] и parts[1]
             const birthPart = parts[0].trim();
             const survivalPart = parts[1].trim();
 
-            const newBirthRules = birthRulesString.split('').map(Number).filter(n => !isNaN(n)); // ОШИБКА: birthRulesString не определен
-            const newSurvivalRules = survivalRulesString.split('').map(Number).filter(n => !isNaN(n)); // ОШИБКА: survivalRulesString не определен
+            const newBirthRules = birthPart.split('').map(Number).filter(n => !isNaN(n));
+            const newSurvivalRules = survivalPart.split('').map(Number).filter(n => !isNaN(n));
 
             const isValidRuleSet = (rules) => rules.every(rule => rule >= 0 && rule <= 8);
 
