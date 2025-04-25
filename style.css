@@ -2,43 +2,46 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif; /* Modern font */
-    background-color: #f0f0f0; /* Light background */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align to top */
+    font-family: sans-serif; /* Современный шрифт без засечек */
+    font-size: 1.125rem; /* Увеличиваем базовый размер шрифта (1.125rem = 18px при стандартных 16px) */
+    background-color: #f0f0f0; /* Светлый фон */
+    /* Удалены flexbox свойства для вертикальной ориентации */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: flex-start; */
     min-height: 100vh;
-    overflow-y: auto; /* Allow scrolling if content overflows */
-    padding-top: 20px; /* Add some space at the top */
+    overflow-y: auto; /* Разрешить прокрутку, если контент не помещается */
+    padding-top: 20px; /* Отступ сверху */
 }
 
 .container {
-    background-color: #ffffff; /* White background for the main container */
+    background-color: #ffffff; /* Белый фон основного контейнера */
     padding: 20px;
-    border-radius: 8px; /* Slightly rounded container corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    text-align: center;
-    margin-bottom: 20px; /* Space at the bottom */
+    border-radius: 8px; /* Слегка округлые углы контейнера */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    text-align: center; /* Выравнивание содержимого по центру (для строчных элементов и текста) */
+    margin: 20px auto; /* Центрирование блочного контейнера по горизонтали с вертикальным отступом */
+    max-width: 800px; /* Ограничение максимальной ширины контейнера */
 }
 
 h1 {
-    color: #333; /* Darker heading color */
+    color: #333; /* Темный цвет заголовка */
 }
 
 canvas {
-    border: 1px solid #ddd; /* Subtle border around canvas */
-    display: block; /* Remove extra space below canvas */
-    margin: 20px auto; /* Center the canvas */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Very subtle shadow for canvas */
+    border: 1px solid #ddd; /* Тонкая рамка вокруг канваса */
+    display: block; /* Убрать лишнее пространство под канвасом */
+    margin: 20px auto; /* Центрировать канвас и добавить отступы */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Очень легкая тень для канваса */
 }
 
 .controls, .info, .settings-section {
     margin-top: 15px;
     padding: 10px;
-    border: 1px solid #eee; /* Light border for sections */
-    border-radius: 5px; /* Rounded corners for sections */
-    background-color: #f9f9f9; /* Very light background for sections */
-    text-align: left; /* Align text left within sections */
+    border: 1px solid #eee; /* Легкая рамка для секций */
+    border-radius: 5px; /* Округлые углы для секций */
+    background-color: #f9f9f9; /* Очень светлый фон для секций */
+    text-align: left; /* Выравнивание текста влево внутри секций */
 }
 
 .controls button,
@@ -47,18 +50,18 @@ canvas {
     padding: 10px 15px;
     margin: 5px;
     border: none;
-    border-radius: 5px; /* Rounded buttons */
+    border-radius: 5px; /* Округлые кнопки */
     cursor: pointer;
-    background-color: #007bff; /* Primary blue color */
+    background-color: #007bff; /* Основной синий цвет */
     color: white;
-    font-size: 1em;
-    transition: background-color 0.2s ease; /* Smooth hover transition */
+    font-size: 1em; /* Размер шрифта относительно родителя (controls) */
+    transition: background-color 0.2s ease; /* Плавный переход при наведении */
 }
 
 .controls button:hover,
 .settings-modal button:hover,
 .settings-modal input[type="submit"]:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3; /* Более темный синий при наведении */
 }
 
 .controls button:disabled {
@@ -74,36 +77,38 @@ canvas {
 
 /* Settings Modal */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Фиксированное положение */
+    z-index: 1; /* Поверх всего */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    padding: 20px; /* Add padding for smaller screens */
-    box-sizing: border-box; /* Include padding in dimensions */
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    overflow: auto; /* Прокрутка, если контент не помещается */
+    background-color: rgba(0,0,0,0.4); /* Черный с прозрачностью */
+    /* Используем flexbox для центрирования модального окна по центру экрана */
+    display: flex; /* Делаем flex-контейнером */
+    justify-content: center; /* Центрируем содержимое по горизонтали */
+    align-items: center; /* Центрируем содержимое по вертикали */
+    padding: 20px; /* Добавляем отступы для маленьких экранов */
+    box-sizing: border-box; /* Учитываем отступы в размерах */
 }
 
 .modal-content {
     background-color: #fefefe;
-    padding: 30px; /* More padding */
+    padding: 30px; /* Увеличенные отступы внутри */
     border: 1px solid #888;
-    width: 90%; /* Responsive width */
-    max-width: 600px; /* Maximum width */
+    width: 90%; /* Отзывчивая ширина */
+    max-width: 600px; /* Максимальная ширина */
     border-radius: 15px; /* *** Более округлые углы для модального окна *** */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Более выраженная тень */
-    position: relative; /* Needed for absolute positioning of the close button */
+    position: relative; /* Для абсолютного позиционирования кнопки закрытия */
 }
 
 .close-button {
     color: #aaa;
-    position: absolute; /* Position relative to modal-content */
-    top: 15px; /* Сдвинуто вниз для лучшего вида с округлыми углами */
+    position: absolute; /* Позиция относительно modal-content */
+    top: 15px; /* Сдвинуто вниз */
     right: 20px; /* Сдвинуто влево */
     font-size: 28px;
     font-weight: bold;
@@ -120,24 +125,24 @@ canvas {
 .settings-modal h2 {
     margin-top: 0;
     color: #333;
-    border-bottom: 1px solid #eee; /* Separator line */
+    border-bottom: 1px solid #eee; /* Линия-разделитель */
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
 .settings-modal .settings-section {
-    margin-bottom: 20px; /* Space between settings sections */
-    padding: 15px; /* More padding inside sections */
+    margin-bottom: 20px; /* Отступ между секциями настроек */
+    padding: 15px; /* Отступы внутри секций */
 }
 
 .settings-modal label {
-    display: inline-block; /* Labels side-by-side with inputs if space allows */
+    display: inline-block; /* Метки рядом с полями ввода */
     margin-bottom: 8px;
     font-weight: bold;
     color: #555;
-    width: 180px; /* Немного увеличена ширина для меток */
-    text-align: right; /* Align label text to the right */
-    margin-right: 10px; /* Space between label and input */
+    width: 180px; /* Фиксированная ширина меток */
+    text-align: right; /* Выравнивание текста меток справа */
+    margin-right: 10px; /* Отступ между меткой и полем ввода */
     vertical-align: top; /* Выравнивание по верхнему краю */
 }
 
@@ -151,10 +156,9 @@ canvas {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 1em;
-    vertical-align: middle; /* Align inputs vertically */
-    box-sizing: border-box; /* Include padding/border in element's total width/height */
-    /* Убрана фиксированная ширина, будет регулироваться контейнером */
+    font-size: 1em; /* Размер шрифта относительно родителя (modal-content) */
+    vertical-align: middle; /* Выравнивание полей ввода по середине */
+    box-sizing: border-box; /* Учитываем отступы и рамку в размерах */
 }
 
 .settings-modal input[type="range"] {
@@ -167,12 +171,12 @@ canvas {
 }
 
 .settings-modal .hint {
-    font-size: 0.9em;
+    font-size: 0.9em; /* Размер шрифта подсказки немного меньше */
     color: #777;
-    margin-top: -5px; /* Pull hint closer to the element */
+    margin-top: -5px; /* Прижать подсказку к элементу */
     margin-bottom: 10px;
-    display: block; /* Ensure hint is on its own line */
-    margin-left: 195px; /* Отступ слева, чтобы выровнять с текстом после меток */
+    display: block; /* Подсказка на отдельной строке */
+    margin-left: 195px; /* Отступ слева, чтобы выровнять с текстом после меток (180px label + 10px margin + 5px padding input/margin) */
 }
 
 /* Корректировка отступа для hints, когда нет label рядом */
@@ -182,11 +186,11 @@ canvas {
 
 .settings-modal .button-group {
     margin-top: 15px;
-    text-align: center; /* Center buttons within the group */
+    text-align: center; /* Центрировать кнопки в группе */
 }
 
 .settings-modal .button-group button {
-    margin: 0 5px; /* Space between buttons */
+    margin: 0 5px; /* Отступ между кнопками */
 }
 
 
@@ -196,7 +200,7 @@ canvas {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 1em;
+    font-size: 1em; /* Размер шрифта относительно родителя */
     cursor: pointer;
 }
 
@@ -209,7 +213,7 @@ canvas {
 /* Authors Text */
 #authors {
     margin-top: 20px;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Размер шрифта для авторов */
     color: #888;
 }
 
@@ -217,6 +221,7 @@ canvas {
 @media (max-width: 768px) {
     .container {
         padding: 15px;
+        margin: 15px auto; /* Уменьшаем отступы на маленьких экранах */
     }
 
     .controls button,
@@ -232,11 +237,11 @@ canvas {
     }
 
      .settings-modal label {
-         width: 100%; /* Full width labels on smaller screens */
-         text-align: left; /* Left align labels */
+         width: 100%; /* Метки на всю ширину на маленьких экранах */
+         text-align: left; /* Выравнивание меток слева */
          margin-right: 0;
          margin-bottom: 5px;
-         vertical-align: top; /* Keep top alignment if content flows */
+         vertical-align: top; /* Выравнивание по верхнему краю */
      }
 
      .settings-modal input[type="number"],
@@ -245,18 +250,18 @@ canvas {
      .settings-modal select,
      .settings-modal input[type="text"],
      .settings-modal input[type="file"],
-     .settings-modal .hint { /* Adjust hint margin on small screens */
-         width: calc(100% - 18px); /* Full width inputs considering padding/border */
-         margin-left: 0; /* Remove left margin */
+     .settings-modal .hint { /* Корректируем отступы и ширину для полей ввода и подсказок */
+         width: calc(100% - 18px); /* Ширина полей ввода с учетом отступов/рамки */
+         margin-left: 0; /* Убираем левый отступ */
          margin-bottom: 10px;
      }
 
 
      .settings-modal .button-group {
-         text-align: left;
+         text-align: left; /* Выравнивание кнопок влево на маленьких экранах */
      }
 
      .settings-modal .button-group button {
-         margin: 5px 5px 5px 0; /* Space below and right */
+         margin: 5px 5px 5px 0; /* Отступ снизу и справа */
      }
 }
