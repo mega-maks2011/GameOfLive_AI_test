@@ -16,7 +16,6 @@ const translations = {
         'displaySettingsTitle': 'Display',
         'liveColorLabel': 'Live cell color:',
         'deadColorLabel': 'Dead cell color:',
-        // Метки цвета и видимости сетки теперь снова актуальны для 2D Canvas
         'gridColorLabel': 'Grid line color:',
         'showGridLinesLabel': 'Show grid lines:',
 
@@ -50,18 +49,6 @@ const translations = {
         'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
         'alertFileLoadSuccess': 'Game state successfully loaded from file!',
         'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
-        // Сообщение об ошибке WebGL теперь не нужно
-        // 'errorWebGLNotSupported': 'Your browser does not support WebGL.',
-
-        // Validation error messages
-        'errorInvalidDataFormat': 'Invalid data format.',
-        'errorInvalidCols': 'Invalid field width value.',
-        'errorInvalidRows': 'Invalid field height value.',
-        'errorInvalidToroidal': 'Invalid border mode value.',
-        'errorInvalidNeighborhood': 'Invalid neighborhood type value.',
-        'errorInvalidBirthRules': 'Invalid birth rules format.',
-        'errorInvalidSurvivalRules': 'Invalid survival rules format.',
-        'errorInvalidGridDataSize': 'Invalid grid data or size mismatch. Expected {expected} cells, found {found}.',
     },
     'ru': {
         'gameTitle': 'Игра "Жизнь"',
@@ -79,9 +66,7 @@ const translations = {
         'displaySettingsTitle': 'Отображение',
         'liveColorLabel': 'Цвет живых клеток:',
         'deadColorLabel': 'Цвет мертвых клеток:',
-        // Modified label
         'gridColorLabel': 'Цвет сетки:',
-        // Modified label
         'showGridLinesLabel': 'Показывать сетку:',
 
         'sizeSettingsTitle': 'Размер поля и границы',
@@ -136,6 +121,7 @@ const MIN_GRID_SIZE = 10; // Минимальные/максимальные з�
 const MAX_GRID_SIZE_SLIDER = 200;
 const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
+// Определяем начальный язык. Сначала из localStorage, затем из языка браузера, по умолчанию английский.
 let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
 
 // Цвета и видимость сетки теперь снова используются напрямую для отрисовки
@@ -162,16 +148,6 @@ let isDrawing = false; // Флаг для рисования мышью
 let drawState = 1; // Состояние (0 или 1), в которое мы РИСУЕМ
 let generation = 0; // Текущее поколение
 let liveCellsCount = 0;
-
-
-// --- Переменные для WebGL УДАЛЕНЫ ---
-// let gl = null;
-// let shaderProgram = null;
-// let vertexBuffer = null;
-// let texture = null;
-// let liveColorUniformLocation = null;
-// let deadColorUniformLocation = null;
-// let textureSamplerLocation = null;
 
 
 // --- Получение ссылок на элементы (до DOMContentLoaded) ---
@@ -235,6 +211,9 @@ function updateUI_Language() {
     console.log("Updating UI language to:", currentLanguage);
     const elementsToTranslate = document.querySelectorAll('[data-lang-key]');
     console.log("Found elements to translate:", elementsToTranslate.length);
+    // Напоминание: Убедитесь, что ваши HTML элементы имеют атрибут data-lang-key,
+    // соответствующий ключам в объекте translations, чтобы локализация работала.
+
 
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-lang-key');
@@ -261,7 +240,7 @@ function updateUI_Language() {
      if (gridColorLabelElement) gridColorLabelElement.textContent = getTranslation('gridColorLabel');
      if (showGridLinesLabelElement) showGridLinesLabelElement.textContent = getTranslation('showGridLinesLabel');
 
-     // Элементы управления сеткой снова видимы
+     // Элементы управления сеткой снова видимы (удалены WebGL-специфичные display: none)
      if (gridColorPickerElement) gridColorPickerElement.style.display = '';
      if (toggleGridLinesElement) toggleGridLinesElement.style.display = '';
      if (gridColorLabelElement) gridColorLabelElement.style.display = '';
@@ -270,6 +249,7 @@ function updateUI_Language() {
 
 function setLanguagePreference(lang) {
     currentLanguage = lang;
+    localStorage.setItem('preferredLanguage', lang); // Сохраняем выбор пользователя
     updateUI_Language();
 }
 
@@ -624,8 +604,8 @@ document.addEventListener('DOMContentLoaded', () => {
          if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
          if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Используем актуальные правила
          // Цвета в настройках теперь напрямую связаны с переменными, которые используются для 2D отрисовки
-         if(liveColorPicker) liveColorPicker.value = liveCellColor;
-         if(deadColorPicker) deadCellColor = deadCellColor;
+         if(liveColorPicker) liveCellColor = liveColorPicker.value;
+         if(deadColorPicker) deadColorPicker.value = deadCellColor;
          if(gridColorPicker) gridColorPicker.value = gridLineColor; // Актуально для 2D
          if(toggleGridLines) toggleGridLines.checked = showGridLines; // Актуально для 2D
 
@@ -768,6 +748,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Обработчики смены цвета в настройках (теперь напрямую влияют на отрисовку 2D Canvas)
+    if(liveColorPicker) liveCellColor = liveColorPicker.value;
+    if(deadColorPicker) deadCellColor = deadColorPicker.value;
+    if(gridColorPicker) gridLineColor = gridColorPicker.value; // Цвет сетки
+    if(toggleGridLines) showGridLines = toggleGridLines.checked; // Состояние чекбокса сетки
+
+
     if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => {
         liveCellColor = event.target.value;
         if (ctx && grid) drawGrid(grid); // Перерисовываем при смене цвета на 2D Canvas
@@ -804,7 +790,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const parts = rulesString.split('/');
 
         if (parts.length === 2) {
-            // ИСПРАВЛЕНО: Использовать parts[0] и parts[1]
             const birthPart = parts[0].trim();
             const survivalPart = parts[1].trim();
 
