@@ -32,8 +32,8 @@ const translations = {
 
         'rulesSettingsTitle': 'Rules (B/S)',
         'rulesFormatHint': 'Format: B (birth) / S (survival). E.g., for standard Life: 3/23',
-        'rulesLabel': 'Rules:',
-        'applyRulesButton': 'Apply Rules (resets simulation)',
+        'rulesLabel': 'Правила:',
+        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
 
         'saveLoadTitle': 'Save / Load (JSON File)',
         'saveToFileButton': 'Save to File',
@@ -99,16 +99,6 @@ const translations = {
         'alertInvalidRulesFormat': 'Некорректный формат правил. Используйте формат B/S (например "3/23") с цифрами от 0 до 8.',
         'alertFileLoadSuccess': 'Состояние игры успешно загружено из файла!',
         'alertFileLoadError': 'Ошибка при загрузке состояния игры из файла: {message}\nПожалуйста, убедитесь, что файл создан этой версией игры.',
-
-        // Валидация error messages
-        'errorInvalidDataFormat': 'Неверный формат данных.',
-        'errorInvalidCols': 'Неверное значение ширины поля.',
-        'errorInvalidRows': 'Неверное значение высоты поля.',
-        'errorInvalidToroidal': 'Неверное значение режима границ.',
-        'errorInvalidNeighborhood': 'Неверное значение типа соседства.',
-        'errorInvalidBirthRules': 'Неверный формат правил рождения.',
-        'errorInvalidSurvivalRules': 'Неверный формат правил выживания.',
-        'errorInvalidGridDataSize': 'Неверные данные сетки или несоответствие размера. Ожидается {expected} клеток, найдено {found}.',
     }
 };
 
@@ -219,7 +209,7 @@ function updateUI_Language() {
         const key = element.getAttribute('data-lang-key');
         const translation = getTranslation(key);
         // Опционально: выводите в консоль каждую примененную локализацию для отладки
-        // console.log(`Translating key "${key}" to "${translation}" for element`, element);
+        // console.log(`Translating key "${key}" to "${translation}" для элемента`, element);
         element.textContent = translation;
     });
 
@@ -249,7 +239,7 @@ function updateUI_Language() {
 
 function setLanguagePreference(lang) {
     currentLanguage = lang;
-    localStorage.setItem('preferredLanguage', lang); // Сохраняем выбор пользователя
+    // localStorage.setItem('preferredLanguage', lang); // Убрано сохранение в localStorage
     updateUI_Language();
 }
 
@@ -394,7 +384,7 @@ function nextGeneration(grid) {
                     let x_cell = col + i;
                     let y_cell = row + j;
 
-                    if (isToroidal) {
+                    if (isToroidal) { // Используем актуальное значение isToroidal
                          x_cell = (x_cell % COLS + COLS) % COLS;
                          y_cell = (y_cell % ROWS + ROWS) % ROWS;
                     } else {
@@ -456,13 +446,13 @@ function setCellState(col, row, state) {
              }
 
              // Отрисовываем только измененную клетку на 2D Canvas
-             const color = state === 1 ? liveCellColor : deadCellColor;
+             const color = state === 1 ? liveCellColor : deadCellColor; // Используем актуальные цвета
              ctx.fillStyle = color;
              ctx.fillRect(col * resolution, row * resolution, resolution, resolution);
 
              // Если сетка видна, отрисовываем границы вокруг измененной клетки
-             if (showGridLines) {
-                 ctx.strokeStyle = gridLineColor;
+             if (showGridLines) { // Используем актуальное значение showGridLines
+                 ctx.strokeStyle = gridLineColor; // Используем актуальный цвет сетки
                  ctx.strokeRect(col * resolution, row * resolution, resolution, resolution);
              }
 
@@ -476,11 +466,11 @@ function setCellState(col, row, state) {
 // Функция запуска симуляции с учетом скорости (остается прежней, использует nextGeneration и drawGrid)
 function startSimulation() {
     // Проверяем наличие контекста 2D Canvas
-    if (!isRunning && ctx && COLS !== undefined && ROWS !== undefined && COLS > 0 && ROWS > 0) {
+    if (!isRunning && ctx && grid && COLS !== undefined && ROWS !== undefined && COLS > 0 && ROWS > 0) {
         isRunning = true;
         clearInterval(intervalId);
 
-        const currentSpeedGPS = speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS;
+        const currentSpeedGPS = speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS; // Используем актуальное значение скорости
         const intervalTime = gpsToMps(currentSpeedGPS);
         const safeIntervalTime = Math.max(1, intervalTime);
 
@@ -489,7 +479,10 @@ function startSimulation() {
         }, safeIntervalTime);
     } else if (!ctx) {
          console.warn("Cannot start simulation: 2D Canvas context not initialized.");
-    } else {
+    } else if (!grid) {
+         console.warn("Cannot start simulation: Grid is not initialized.");
+    }
+    else {
          console.warn("Cannot start simulation: Grid dimensions are invalid.", {COLS, ROWS});
     }
 }
@@ -502,7 +495,9 @@ function initializeGameWithDefaults() {
     // Инициализируем игру с параметрами по умолчанию
     initializeGrid(DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE);
 
-    // Устанавливаем начальные значения для всех элементов управления
+    // Устанавливаем начальные значения для всех элементов управления интерфейса настроек
+    // Переменные игры (цвета, правила, тороидальность, соседство) уже инициализированы в начале скрипта
+    // или будут обновлены обработчиками событий при взаимодействии пользователя
      if(speedInput) speedInput.value = DEFAULT_SPEED_GPS;
      if(speedSlider) speedSlider.value = DEFAULT_SPEED_GPS;
 
@@ -511,19 +506,19 @@ function initializeGameWithDefaults() {
      if(gridHeightInput) gridHeightInput.value = ROWS;
      if(gridHeightSlider) gridHeightSlider.value = ROWS;
 
+     // Начальные значения для тороидальности и соседства уже заданы в глобальных переменных.
+     // Их состояние в UI будет обновлено при открытии модалки или здесь.
      if(toggleToroidal) toggleToroidal.checked = isToroidal;
-    isToroidal = false;
-
      if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
-    neighborhoodType = 'moore';
 
      if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Правила по умолчанию
 
-     // Устанавливаем начальные цвета и видимость сетки из HTML (теперь актуально для 2D Canvas)
-     if(liveColorPicker) liveCellColor = liveColorPicker.value;
-     if(deadColorPicker) deadCellColor = deadColorPicker.value;
+     // Начальные цвета и видимость сетки уже заданы в глобальных переменных.
+     // Их состояние в UI будет обновлено при открытии модалки или здесь.
+     if(liveColorPicker) liveColorPicker.value = liveCellColor;
+     if(deadColorPicker) deadCellColor = deadCellColor;
      if(gridColorPicker) gridLineColor = gridColorPicker.value;
-     if(toggleGridLines) showGridLines = toggleGridLines.checked;
+     if(toggleGridLines) toggleGridLines.checked = showGridLines;
 
 
      updateUI_Language(); // Обновляем UI, включая метки сетки (теперь снова видимы)
@@ -533,12 +528,9 @@ function initializeGameWithDefaults() {
 // --- Инициализация игры при загрузке страницы (возвращена к 2D Canvas) ---
 function initializeGameOnLoad() {
     // Инициализация игры с параметрами по умолчанию на 2D Canvas
-    if (canvas && ctx) {
-        initializeGameWithDefaults();
-    } else {
-        console.error("Canvas or 2D rendering context not available on page load.");
-        // Возможно, показать сообщение об ошибке пользователю
-    }
+    // initializeGameWithDefaults теперь вызывает initializeGrid
+    initializeGameWithDefaults();
+
 
     updateUI_Language(); // Обновляем язык интерфейса
      // Привязка всех обработчиков событий происходит в DOMContentLoaded
@@ -595,30 +587,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if(settingsButton) settingsButton.addEventListener('click', () => {
         isRunning = false; clearInterval(intervalId);
          if(settingsModal) settingsModal.style.display = 'flex';
-        // Обновляем значения полей в модалке
+        // Обновляем значения полей в модалке ПЕРЕД ее открытием,
+        // чтобы они отражали текущие активные настройки игры
          if(gridWidthInput) gridWidthInput.value = COLS;
          if(gridWidthSlider) gridWidthSlider.value = COLS;
          if(gridHeightInput) gridHeightInput.value = ROWS;
          if(gridHeightSlider) gridHeightSlider.value = ROWS;
-         if(toggleToroidal) toggleToroidal.checked = isToroidal;
-         if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
-         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Используем актуальные правила
-         // Цвета в настройках теперь напрямую связаны с переменными, которые используются для 2D отрисовки
-         if(liveColorPicker) liveCellColor = liveColorPicker.value;
-         if(deadColorPicker) deadColorPicker.value = deadCellColor;
-         if(gridColorPicker) gridColorPicker.value = gridLineColor; // Актуально для 2D
-         if(toggleGridLines) toggleGridLines.checked = showGridLines; // Актуально для 2D
+         if(toggleToroidal) toggleToroidal.checked = isToroidal; // Обновляем состояние чекбокса
+         if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType; // Обновляем выбранный тип соседства
+         if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Обновляем поле правил
+         if(liveColorPicker) liveColorPicker.value = liveCellColor; // Обновляем цвет в color picker
+         if(deadColorPicker) deadColorPicker.value = deadCellColor; // Обновляем цвет в color picker
+         if(gridColorPicker) gridColorPicker.value = gridLineColor; // Обновляем цвет сетки в color picker
+         if(toggleGridLines) toggleGridLines.checked = showGridLines; // Обновляем состояние чекбокса сетки
 
          if(loadFromJsonInput) loadFromJsonInput.value = ''; // Сбрасываем поле выбора файла
     });
 
 
-    // Обработчики синхронизации полей ввода/слайдеров
+    // Обработчики синхронизации полей ввода/слайдеров СКОРОСТИ
     if(speedSlider) speedSlider.addEventListener('input', () => {
         const sliderSpeed = parseInt(speedSlider.value);
         if(speedInput) speedInput.value = sliderSpeed;
+        // Скорость применяется при следующем запуске симуляции или сразу, если симуляция уже идет
         if (isRunning) {
-            startSimulation();
+            startSimulation(); // Перезапускаем с новой скоростью
         }
     });
      if(speedInput) speedInput.addEventListener('input', () => {
@@ -627,53 +620,63 @@ document.addEventListener('DOMContentLoaded', () => {
             inputSpeed = MIN_SPEED_GPS;
              if(speedInput) speedInput.value = inputSpeed;
         }
-         if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, inputSpeed));
+         // Ограничиваем значение input максимальной скоростью слайдера при вводе
+         if(inputSpeed > MAX_SPEED_GPS) {
+             inputSpeed = MAX_SPEED_GPS;
+             if(speedInput) speedInput.value = inputSpeed;
+         }
+         if(speedSlider) speedSlider.value = inputSpeed; // Синхронизируем слайдер
+        // Скорость применяется при следующем запуске симуляции или сразу, если симуляция уже идет
         if (isRunning) {
-            startSimulation();
+            startSimulation(); // Перезапускаем с новой скоростью
         }
     });
 
+    // Обработчики синхронизации полей ввода/слайдеров ШИРИНЫ СЕТКИ
     if(gridWidthInput) gridWidthInput.addEventListener('input', () => {
         let inputVal = parseInt(gridWidthInput.value);
          if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
              inputVal = MIN_GRID_SIZE;
              if(gridWidthInput) gridWidthInput.value = inputVal;
         }
-         const MAX_INPUT_GRID_SIZE = 500;
+          const MAX_INPUT_GRID_SIZE = 500; // Максимальное значение для поля ввода ширины
           if (inputVal > MAX_INPUT_GRID_SIZE) {
               inputVal = MAX_INPUT_GRID_SIZE;
                if(gridWidthInput) gridWidthInput.value = inputVal;
           }
+         // Синхронизируем слайдер, ограничивая его значениями MIN_GRID_SIZE и MAX_GRID_SIZE_SLIDER
          if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
     });
     if(gridWidthSlider) gridWidthSlider.addEventListener('input', () => {
         const sliderVal = parseInt(gridWidthSlider.value);
-        if(gridWidthInput) gridWidthInput.value = sliderVal;
+        if(gridWidthInput) gridWidthInput.value = sliderVal; // Синхронизируем поле ввода
     });
 
+    // Обработчики синхронизации полей ввода/слайдеров ВЫСОТЫ СЕТКИ
     if(gridHeightInput) gridHeightInput.addEventListener('input', () => {
         let inputVal = parseInt(gridHeightInput.value);
          if (isNaN(inputVal) || inputVal < MIN_GRID_SIZE) {
              inputVal = MIN_GRID_SIZE;
              if(gridHeightInput) gridHeightInput.value = inputVal;
         }
-          const MAX_INPUT_GRID_SIZE = 500;
+          const MAX_INPUT_GRID_SIZE = 500; // Максимальное значение для поля ввода высоты
           if (inputVal > MAX_INPUT_GRID_SIZE) {
               inputVal = MAX_INPUT_GRID_SIZE;
                if(gridHeightInput) gridHeightInput.value = inputVal;
           }
+         // Синхронизируем слайдер, ограничивая его значениями MIN_GRID_SIZE и MAX_GRID_SIZE_SLIDER
          if(gridHeightSlider) gridHeightSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, inputVal));
     });
     if(gridHeightSlider) gridHeightSlider.addEventListener('input', () => {
         const sliderVal = parseInt(gridHeightSlider.value);
-        if(gridHeightInput) gridHeightInput.value = sliderVal;
+        if(gridHeightInput) gridHeightInput.value = sliderVal; // Синхронизируем поле ввода
     });
 
 
     // Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas)
      if(canvas) {
         canvas.addEventListener('mousedown', (event) => {
-             // Проверяем наличие контекста 2D Canvas
+             // Проверяем наличие контекста 2D Canvas и что игра не запущена
              if (!isRunning && ctx) {
                 isDrawing = true;
                 const rect = canvas.getBoundingClientRect();
@@ -686,6 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+                     // Определяем состояние, в которое будем рисовать (инвертируем текущее состояние клетки)
                      drawState = grid[col][row] === 1 ? 0 : 1;
                      setCellState(col, row, drawState); // setCellState теперь обновляет 2D Canvas
                 } else {
@@ -693,11 +697,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
              } else if (!ctx) {
                   console.warn("Mouse down ignored: 2D Canvas context not initialized.");
+             } else if (isRunning) {
+                 // Опционально: показать сообщение, что рисование доступно только на паузе
+                 // console.log("Manual drawing is only available when the simulation is paused.");
              }
         });
 
         canvas.addEventListener('mousemove', (event) => {
-            // Проверяем наличие контекста 2D Canvas
+            // Рисование только если кнопка мыши зажата И игра на паузе И контекст готов
             if (isDrawing && !isRunning && ctx) {
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
@@ -705,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const col = Math.floor(x / resolution);
                 const row = Math.floor(y / resolution);
 
-                // Проверяем, что координаты внутри сетки и состояние клетки изменилось
+                // Проверяем, что координаты внутри сетки и состояние клетки отличается от drawState
                 if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
                      setCellState(col, row, drawState); // setCellState теперь обновляет 2D Canvas
                 }
@@ -725,35 +732,32 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModalButtons.forEach(button => {
          if(button) {
             button.addEventListener('click', () => {
-                const modalId = button.dataset.modal;
-                 const modalElement = document.getElementById(modalId);
-                 if(modalElement) modalElement.style.display = 'none';
-                // После закрытия модалки, если контекст 2D Canvas готов, перерисовываем сцену
-                if (ctx && grid) { // Проверяем наличие grid
-                     drawGrid(grid); // Отрисовываем на 2D Canvas
-                }
+                // Находим ближайший родительский элемент с классом modal
+                const modalElement = button.closest('.modal');
+                 if(modalElement) {
+                     modalElement.style.display = 'none';
+                      // После закрытия модалки, если контекст 2D Canvas и сетка готовы, перерисовываем сцену
+                     if (ctx && grid) {
+                          drawGrid(grid); // Отрисовываем на 2D Canvas (нужно для применения цветов, если они изменились)
+                     }
+                 }
             });
          }
     });
 
      // Обработчик клика вне модалок
     window.addEventListener('click', (event) => {
+        // Проверяем, был ли клик непосредственно по элементу с классом modal (полупрозрачный фон)
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
-             // После закрытия модалки, если контекст 2D Canvas готов, перерисовываем сцену
-            if (ctx && grid) { // Проверяем наличие grid
-                 drawGrid(grid); // Отрисовываем на 2D Canvas
+             // После закрытия модалки, если контекст 2D Canvas и сетка готовы, перерисовываем сцену
+            if (ctx && grid) {
+                 drawGrid(grid); // Отрисовываем на 2D Canvas (нужно для применения цветов)
             }
         }
     });
 
-    // Обработчики смены цвета в настройках (теперь напрямую влияют на отрисовку 2D Canvas)
-    if(liveColorPicker) liveCellColor = liveColorPicker.value;
-    if(deadColorPicker) deadCellColor = deadColorPicker.value;
-    if(gridColorPicker) gridLineColor = gridColorPicker.value; // Цвет сетки
-    if(toggleGridLines) showGridLines = toggleGridLines.checked; // Состояние чекбокса сетки
-
-
+    // Обработчики смены ЦВЕТА в настройках (теперь напрямую влияют на отрисовку 2D Canvas)
     if(liveColorPicker) liveColorPicker.addEventListener('input', (event) => {
         liveCellColor = event.target.value;
         if (ctx && grid) drawGrid(grid); // Перерисовываем при смене цвета на 2D Canvas
@@ -772,14 +776,42 @@ document.addEventListener('DOMContentLoaded', () => {
          if(ctx && grid) drawGrid(grid); // Перерисовываем при изменении видимости сетки
     });
 
+    // Обработчик изменения ТИПА СОСЕДСТВА
+    if(neighborhoodSelect) {
+        neighborhoodSelect.addEventListener('change', (event) => {
+            neighborhoodType = event.target.value;
+            console.log("Neighborhood type set to:", neighborhoodType, "(Applies to next generation)");
+            // При изменении типа соседства, обычно сбрасывают поле, т.к. правила игры меняются фундаментально
+            isRunning = false;
+            clearInterval(intervalId);
+            grid = createGrid(); // Сбросить поле
+            drawGrid(grid); // Отрисовать сброшенное поле
+            generation = 0;
+            updateInfoDisplay();
+            alert(getTranslation('alertNeighborhoodChange', { type: neighborhoodType === 'moore' ? getTranslation('mooreNeighborhood') : getTranslation('vonneumannNeighborhood') }));
+        });
+    }
+
+    // Обработчик изменения ТОРОИДАЛЬНОСТИ (границ)
+    if(toggleToroidal) {
+        toggleToroidal.addEventListener('change', (event) => {
+            isToroidal = event.target.checked;
+            console.log("Toroidal mode set to:", isToroidal, "(Applies to next generation)");
+            // Этот параметр влияет на расчет следующего поколения, не требует немедленной перерисовки поля
+            // (Если не добавлена визуальная индикация на поле)
+        });
+    }
+
 
      if(applySizeButton) applySizeButton.addEventListener('click', () => {
         const newWidth = parseInt(gridWidthInput.value);
         const newHeight = parseInt(gridHeightInput.value);
 
         if (!isNaN(newWidth) && newWidth >= MIN_GRID_SIZE && !isNaN(newHeight) && newHeight >= MIN_GRID_SIZE) {
-            // initializeGrid теперь инициализирует 2D Canvas и grid
-            initializeGrid(newWidth, newHeight);
+            // Применяем размер поля и обновляем isToroidal из чекбокса
+            isToroidal = toggleToroidal ? toggleToroidal.checked : false; // Убедимся, что берем актуальное значение
+            initializeGrid(newWidth, newHeight); // Инициализируем 2D Canvas и grid с новым размером
+            // initializeGrid сбрасывает игру и вызывает drawGrid
         } else {
             alert(getTranslation('alertInvalidSizeInput', { minSize: MIN_GRID_SIZE }));
         }
@@ -803,10 +835,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 survivalRules = newSurvivalRules.sort((a, b) => a - b);
                 alert(getTranslation('alertRulesUpdated', { birth: birthRules.join(', '), survival: survivalRules.join(', ') }));
 
+                // При изменении правил, обычно сбрасывают поле, т.к. правила игры меняются фундаментально
                 isRunning = false;
                 clearInterval(intervalId);
-                grid = createGrid(); // Создаем пустую сетку
-                drawGrid(grid); // Отрисовываем
+                grid = createGrid(); // Сбросить поле
+                drawGrid(grid); // Отрисовать сброшенное поле
                 generation = 0;
                 updateInfoDisplay();
             } else {
@@ -820,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Сохранение в JSON файл ---
      if(saveToJsonButton) saveToJsonButton.addEventListener('click', () => {
-         // Проверяем наличие grid и корректные размеры
+         // Проверяем наличие grid и корректные размеры перед сохранением
          if (!grid || COLS === undefined || ROWS === undefined || COLS <= 0 || ROWS <= 0 || speedInput === null) {
             console.error("Cannot save to JSON: grid, dimensions, or speedInput are missing or invalid.", {COLS, ROWS, grid_is_array: Array.isArray(grid), speedInput: !!speedInput});
              alert("Не удалось сохранить в файл: данные игры отсутствуют или неполные.");
@@ -836,17 +869,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const gameState = {
             cols: COLS,
             rows: ROWS,
-            isToroidal: isToroidal,
-            neighborhoodType: neighborhoodType,
-            birthRules: birthRules,
-            survivalRules: survivalRules,
+            isToroidal: isToroidal, // Сохраняем актуальное значение
+            neighborhoodType: neighborhoodType, // Сохраняем актуальное значение
+            birthRules: birthRules, // Сохраняем актуальное значение
+            survivalRules: survivalRules, // Сохраняем актуальное значение
             generation: generation,
             liveCellsCount: liveCellsCount,
-            liveCellColor: liveCellColor,
-            deadCellColor: deadCellColor,
-            gridLineColor: gridLineColor, // Сохраняем цвет сетки
-            showGridLines: showGridLines, // Сохраняем состояние чекбокса сетки
-            speedGPS: speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS, // Убедимся, что speedInput не null
+            liveCellColor: liveCellColor, // Сохраняем актуальное значение
+            deadCellColor: deadCellColor, // Сохраняем актуальное значение
+            gridLineColor: gridLineColor, // Сохраняем актуальное значение
+            showGridLines: showGridLines, // Сохраняем актуальное значение
+            speedGPS: speedInput ? parseInt(speedInput.value) : DEFAULT_SPEED_GPS, // Сохраняем актуальное значение скорости
             grid: gridString, // Сохраняем сетку как строку (для уменьшения размера)
             hash: randomHash // Добавляем поле hash со случайной строкой цифр
         };
@@ -932,12 +965,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const loadedSpeedGPS = (typeof loadedState.speedGPS === 'number' && loadedState.speedGPS >= MIN_SPEED_GPS) ? loadedState.speedGPS : DEFAULT_SPEED_GPS;
 
 
-                // --- Применение загруженного состояния ---
+                // --- Применение загруженного состояния к игровым переменным и UI ---
                 isRunning = false;
                 clearInterval(intervalId);
 
-                 neighborhoodType = loadedState.neighborhoodType;
-                 isToroidal = loadedState.isToroidal;
+                 neighborhoodType = loadedState.neighborhoodType; // Применяем тип соседства
+                 isToroidal = loadedState.isToroidal; // Применяем тороидальность
 
                 initializeGrid(loadedState.cols, loadedState.rows); // Инициализируем новую сетку (и 2D Canvas) с правильными размерами
 
@@ -952,22 +985,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                birthRules = loadedState.birthRules.sort((a, b) => a - b);
-                survivalRules = loadedState.survivalRules.sort((a, b) => a - b);
+                birthRules = loadedState.birthRules.sort((a, b) => a - b); // Применяем правила
+                survivalRules = loadedState.survivalRules.sort((a, b) => a - b); // Применяем правила
                 generation = loadedGeneration;
                 liveCellsCount = calculatedLiveCount; // Используем пересчитанное значение
 
-                liveCellColor = loadedLiveCellColor;
-                deadCellColor = loadedDeadCellColor;
-                gridLineColor = loadedGridLineColor;
-                showGridLines = loadedShowGridLines;
+                liveCellColor = loadedLiveCellColor; // Применяем цвет
+                deadCellColor = loadedDeadCellColor; // Применяем цвет
+                gridLineColor = loadedGridLineColor; // Применяем цвет
+                showGridLines = loadedShowGridLines; // Применяем видимость сетки
 
-                // Обновляем элементы интерфейса
+                // Обновляем элементы интерфейса настроек, чтобы они соответствовали загруженному состоянию
                 if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
                  if(liveColorPicker) liveColorPicker.value = liveCellColor;
                  if(deadColorPicker) deadColorPicker.value = deadCellColor;
                  if(gridColorPicker) gridColorPicker.value = gridLineColor;
                  if(toggleGridLines) toggleGridLines.checked = showGridLines;
+                 if(toggleToroidal) toggleToroidal.checked = isToroidal; // Обновляем состояние чекбокса тороидальности
+                 if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType; // Обновляем выбранный тип соседства
+
 
                  if(gridWidthInput) gridWidthInput.value = COLS;
                  if(gridWidthSlider) gridWidthSlider.value = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE_SLIDER, COLS));
@@ -976,9 +1012,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if(speedInput) speedInput.value = loadedSpeedGPS;
                 if(speedSlider) speedSlider.value = Math.max(MIN_SPEED_GPS, Math.min(MAX_SPEED_GPS, loadedSpeedGPS));
-
-                if(neighborhoodSelect) neighborhoodSelect.value = neighborhoodType;
-                if(toggleToroidal) toggleToroidal.checked = isToroidal;
 
                 // Хэш не используется при загрузке
 
@@ -1017,7 +1050,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setLanguagePreference(event.target.value); // setLanguagePreference вызывает updateUI_Language
      });
 
-    // Инициализация игры на 2D Canvas
+    // Инициализация игры на 2D Canvas с параметрами по умолчанию
+    // initializeGameOnLoad вызывает initializeGrid, которая использует глобальные переменные
     initializeGameOnLoad();
 
     // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для отрисовки)
