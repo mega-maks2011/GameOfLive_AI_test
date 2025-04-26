@@ -1,108 +1,72 @@
-// --- Переводы ---
-const translations = {
-    'en': {
-        'gameTitle': 'Game of Life',
-        'startButton': 'Start',
-        'pauseButton': 'Pause',
-        'randomButton': 'Random',
-        'clearButton': 'Clear',
-        'settingsButton': 'Settings',
-        'speedLabel': 'Speed (gen/sec):',
-        'generationLabel': 'Generation',
-        'liveCellsLabel': 'Live cells',
-        // Обновленная подсказка для ручного рисования, включающая касания
-        'manualDrawHint': 'Click/Tap cells to toggle them (works when paused). Click/Tap and drag to draw.',
+// Удален объект translations отсюда, теперь он будет загружаться из файла
 
-        'settingsModalTitle': 'Settings',
-        'displaySettingsTitle': 'Display',
-        'liveColorLabel': 'Live cell color:',
-        'deadColorLabel': 'Dead cell color:',
-        'gridColorLabel': 'Grid line color:',
-        'showGridLinesLabel': 'Show grid lines:',
 
-        'sizeSettingsTitle': 'Field Size and Borders',
-        'widthLabel': 'Width (cells):',
-        'heightLabel': 'Height (cells):',
-        'toroidalLabel': 'Infinite field (toroidal):',
-        'applySizeButton': 'Apply Size/Borders (clears field)',
+// Объявляем переменную translations, которая будет заполнена после загрузки файла
+let translations = {};
 
-        'neighborhoodSettingsTitle': 'Neighborhood Rules',
-        'neighborhoodTypeLabel': 'Neighborhood type:',
-        'mooreNeighborhood': 'Moore (8 neighbors)',
-        'vonneumannNeighborhood': 'Von Neumann (4 neighbors)',
-
-        'rulesSettingsTitle': 'Rules (B/S)',
-        'rulesFormatHint': 'Format: B (birth) / S (survival). E.g., for standard Life: 3/23',
-        'rulesLabel': 'Правила:',
-        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
-
-        'saveLoadTitle': 'Save / Load (JSON File)',
-        'saveToFileButton': 'Save to File',
-        'loadFileLabel': 'Load from file:',
-        'loadFileHint': '(Loading a file automatically applies state)',
-
-         'authorsText': 'Authors: Gemini and M-998',
-
-        // Alert messages
-        'alertInvalidSizeInput': 'Please enter valid positive numbers for width and height (minimum {minSize}).',
-        'alertNeighborhoodChange': 'Neighborhood type changed to "{type}". Field reset.',
-        'alertRulesUpdated': 'Rules successfully updated:\nBirth on {birth} neighbors\nSurvival on {survival} neighbors.',
-        'alertInvalidRulesFormat': 'Incorrect rules format. Use B/S format (e.g., "3/23") with digits from 0 to 8.',
-        'alertFileLoadSuccess': 'Game state successfully loaded from file!',
-        'alertFileLoadError': 'Error loading game state from file: {message}\nPlease ensure the file was created by this version of the game.',
-    },
-    'ru': {
-        'gameTitle': 'Игра "Жизнь"',
-        'startButton': 'Старт',
-        'pauseButton': 'Пауза',
-        'randomButton': 'Случайно',
-        'clearButton': 'Очистить',
-        'settingsButton': 'Настройки',
-        'speedLabel': 'Скорость (поколений/сек):',
-        'generationLabel': 'Поколение',
-        'liveCellsLabel': 'Живых клеток',
-        // Обновленная подсказка для ручного рисования, включающая касания
-        'manualDrawHint': 'Нажмите/Коснитесь клетки, чтобы установить или убрать ее вручную (работает в режиме паузы). Зажмите/Коснитесь и ведите для рисования.',
-
-        'settingsModalTitle': 'Настройки',
-        'displaySettingsTitle': 'Отображение',
-        'liveColorLabel': 'Цвет живых клеток:',
-        'deadColorLabel': 'Цвет мертвых клеток:',
-        'gridColorLabel': 'Цвет сетки:',
-        'showGridLinesLabel': 'Показывать сетку:',
-
-        'sizeSettingsTitle': 'Размер поля и границы',
-        'widthLabel': 'Ширина (клеток):',
-        'heightLabel': 'Высота (клеток):',
-        'toroidalLabel': 'Бесконечное поле (тороидальное):',
-        'applySizeButton': 'Применить размер/границы (очистит поле)',
-
-        'neighborhoodSettingsTitle': 'Правила соседства',
-        'neighborhoodTypeLabel': 'Тип соседства:',
-        'mooreNeighborhood': 'Мур (8 соседей)',
-        'vonneumannNeighborhood': 'Фон Нейман (4 соседа)',
-
-        'rulesSettingsTitle': 'Правила (B/S)',
-        'rulesFormatHint': 'Формат: B (рождение) / S (выживание). Например, для стандартной Жизни: 3/23',
-        'rulesLabel': 'Правила:',
-        'applyRulesButton': 'Применить правила (сбросит симуляцию)',
-
-        'saveLoadTitle': 'Сохранить / Загрузить (файл JSON)',
-        'saveToFileButton': 'Сохранить в файл',
-        'loadFileLabel': 'Загрузить из файла:',
-        'loadFileHint': '(Загрузка файла автоматически применит состояние)',
-
-         'authorsText': 'Авторы: Gemini и M-998',
-
-        // Сообщения для пользователя (всплывающие alert)
-        'alertInvalidSizeInput': 'Пожалуйста, введите корректные положительные числа для ширины и высоты (минимум {minSize}).',
-        'alertNeighborhoodChange': 'Тип соседства изменен на "{type}". Поле сброшено.',
-        'alertRulesUpdated': 'Правила успешно обновлены:\nРождение при {birth} соседях\nВыживание при {survival} соседях.',
-        'alertInvalidRulesFormat': 'Некорректный формат правил. Используйте формат B/S (например "3/23") с цифрами от 0 до 8.',
-        'alertFileLoadSuccess': 'Состояние игры успешно загружено из файла!',
-        'alertFileLoadError': 'Ошибка при загрузке состояния игры из файла: {message}\nПожалуйста, убедитесь, что файл создан этой версией игры.',
+// Функция для загрузки переводов из файла local.txt
+async function loadTranslations(langFile = 'local.txt') {
+    try {
+        const response = await fetch(langFile);
+        if (!response.ok) {
+            // Если файл не найден или другая HTTP ошибка, выводим ошибку
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        parseTranslations(text);
+        console.log("Translations loaded and parsed from", langFile);
+    } catch (error) {
+        console.error("Failed to load translations from", langFile, ":", error);
+        // Fallback: Если загрузка файла не удалась, можно использовать пустой объект
+        // или, если есть резервные переводы (хотя мы их убрали), использовать их.
+        // Сейчас просто оставляем translations как пустой объект, getTranslation будет использовать ключи.
     }
-};
+}
+
+// Функция для разбора текста из local.txt и заполнения объекта translations
+function parseTranslations(text) {
+    const lines = text.split('\n');
+    let currentLang = null;
+
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        // Пропускаем пустые строки и строки комментариев, начинающиеся с #
+        if (!trimmedLine || trimmedLine.startsWith('#')) {
+            continue;
+        }
+
+        // Проверяем, является ли строка заголовком секции языка, например [en]
+        const langMatch = trimmedLine.match(/^\[([a-z]{2})\]$/);
+        if (langMatch) {
+            currentLang = langMatch[1];
+            // Убеждаемся, что для этого языка существует объект в translations
+            if (!translations[currentLang]) {
+                translations[currentLang] = {};
+            }
+            continue; // Переходим к следующей строке после заголовка секции
+        }
+
+        // Если мы находимся внутри секции языка
+        if (currentLang) {
+            // Ищем разделитель ключ=значение
+            const separatorIndex = trimmedLine.indexOf('=');
+            if (separatorIndex > 0) { // Убедимся, что = не в самом начале
+                const key = trimmedLine.substring(0, separatorIndex).trim();
+                const value = trimmedLine.substring(separatorIndex + 1).trim();
+                 if (key) { // Убедимся, что ключ не пустой
+                    translations[currentLang][key] = value;
+                 }
+            } else {
+                 console.warn(`Skipping malformed translation line in [${currentLang}]: ${trimmedLine}`);
+            }
+        } else {
+             // Если строка с переводом найдена до заголовка секции языка
+             console.warn(`Skipping translation line outside of a language section: ${trimmedLine}`);
+        }
+    }
+    // console.log("Parsed translations object:", translations); // Опционально: вывести результат парсинга
+}
+
 
 // --- Объявление КОНСТАНТ и глобальных ПЕРЕМЕННЫХ в самом начале ---
 const DEFAULT_SPEED_GPS = 10; // Скорость по умолчанию в поколений/сек
@@ -114,6 +78,8 @@ const MAX_GRID_SIZE_SLIDER = 200;
 const DEFAULT_GRID_SIZE = 50; // Размер по умолчанию
 
 // Определяем начальный язык. Сначала из localStorage, затем из языка браузера, по умолчанию английский.
+// currentLanguage будет использоваться функцией getTranslation, но объект translations
+// будет заполнен только после загрузки файла.
 let currentLanguage = localStorage.getItem('preferredLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
 
 // Цвета и видимость сетки теперь снова используются напрямую для отрисовки
@@ -188,10 +154,12 @@ const languageSelect = document.getElementById('languageSelect');
 
 // --- Функции локализации ---
 function getTranslation(key, replacements = {}) {
+    // Ищем перевод сначала для текущего языка, затем для английского, иначе возвращаем сам ключ
     let text = translations[currentLanguage] && translations[currentLanguage][key] !== undefined
                ? translations[currentLanguage][key]
-               : (translations['en'][key] !== undefined ? translations['en'][key] : key);
+               : (translations['en'] && translations['en'][key] !== undefined ? translations['en'][key] : key);
 
+    // Применяем замены плейсхолдеров, если есть
     for (const placeholder in replacements) {
         const regex = new RegExp(`{${placeholder}}`, 'g');
         text = text.replace(regex, replacements[placeholder]);
@@ -199,6 +167,7 @@ function getTranslation(key, replacements = {}) {
     return text;
 }
 
+// Обновление UI элементов на основе текущего языка и загруженных переводов
 function updateUI_Language() {
     console.log("Updating UI language to:", currentLanguage);
     const elementsToTranslate = document.querySelectorAll('[data-lang-key]');
@@ -215,15 +184,17 @@ function updateUI_Language() {
         element.textContent = translation;
     });
 
+     // Обновляем текст для опций в select'е типа соседства вручную, т.к. они не имеют data-lang-key
      const mooreOption = document.querySelector('#neighborhoodSelect option[value="moore"]');
      const vonneumannOption = document.querySelector('#neighborhoodSelect option[value="vonneumann"]');
      if (mooreOption) mooreOption.textContent = getTranslation('mooreNeighborhood');
      if (vonneumannOption) vonneumannOption.textContent = getTranslation('vonneumannNeighborhood');
 
-     if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`;
-     if(document.title) document.title = getTranslation('gameTitle');
+     // Обновляем плейсхолдеры, заголовки и другие специфичные элементы
+     if(rulesInput) rulesInput.value = `${birthRules.join('')}/${survivalRules.join('')}`; // Правила не меняются при смене языка
+     if(document.title) document.title = getTranslation('gameTitle'); // Заголовок страницы
 
-     // Метки цвета и видимости сетки теперь снова отображаются
+     // Метки цвета и видимости сетки теперь снова отображаются (убеждаемся, что display не none)
      const gridColorLabelElement = document.querySelector('label[for="gridColorPicker"]');
      const showGridLinesLabelElement = document.querySelector('label[for="toggleGridLines"]');
      const gridColorPickerElement = document.getElementById('gridColorPicker');
@@ -232,7 +203,7 @@ function updateUI_Language() {
      if (gridColorLabelElement) gridColorLabelElement.textContent = getTranslation('gridColorLabel');
      if (showGridLinesLabelElement) showGridLinesLabelElement.textContent = getTranslation('showGridLinesLabel');
 
-     // Элементы управления сеткой снова видимы (удалены WebGL-специфичные display: none)
+     // Убеждаемся, что эти элементы видимы
      if (gridColorPickerElement) gridColorPickerElement.style.display = '';
      if (toggleGridLinesElement) toggleGridLinesElement.style.display = '';
      if (gridColorLabelElement) gridColorLabelElement.style.display = '';
@@ -240,9 +211,18 @@ function updateUI_Language() {
 }
 
 function setLanguagePreference(lang) {
-    currentLanguage = lang;
-    // localStorage.setItem('preferredLanguage', lang); // Убрано сохранение в localStorage
-    updateUI_Language();
+    // Проверяем, есть ли переводы для выбранного языка, прежде чем устанавливать его
+    if (translations[lang]) {
+        currentLanguage = lang;
+        localStorage.setItem('preferredLanguage', lang); // Сохраняем выбор пользователя в localStorage
+        updateUI_Language(); // Обновляем интерфейс
+    } else {
+        console.warn(`Translations for language "${lang}" not found.`);
+        // Можно остаться на текущем языке или вернуться к английскому
+        // alert(`Translations for language "${lang}" not available.`);
+        // Возвращаем select к текущему активному языку, если выбранный не найден
+        if(languageSelect) languageSelect.value = currentLanguage;
+    }
 }
 
 
@@ -433,7 +413,7 @@ function updateInfoDisplay() {
      if(liveCellCountSpan) liveCellCountSpan.textContent = liveCellsCount;
 }
 
-// --- Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas) ---
+// --- Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas, добавлена поддержка касаний) ---
 function setCellState(col, row, state) {
      // Проверка на наличие контекста 2D Canvas
      if (ctx && grid && COLS !== undefined && ROWS !== undefined && COLS > 0 && ROWS > 0 && col >= 0 && col < COLS && row >= 0 && row < ROWS && (state === 0 || state === 1)) {
@@ -523,19 +503,18 @@ function initializeGameWithDefaults() {
      if(toggleGridLines) toggleGridLines.checked = showGridLines;
 
 
-     updateUI_Language(); // Обновляем UI, включая метки сетки (теперь снова видимы)
+     // updateUI_Language(); // Обновляем UI здесь или после установки начального языка в DOMContentLoaded
 }
 
 
 // --- Инициализация игры при загрузке страницы (возвращена к 2D Canvas) ---
 function initializeGameOnLoad() {
     // Инициализация игры с параметрами по умолчанию на 2D Canvas
-    // initializeGameWithDefaults теперь вызывает initializeGrid
+    // initializeGameWithDefaults вызывает initializeGrid
     initializeGameWithDefaults();
 
 
-    updateUI_Language(); // Обновляем язык интерфейса
-     // Привязка всех обработчиков событий происходит в DOMContentLoaded
+    // updateUI_Language() вызывается в DOMContentLoaded после загрузки переводов
 }
 
 
@@ -560,14 +539,41 @@ function generateRandomDigitString(length) {
 }
 
 
-// Запускаем логику при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
+// Запускаем логику после полной загрузки DOM
+document.addEventListener('DOMContentLoaded', async () => {
+
+    // --- Загрузка переводов из local.txt ---
+    await loadTranslations(); // Ждем загрузки и разбора переводов
 
     // --- Инициализация Игры (на 2D Canvas) ---
+    // initializeGameOnLoad вызывает initializeGrid с параметрами по умолчанию
     initializeGameOnLoad();
 
+    // Устанавливаем начальные значения для переключателя языка после загрузки переводов
+     if(languageSelect) {
+        // Убедимся, что текущий определенный язык (из localStorage или браузера) существует в переводах
+        if (!translations[currentLanguage]) {
+            console.warn(`Preferred language "${currentLanguage}" not found in translations, falling back to English.`);
+            currentLanguage = 'en'; // Возврат к английскому, если предпочтительный язык не найден
+        }
+        // Убедимся, что английский язык существует как минимум
+        if (!translations['en']) {
+             console.error("English translations ('en') not found in local.txt! Localization will not work correctly.");
+             // Переводы останутся пустыми, getTranslation будет возвращать ключи
+        }
 
-    // --- Привязка обработчиков событий КНОПОК ---
+        languageSelect.value = currentLanguage; // Устанавливаем значение в UI
+        updateUI_Language(); // Обновляем UI с использованием загруженных переводов и текущего языка
+     } else {
+         console.warn("Language select element not found.");
+         // Если элемента выбора языка нет, все равно обновляем UI на основе текущего языка
+         updateUI_Language();
+     }
+
+
+    // --- Привязка всех обработчиков событий ---
+
+    // --- Обработчики событий КНОПОК УПРАВЛЕНИЯ ---
     if(startButton) startButton.addEventListener('click', startSimulation);
     if(pauseButton) pauseButton.addEventListener('click', () => {
         isRunning = false;
@@ -712,7 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Обработчики событий мыши
         canvas.addEventListener('mousedown', (event) => {
              // Проверяем наличие контекста 2D Canvas и что игра не запущена
-             if (!isRunning && ctx) {
+             if (!isRunning && ctx && grid) { // Добавлена проверка на наличие grid
                 const coords = getEventCoords(event);
                 if (coords && coords.valid) {
                      isDrawing = true;
@@ -724,22 +730,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
              } else if (!ctx) {
                   console.warn("Mouse down ignored: 2D Canvas context not initialized.");
-             } else if (isRunning) {
+             } else if (!grid) {
+                 console.warn("Mouse down ignored: Grid not initialized.");
+             }
+             else if (isRunning) {
                  // Опционально: показать сообщение, что рисование доступно только на паузе
                  // console.log("Manual drawing is only available when the simulation is paused.");
              }
         });
 
         canvas.addEventListener('mousemove', (event) => {
-            // Рисование только если кнопка мыши зажата И игра на паузе И контекст готов
-            if (isDrawing && !isRunning && ctx) {
+            // Рисование только если кнопка мыши зажата И игра на паузе И контекст готов И сетка готова
+            if (isDrawing && !isRunning && ctx && grid) {
                 const coords = getEventCoords(event);
-                if (coords && coords.valid) {
+                 if (coords && coords.valid) {
                      // Проверяем, что состояние клетки отличается от drawState
                      if (grid[coords.col][coords.row] !== drawState) {
                           setCellState(coords.col, coords.row, drawState); // setCellState теперь обновляет 2D Canvas
                      }
-                }
+                 }
             }
         });
 
@@ -755,8 +764,8 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('touchstart', (event) => {
             // Предотвращаем стандартное действие браузера (например, прокрутку или масштабирование)
             event.preventDefault();
-             // Проверяем наличие контекста 2D Canvas и что игра не запущена
-             if (!isRunning && ctx) {
+             // Проверяем наличие контекста 2D Canvas и что игра не запущена И сетка готова
+             if (!isRunning && ctx && grid) {
                 const coords = getEventCoords(event);
                 if (coords && coords.valid) {
                      isDrawing = true;
@@ -768,7 +777,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
              } else if (!ctx) {
                   console.warn("Touch start ignored: 2D Canvas context not initialized.");
-             } else if (isRunning) {
+             } else if (!grid) {
+                  console.warn("Touch start ignored: Grid not initialized.");
+             }
+             else if (isRunning) {
                  // Опционально: сообщение
                  // console.log("Manual drawing is only available when the simulation is paused.");
              }
@@ -778,8 +790,8 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('touchmove', (event) => {
             // Предотвращаем стандартное действие браузера
             event.preventDefault();
-            // Рисование только если isDrawing активно И игра на паузе И контекст готов
-            if (isDrawing && !isRunning && ctx) {
+            // Рисование только если isDrawing активно И игра на паузе И контекст готов И сетка готова
+            if (isDrawing && !isRunning && ctx && grid) {
                 const coords = getEventCoords(event);
                  if (coords && coords.valid) {
                      // Проверяем, что состояние клетки отличается от drawState
@@ -1124,12 +1136,15 @@ document.addEventListener('DOMContentLoaded', () => {
      });
 
     // Инициализация игры на 2D Canvas с параметрами по умолчанию
-    // initializeGameWithDefaults вызывает initializeGrid, которая использует глобальные переменные
+    // initializeGameOnLoad вызывает initializeGrid, которая использует глобальные переменные
     initializeGameOnLoad();
 
     // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для отрисовки)
     // Эти переменные будут обновлены при загрузке из файла или установлены initializeGameWithDefaults
     // Просто убедимся, что они имеют начальные значения из HTML
+    // Note: These are initialized here as fallbacks, but the actual values used for drawing
+    // depend on the current value of the global variables (liveCellColor, etc.) which
+    // are updated by the settings change handlers or file loading.
     if(liveColorPicker) liveCellColor = liveColorPicker.value;
     if(deadColorPicker) deadCellColor = deadColorPicker.value;
     if(gridColorPicker) gridLineColor = gridColorPicker.value; // Цвет сетки
