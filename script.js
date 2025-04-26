@@ -10,7 +10,8 @@ const translations = {
         'speedLabel': 'Speed (gen/sec):',
         'generationLabel': 'Generation',
         'liveCellsLabel': 'Live cells',
-        'manualDrawHint': 'Click cells to toggle them (works when paused). Click and drag to draw.',
+        // Обновленная подсказка для ручного рисования, включающая касания
+        'manualDrawHint': 'Click/Tap cells to toggle them (works when paused). Click/Tap and drag to draw.',
 
         'settingsModalTitle': 'Settings',
         'displaySettingsTitle': 'Display',
@@ -60,7 +61,8 @@ const translations = {
         'speedLabel': 'Скорость (поколений/сек):',
         'generationLabel': 'Поколение',
         'liveCellsLabel': 'Живых клеток',
-        'manualDrawHint': 'Нажмите на клетки на поле, чтобы установить или убрать их вручную (работает в режиме паузы). Зажмите и ведите мышь для рисования.',
+        // Обновленная подсказка для ручного рисования, включающая касания
+        'manualDrawHint': 'Нажмите/Коснитесь клетки, чтобы установить или убрать ее вручную (работает в режиме паузы). Зажмите/Коснитесь и ведите для рисования.',
 
         'settingsModalTitle': 'Настройки',
         'displaySettingsTitle': 'Отображение',
@@ -516,8 +518,8 @@ function initializeGameWithDefaults() {
      // Начальные цвета и видимость сетки уже заданы в глобальных переменных.
      // Их состояние в UI будет обновлено при открытии модалки или здесь.
      if(liveColorPicker) liveColorPicker.value = liveCellColor;
-     if(deadColorPicker) deadCellColor = deadCellColor;
-     if(gridColorPicker) gridLineColor = gridColorPicker.value;
+     if(deadColorPicker) deadColorPicker.value = deadCellColor;
+     if(gridColorPicker) gridColorPicker.value = gridLineColor;
      if(toggleGridLines) toggleGridLines.checked = showGridLines;
 
 
@@ -673,27 +675,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas)
+    // --- Ручное рисование на канвасе (ВОССТАНОВЛЕНА для 2D Canvas, добавлена поддержка касаний) ---
      if(canvas) {
+        // Вспомогательная функция для получения координат события (мышь или касание)
+        function getEventCoords(event) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+
+            // Проверяем тип события: мышь или касание
+            if (event.clientX !== undefined && event.clientY !== undefined) {
+                // Событие мыши
+                clientX = event.clientX;
+                clientY = event.clientY;
+            } else if (event.touches && event.touches.length > 0) {
+                // Событие касания, берем первое касание
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
+            } else {
+                // Неизвестный тип события или нет касаний
+                return null;
+            }
+
+            // Вычисляем координаты относительно канваса
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            // Конвертируем пиксельные координаты в координаты сетки (клетки)
+            const col = Math.floor(x / resolution);
+            const row = Math.floor(y / resolution);
+
+            // Возвращаем координаты сетки и флаг, было ли событие обработано успешно
+            return { col, row, valid: col >= 0 && col < COLS && row >= 0 && row < ROWS };
+        }
+
+
+        // Обработчики событий мыши
         canvas.addEventListener('mousedown', (event) => {
              // Проверяем наличие контекста 2D Canvas и что игра не запущена
              if (!isRunning && ctx) {
-                isDrawing = true;
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-
-                // Конвертируем пиксельные координаты в координаты сетки (клетки)
-                const col = Math.floor(x / resolution);
-                const row = Math.floor(y / resolution);
-
-
-                if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+                const coords = getEventCoords(event);
+                if (coords && coords.valid) {
+                     isDrawing = true;
                      // Определяем состояние, в которое будем рисовать (инвертируем текущее состояние клетки)
-                     drawState = grid[col][row] === 1 ? 0 : 1;
-                     setCellState(col, row, drawState); // setCellState теперь обновляет 2D Canvas
-                } else {
-                     console.warn("Mouse down outside grid bounds.", { col, row, COLS, ROWS });
+                     drawState = grid[coords.col][coords.row] === 1 ? 0 : 1;
+                     setCellState(coords.col, coords.row, drawState); // setCellState теперь обновляет 2D Canvas
+                } else if (coords) {
+                     console.warn("Mouse down outside grid bounds.", { col: coords.col, row: coords.row, COLS, ROWS });
                 }
              } else if (!ctx) {
                   console.warn("Mouse down ignored: 2D Canvas context not initialized.");
@@ -706,15 +733,12 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('mousemove', (event) => {
             // Рисование только если кнопка мыши зажата И игра на паузе И контекст готов
             if (isDrawing && !isRunning && ctx) {
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                const col = Math.floor(x / resolution);
-                const row = Math.floor(y / resolution);
-
-                // Проверяем, что координаты внутри сетки и состояние клетки отличается от drawState
-                if (col >= 0 && col < COLS && row >= 0 && row < ROWS && grid[col][row] !== drawState) {
-                     setCellState(col, row, drawState); // setCellState теперь обновляет 2D Canvas
+                const coords = getEventCoords(event);
+                if (coords && coords.valid) {
+                     // Проверяем, что состояние клетки отличается от drawState
+                     if (grid[coords.col][coords.row] !== drawState) {
+                          setCellState(coords.col, coords.row, drawState); // setCellState теперь обновляет 2D Canvas
+                     }
                 }
             }
         });
@@ -723,6 +747,55 @@ document.addEventListener('DOMContentLoaded', () => {
             isDrawing = false;
         });
         canvas.addEventListener('mouseout', () => {
+            isDrawing = false;
+        });
+
+
+        // --- Обработчики событий касания (Touch Events) ---
+        canvas.addEventListener('touchstart', (event) => {
+            // Предотвращаем стандартное действие браузера (например, прокрутку или масштабирование)
+            event.preventDefault();
+             // Проверяем наличие контекста 2D Canvas и что игра не запущена
+             if (!isRunning && ctx) {
+                const coords = getEventCoords(event);
+                if (coords && coords.valid) {
+                     isDrawing = true;
+                     // Определяем состояние, в которое будем рисовать (инвертируем текущее состояние клетки)
+                     drawState = grid[coords.col][coords.row] === 1 ? 0 : 1;
+                     setCellState(coords.col, coords.row, drawState); // setCellState теперь обновляет 2D Canvas
+                } else if (coords) {
+                     console.warn("Touch start outside grid bounds.", { col: coords.col, row: coords.row, COLS, ROWS });
+                }
+             } else if (!ctx) {
+                  console.warn("Touch start ignored: 2D Canvas context not initialized.");
+             } else if (isRunning) {
+                 // Опционально: сообщение
+                 // console.log("Manual drawing is only available when the simulation is paused.");
+             }
+        }, { passive: false }); // Use passive: false to allow preventDefault
+
+
+        canvas.addEventListener('touchmove', (event) => {
+            // Предотвращаем стандартное действие браузера
+            event.preventDefault();
+            // Рисование только если isDrawing активно И игра на паузе И контекст готов
+            if (isDrawing && !isRunning && ctx) {
+                const coords = getEventCoords(event);
+                 if (coords && coords.valid) {
+                     // Проверяем, что состояние клетки отличается от drawState
+                     if (grid[coords.col][coords.row] !== drawState) {
+                          setCellState(coords.col, coords.row, drawState); // setCellState теперь обновляет 2D Canvas
+                     }
+                 }
+            }
+        }, { passive: false }); // Use passive: false to allow preventDefault
+
+
+        canvas.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('touchcancel', () => {
             isDrawing = false;
         });
      }
@@ -1051,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', () => {
      });
 
     // Инициализация игры на 2D Canvas с параметрами по умолчанию
-    // initializeGameOnLoad вызывает initializeGrid, которая использует глобальные переменные
+    // initializeGameWithDefaults вызывает initializeGrid, которая использует глобальные переменные
     initializeGameOnLoad();
 
     // Инициализация цветов и видимости сетки из HTML после загрузки DOM (нужно для отрисовки)
